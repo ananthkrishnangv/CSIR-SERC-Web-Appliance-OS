@@ -1,0 +1,36 @@
+{
+  "product_title": "सीएसआईआर सुरक्षित वेब उपकरण ओएस",
+  "search_placeholder": "अनुप्रयोग, नियम, घटनाएं खोजें...",
+  "alerts": "चेतावनियाँ",
+  "admin": "प्रशासक",
+  "nav": {
+    "overview": "अवलोकन",
+    "applications": "अनुप्रयोग",
+    "containers": "कंटेनर",
+    "web_delivery": "वेब डिलीवरी",
+    "security": "सुरक्षा",
+    "ai_security": "एआई सुरक्षा केंद्र",
+    "data_protection": "डेटा सुरक्षा व बैकअप",
+    "observability": "निगरानी",
+    "identity": "पहचान व प्रमाणीकरण",
+    "compliance": "अनुपालन एवं ऑडिट",
+    "updates": "अद्यतन और पुनर्प्राप्ति",
+    "settings": "सेटिंग्स",
+    "console_boot": "बूट स्क्रीन"
+  },
+  "overview": {
+    "headline": "सुरक्षा और संचालन अवलोकन",
+    "health_label": "स्वास्थ्य",
+    "apps_label": "ऐप्स",
+    "backups_label": "बैकअप",
+    "security_activity_title": "सुरक्षा गतिविधि",
+    "ai_recommendations_title": "एआई अनुशंसाएं",
+    "application_health_title": "अनुप्रयोग स्वास्थ्य",
+    "actions": {
+      "view_incidents": "घटनाएं देखें",
+      "deploy_app": "नया ऐप तैनात करें",
+      "run_backup": "बैकअप चलाएं",
+      "verify_audit": "ऑडिट खाता सत्यापित करें"
+    }
+  }
+}

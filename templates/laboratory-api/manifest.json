@@ -1,0 +1,12 @@
+{
+  "app_id": "csir-laboratory-api",
+  "name": "Laboratory API",
+  "version": "3.0.0",
+  "description": "SERC Scientific Sensor and High-Throughput Instrumentation API",
+  "image": "registry.csir.res.in/apps/lab-api:3.0.0",
+  "digest": "sha256:e901b2a95c81729b19df402319ef7612c6a084018274a123",
+  "port": 8082,
+  "domain": "api.serc.res.in",
+  "waf_profile": "strict",
+  "backup_tier": 0
+}

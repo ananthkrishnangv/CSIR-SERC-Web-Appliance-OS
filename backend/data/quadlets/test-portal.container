@@ -1,0 +1,42 @@
+# CSIR-SWA OS Podman Quadlet Specification
+# Generated for Application: Test Portal (ID: test-portal)
+# Security Baseline: Rootless, Read-Only Root, Dropped Capabilities
+
+[Unit]
+Description=CSIR Workload - Test Portal
+After=network-online.target local-fs.target
+Wants=network-online.target
+
+[Container]
+ContainerName=csir-test-portal
+Image=registry.csir.res.in/apps/test-portal:1.0.0@sha256:35cbffae00c19cc8ffc9baeb4b9c70855caf0fc88294f4ed8f55844c6e9363d6
+PublishPort=127.0.0.1:8090:8090
+
+# Mandatory Hardening Controls (Section 9)
+ReadOnly=true
+DropCapability=ALL
+NoNewPrivileges=true
+UserNS=auto
+Network=csir-test-portal.network
+
+# Resource Quotas
+Memory=512M
+CPUQuota=40%
+PIDsLimit=256
+
+# Health Check
+HealthCmd=curl -f http://127.0.0.1:8090/health || exit 1
+HealthInterval=30s
+HealthRetries=3
+HealthTimeout=5s
+
+Environment=APP_ENV=production
+Volume=/srv/app-data/test:/data:Z
+
+[Service]
+Restart=on-failure
+RestartSec=10s
+TimeoutStartSec=60s
+
+[Install]
+WantedBy=default.target

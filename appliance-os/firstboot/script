@@ -1,0 +1,25 @@
+#!/bin/bash
+# combustion: network
+#=============================================================
+# Combustion script for automated headless provisioning
+#=============================================================
+set -euxo pipefail
+
+echo "Executing CSIR-SWA OS Combustion automated provisioning..."
+
+# Mount persistent dirs if needed
+mkdir -p /etc/csir-swa /var/lib/csir-swa /srv/apps /srv/app-data /srv/backups
+
+# Setup default appliance settings
+cat <<EOF > /etc/csir-swa/appliance.yaml
+appliance:
+  organisation: "CSIR Standard Deployment"
+  hostname: "csir-webos-01"
+  security_profile: "hardened"
+  management_port: 8443
+  provisioned_by: "combustion"
+  provisioned_at: "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+EOF
+
+touch /etc/csir-swa/provisioned
+echo "Combustion provisioning complete."

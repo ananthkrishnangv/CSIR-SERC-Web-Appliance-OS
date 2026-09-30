@@ -1,0 +1,36 @@
+[Unit]
+Description=CSIR Scientific Research Portal Workload
+After=network-online.target local-fs.target
+Wants=network-online.target
+
+[Container]
+ContainerName=csir-research-portal
+Image=registry.csir.res.in/apps/research-portal:1.2.0@sha256:d8c5f948a123f8b375b42a00df87b9264871e98412431fae
+PublishPort=127.0.0.1:8080:8080
+
+# CSIR Mandatory Security Controls
+ReadOnly=true
+DropCapability=ALL
+NoNewPrivileges=true
+UserNS=auto
+Network=csir-research-portal.network
+
+# Dedicated Subvolume Storage
+Volume=/srv/app-data/research-portal:/app/data:Z
+
+# Resource Limits
+Memory=1024M
+CPUQuota=50%
+PIDsLimit=256
+
+# Health Gate
+HealthCmd=curl -f http://127.0.0.1:8080/health || exit 1
+HealthInterval=30s
+HealthRetries=3
+
+[Service]
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=default.target

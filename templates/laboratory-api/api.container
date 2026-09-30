@@ -1,0 +1,25 @@
+[Unit]
+Description=CSIR Laboratory Instrumentation API Workload
+After=network-online.target local-fs.target
+Wants=network-online.target
+
+[Container]
+ContainerName=csir-laboratory-api
+Image=registry.csir.res.in/apps/lab-api:3.0.0@sha256:e901b2a95c81729b19df402319ef7612c6a084018274a123
+PublishPort=127.0.0.1:8082:8082
+
+ReadOnly=true
+DropCapability=ALL
+NoNewPrivileges=true
+UserNS=auto
+
+Memory=1536M
+CPUQuota=75%
+PIDsLimit=512
+
+[Service]
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=default.target

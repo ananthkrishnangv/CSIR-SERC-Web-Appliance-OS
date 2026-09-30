@@ -1,0 +1,5 @@
+# Dedicated Network for CSIR Application app-8c05e6f8
+[Network]
+NetworkName=csir-app-8c05e6f8
+Subnet=10.89.99.0/24
+Internal=false

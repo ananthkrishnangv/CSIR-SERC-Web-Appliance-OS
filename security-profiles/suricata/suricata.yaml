@@ -1,0 +1,31 @@
+%YAML 1.1
+---
+# Suricata Network IDS/IPS Profile for CSIR-SWA OS
+default-rule-path: /var/lib/suricata/rules
+rule-files:
+  - suricata.rules
+  - emerging-threats.rules
+
+af-packet:
+  - interface: eth0
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+    use-mmsg: yes
+
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: /var/log/suricata/eve.json
+      types:
+        - alert:
+            payload: yes
+            metadata: yes
+            tagged-packets: yes
+        - http:
+            extended: yes
+        - tls:
+            extended: yes
+        - dns:
+            version: 2

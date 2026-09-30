@@ -1,0 +1,14 @@
+{
+  "app_id": "csir-research-portal",
+  "name": "CSIR Research Portal",
+  "version": "1.2.0",
+  "description": "Scientific Research Publications & Laboratory Project Directory",
+  "image": "registry.csir.res.in/apps/research-portal:1.2.0",
+  "digest": "sha256:d8c5f948a123f8b375b42a00df87b9264871e98412431fae",
+  "port": 8080,
+  "domain": "research.csir.res.in",
+  "waf_profile": "strict",
+  "backup_tier": 1,
+  "sbom": "cyclonedx-1.5",
+  "signed_by": "CSIR Release Authority"
+}

@@ -1,0 +1,36 @@
+{
+  "product_title": "CSIR Secure Web Appliance OS",
+  "search_placeholder": "Search applications, rules, incidents, snapshots...",
+  "alerts": "Alerts",
+  "admin": "Admin",
+  "nav": {
+    "overview": "Overview",
+    "applications": "Applications",
+    "containers": "Containers",
+    "web_delivery": "Web Delivery",
+    "security": "Security",
+    "ai_security": "AI Security Center",
+    "data_protection": "Data Protection",
+    "observability": "Observability",
+    "identity": "Identity",
+    "compliance": "Compliance & Audit",
+    "updates": "Updates & Recovery",
+    "settings": "Settings",
+    "console_boot": "Boot Screen"
+  },
+  "overview": {
+    "headline": "SECURITY AND OPERATIONS OVERVIEW",
+    "health_label": "Health",
+    "apps_label": "Apps",
+    "backups_label": "Backups",
+    "security_activity_title": "Security activity",
+    "ai_recommendations_title": "AI recommendations",
+    "application_health_title": "APPLICATION HEALTH",
+    "actions": {
+      "view_incidents": "View incidents",
+      "deploy_app": "Deploy application",
+      "run_backup": "Run backup",
+      "verify_audit": "Verify Audit Ledger"
+    }
+  }
+}

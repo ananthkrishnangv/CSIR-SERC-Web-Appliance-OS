@@ -1,0 +1,25 @@
+[Unit]
+Description=CSIR-SWA OS Privileged Node Agent
+Documentation=file:///usr/share/doc/csir-swa/README.md
+After=network.target local-fs.target
+Before=csir-control-plane.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+RuntimeDirectory=csir-swa
+RuntimeDirectoryMode=0750
+ExecStart=/usr/bin/python3.14 -m csir_agent.main --socket /run/csir-swa/agent.sock
+Restart=always
+RestartSec=5s
+LimitNOFILE=65536
+CapabilityBoundingSet=CAP_SYS_ADMIN CAP_NET_ADMIN CAP_DAC_OVERRIDE
+AmbientCapabilities=CAP_SYS_ADMIN CAP_NET_ADMIN CAP_DAC_OVERRIDE
+ProtectSystem=strict
+ReadWritePaths=/run/csir-swa /var/lib/csir-swa /srv/apps /srv/app-data /srv/backups /etc/snapper /etc/nftables
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

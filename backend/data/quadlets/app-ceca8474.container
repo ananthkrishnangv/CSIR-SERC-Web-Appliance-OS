@@ -1,0 +1,40 @@
+# CSIR-SWA OS Podman Quadlet Specification
+# Generated for Application: SERC Sensor Dashboard (ID: app-ceca8474)
+# Security Baseline: Rootless, Read-Only Root, Dropped Capabilities
+
+[Unit]
+Description=CSIR Workload - SERC Sensor Dashboard
+After=network-online.target local-fs.target
+Wants=network-online.target
+
+[Container]
+ContainerName=csir-app-ceca8474
+Image=registry.csir.res.in/apps/serc-sensor:1.0.0@sha256:d80ebb631a56dfa91960b2e99db7b874c9ca090edff8ac4954217426bcda87b2
+PublishPort=127.0.0.1:8089:8089
+
+# Mandatory Hardening Controls (Section 9)
+ReadOnly=true
+DropCapability=ALL
+NoNewPrivileges=true
+UserNS=auto
+Network=csir-app-ceca8474.network
+
+# Resource Quotas
+Memory=512M
+CPUQuota=30%
+PIDsLimit=256
+
+# Health Check
+HealthCmd=curl -f http://127.0.0.1:8089/health || exit 1
+HealthInterval=30s
+HealthRetries=3
+HealthTimeout=5s
+
+
+[Service]
+Restart=on-failure
+RestartSec=10s
+TimeoutStartSec=60s
+
+[Install]
+WantedBy=default.target

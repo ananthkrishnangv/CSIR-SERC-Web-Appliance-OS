@@ -1,0 +1,15 @@
+[Unit]
+Description=CSIR-SWA OS Boot Health Gate Verification
+Documentation=file:///usr/share/doc/csir-swa/README.md
+After=csir-control-plane.service haproxy.service nftables.service
+Before=multi-user.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/lib/csir-swa/bin/csir-health-gate.sh
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target

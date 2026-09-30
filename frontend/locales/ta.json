@@ -1,0 +1,36 @@
+{
+  "product_title": "சிஎஸ்ஐஆர் பாதுகாப்பான வலை சாதன இயங்குதளம்",
+  "search_placeholder": "பயன்பாடுகள், விதிகள், சம்பவங்களை தேட...",
+  "alerts": "எச்சரிக்கைகள்",
+  "admin": "நிர்வாகி",
+  "nav": {
+    "overview": "மேலோட்டம்",
+    "applications": "பயன்பாடுகள்",
+    "containers": "கலன்கள்",
+    "web_delivery": "வலை விநியோகம்",
+    "security": "பாதுகாப்பு",
+    "ai_security": "ஏஐ பாதுகாப்பு மையம்",
+    "data_protection": "தரவு பாதுகாப்பு மற்றும் காப்புநகல்",
+    "observability": "கண்காணிப்பு",
+    "identity": "அடையாளம் மற்றும் அணுகல்",
+    "compliance": "இணக்கம் மற்றும் தணிக்கை",
+    "updates": "புதுப்பிப்புகள் மற்றும் மீட்பு",
+    "settings": "அமைப்புகள்",
+    "console_boot": "தொடக்க திரை"
+  },
+  "overview": {
+    "headline": "பாதுகாப்பு மற்றும் செயல்பாடுகள் மேலோட்டம்",
+    "health_label": "ஆரோக்கியம்",
+    "apps_label": "செயலிகள்",
+    "backups_label": "காப்புநகல்",
+    "security_activity_title": "பாதுகாப்பு செயல்பாடு",
+    "ai_recommendations_title": "ஏஐ பரிந்துரைகள்",
+    "application_health_title": "பயன்பாடு ஆரோக்கியம்",
+    "actions": {
+      "view_incidents": "சம்பவங்களைக் காண்க",
+      "deploy_app": "பயன்பாட்டை நிறுவுக",
+      "run_backup": "காப்புநகல் எடுக்க",
+      "verify_audit": "தணிக்கை ஏட்டை சரிபார்க்கவும்"
+    }
+  }
+}

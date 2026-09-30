@@ -1,0 +1,24 @@
+┌──────────────────────────────────────────────────────────────────────┐
+│                                                                      │
+│                         [ APPROVED CSIR LOGO ]                       │
+│                                                                      │
+│                    CSIR SECURE WEB APPLIANCE OS                      │
+│             Immutable Web, Application and Security Platform         │
+│                                                                      │
+│                     Version 1.0.0 | Stable Channel                   │
+│                                                                      │
+│     Initialising immutable operating system ................. OK     │
+│     Verifying signed platform image ......................... OK     │
+│     Validating TPM and Secure Boot .......................... OK     │
+│     Mounting encrypted appliance data ....................... OK     │
+│     Starting management services ............................ OK     │
+│     Starting web protection services ....................... OK     │
+│     Checking backup repository .............................. OK     │
+│                                                                      │
+│              Management: https://\4:8443                             │
+│              Console: Press F2    Recovery: Press F8                 │
+│                                                                      │
+│ This system is restricted to authorised users. Activity may be       │
+│ monitored, recorded and retained for security and compliance.        │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘

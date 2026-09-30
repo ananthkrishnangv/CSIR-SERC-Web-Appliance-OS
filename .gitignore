@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+.pytest_cache/
+test_swa.db
+*.tar.gz
+node_modules/
+.nuxt/
+.output/
+dist/
+build_output/

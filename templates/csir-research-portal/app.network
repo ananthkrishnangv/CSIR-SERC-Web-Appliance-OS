@@ -1,0 +1,4 @@
+[Network]
+NetworkName=csir-research-portal.network
+Subnet=10.89.10.0/24
+Internal=false

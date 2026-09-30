@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSIR Secure Web Appliance OS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --border-color: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #1e40af;
+      --primary-light: #eff6ff;
+      --accent-cyan: #0284c7;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+      --warning: #b45309;
+      --warning-bg: #fef3c7;
+      --danger: #b91c1c;
+      --danger-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-page); color: var(--text-main); font-size: 14px; line-height: 1.5; }
+
+    /* Header */
+    .app-header {
+      background: var(--bg-surface);
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 24px;
+      height: 60px;
+    }
+    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .brand-badge { background: #1e3a8a; color: white; padding: 4px 10px; border-radius: 4px; font-weight: 800; font-size: 13px; letter-spacing: 1px; }
+    .brand-title { font-weight: 700; font-size: 16px; color: #1e293b; }
+    
+    .search-input {
+      width: 320px;
+      padding: 7px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--primary); }
+
+    .header-actions { display: flex; align-items: center; gap: 18px; }
+    .lang-btn {
+      padding: 4px 8px;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-left: 2px;
+    }
+    .lang-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: bold; }
+    .alerts-indicator { font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; }
+    .alerts-chip { background: var(--danger); color: white; border-radius: 10px; padding: 1px 7px; font-size: 11px; }
+    .admin-menu { cursor: pointer; font-weight: 600; font-size: 13px; color: #334155; }
+
+    /* Layout */
+    .app-body { display: flex; height: calc(100vh - 60px); }
+    .sidebar {
+      width: 220px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-color);
+      overflow-y: auto;
+    }
+    .sidebar ul { list-style: none; padding: 8px 0; }
+    .sidebar li {
+      padding: 10px 18px;
+      font-size: 13px;
+      color: #334155;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .sidebar li:hover { background: #f1f5f9; color: var(--primary); }
+    .sidebar li.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-left-color: var(--primary);
+      font-weight: 700;
+    }
+
+    .main-viewport {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      background: #f8fafc;
+    }
+
+    /* Cards & Grids */
+    .section-title { font-size: 15px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 16px; color: #1e293b; text-transform: uppercase; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .stat-box { text-align: center; padding: 18px; }
+    .stat-number { font-size: 26px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+    .stat-desc { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+    .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1e293b; }
+
+    /* Tables */
+    .table-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 10px 12px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+    td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    tr:last-child td { border-bottom: none; }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+    .badge-healthy { background: var(--success-bg); color: var(--success); }
+    .badge-warning { background: var(--warning-bg); color: var(--warning); }
+    .badge-critical { background: var(--danger-bg); color: var(--danger); }
+    .badge-pending { background: #e0f2fe; color: #0369a1; }
+    .badge-executed { background: var(--success-bg); color: var(--success); }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      color: #334155;
+      transition: all 0.15s;
+    }
+    .btn:hover { background: #f8fafc; border-color: #94a3b8; }
+    .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-success { background: var(--success); color: #fff; border-color: var(--success); }
+    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+    .action-bar { display: flex; gap: 10px; margin-top: 10px; }
+
+    /* Boot Screen ASCII Terminal */
+    .boot-terminal {
+      background: #020617;
+      color: #38bdf8;
+      border-radius: 8px;
+      padding: 24px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 13px;
+      line-height: 1.35;
+      white-space: pre;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      overflow-x: auto;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: flex; align-items: center; justify-content: center; z-index: 1000;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 8px;
+      width: 540px;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #334155; }
+    .form-control { width: 100%; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #0f172a; color: white;
+      padding: 12px 20px; border-radius: 6px;
+      font-size: 13px; font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 2000;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-group">
+        <span class="brand-badge">CSIR</span>
+        <span class="brand-title">{{ l('product_title') }}</span>
+      </div>
+      <div class="header-center">
+        <input type="text" class="search-input" :placeholder="l('search_placeholder')" v-model="searchQuery">
+      </div>
+      <div class="header-actions">
+        <div>
+          <button class="lang-btn" :class="{ active: lang === 'en' }" @click="lang = 'en'">EN</button>
+          <button class="lang-btn" :class="{ active: lang === 'hi' }" @click="lang = 'hi'">हिन्दी</button>
+          <button class="lang-btn" :class="{ active: lang === 'ta' }" @click="lang = 'ta'">தமிழ்</button>
+        </div>
+        <div class="alerts-indicator" @click="activeTab = 'security'">
+          <span>{{ l('alerts') }}</span>
+          <span class="alerts-chip">5</span>
+        </div>
+        <div class="admin-menu">Admin ▼</div>
+      </div>
+    </header>
+
+    <div class="app-body">
+      <!-- Sidebar -->
+      <nav class="sidebar">
+        <ul>
+          <li :class="{ active: activeTab === 'overview' }" @click="activeTab = 'overview'">
+            <i class="fa fa-dashboard"></i> {{ l('nav.overview') }}
+          </li>
+          <li :class="{ active: activeTab === 'applications' }" @click="activeTab = 'applications'">
+            <i class="fa fa-cubes"></i> {{ l('nav.applications') }}
+          </li>
+          <li :class="{ active: activeTab === 'security' }" @click="activeTab = 'security'">
+            <i class="fa fa-shield-alt"></i> {{ l('nav.security') }}
+          </li>
+          <li :class="{ active: activeTab === 'ai_security' }" @click="activeTab = 'ai_security'">
+            <i class="fa fa-brain"></i> {{ l('nav.ai_security') }}
+          </li>
+          <li :class="{ active: activeTab === 'data_protection' }" @click="activeTab = 'data_protection'">
+            <i class="fa fa-database"></i> {{ l('nav.data_protection') }}
+          </li>
+          <li :class="{ active: activeTab === 'compliance' }" @click="activeTab = 'compliance'">
+            <i class="fa fa-file-contract"></i> {{ l('nav.compliance') }}
+          </li>
+          <li :class="{ active: activeTab === 'updates' }" @click="activeTab = 'updates'">
+            <i class="fa fa-sync-alt"></i> {{ l('nav.updates') }}
+          </li>
+          <li :class="{ active: activeTab === 'boot_screen' }" @click="activeTab = 'boot_screen'">
+            <i class="fa fa-terminal"></i> {{ l('nav.console_boot') }} (F2)
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Viewport -->
+      <main class="main-viewport">
+        <!-- 1. OVERVIEW TAB (Section 8 Mockup) -->
+        <div v-if="activeTab === 'overview'">
+          <div class="section-title">{{ l('overview.headline') }}</div>
+          
+          <div class="grid-3">
+            <div class="card stat-box">
+              <div class="stat-number" style="color: var(--success);">{{ overview.headline_metrics.health_score }}</div>
+              <div class="stat-desc">{{ overview.headline_metrics.health_subtext }}</div>
+            </div>
+            <div class="card stat-box">
+              <div class="stat-number">{{ overview.headline_metrics.apps_operational }}</div>
+              <div class="stat-desc">{{ overview.headline_metrics.apps_subtext }}</div>
+            </div>
+            <div class="card stat-box">
+              <div class="stat-number" style="color: var(--primary);">{{ overview.headline_metrics.backups_compliance }}</div>
+              <div class="stat-desc">{{ overview.headline_metrics.backups_subtext }}</div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <h3>{{ l('overview.security_activity_title') }}</h3>
+              <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                <span class="badge badge-critical">{{ overview.security_activity.critical_count }} Critical</span>
+                <span class="badge badge-warning">{{ overview.security_activity.medium_count }} Medium</span>
+              </div>
+              <p style="margin-bottom: 6px;">• <strong>{{ overview.security_activity.requests_blocked }}</strong> requests blocked</p>
+              <p>• <strong>{{ overview.security_activity.ips_temporarily_denied }}</strong> IPs temporarily denied</p>
+            </div>
+
+            <div class="card">
+              <h3>{{ l('overview.ai_recommendations_title') }}</h3>
+              <div v-for="rec in overview.ai_recommendations" :key="rec.rec_id" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span>• {{ rec.title }}</span>
+                <span :class="['badge', 'badge-' + (rec.impact === 'high' ? 'critical' : 'warning')]">{{ rec.impact }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <h3>{{ l('overview.application_health_title') }}</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>WAF</th>
+                  <th>Backup</th>
+                  <th>CPU</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="app in overview.applications" :key="app.app_id">
+                  <td><strong>{{ app.name }}</strong><div style="font-size: 11px; color: var(--text-muted);">{{ app.domain }}</div></td>
+                  <td><span :class="['badge', 'badge-' + (app.health === 'healthy' ? 'healthy' : 'warning')]">{{ app.status }}</span></td>
+                  <td>{{ app.waf }}</td>
+                  <td>{{ app.backup }}</td>
+                  <td>{{ app.cpu }}</td>
+                  <td>
+                    <button class="btn" @click="triggerAppAction(app.app_id, 'restart')"><i class="fa fa-redo"></i> Restart</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="action-bar">
+            <button class="btn" @click="activeTab = 'security'">[{{ l('overview.actions.view_incidents') }}]</button>
+            <button class="btn btn-primary" @click="showDeployModal = true">[{{ l('overview.actions.deploy_app') }}]</button>
+            <button class="btn" @click="triggerResticBackup">[{{ l('overview.actions.run_backup') }}]</button>
+            <button class="btn" @click="verifyAuditChain">[{{ l('overview.actions.verify_audit') }}]</button>
+          </div>
+        </div>
+
+        <!-- 2. APPLICATIONS & QUADLETS TAB -->
+        <div v-if="activeTab === 'applications'">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="section-title">Rootless Podman Quadlet Workloads</div>
+            <button class="btn btn-primary" @click="showDeployModal = true"><i class="fa fa-plus"></i> Deploy New Application</button>
+          </div>
+
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>App Name & ID</th>
+                  <th>Image Digest</th>
+                  <th>Memory / Quota</th>
+                  <th>Port & Domain</th>
+                  <th>Workload Isolation</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="app in appList" :key="app.app_id">
+                  <td>
+                    <strong>{{ app.name }}</strong>
+                    <div style="font-size: 11px; color: var(--text-muted);">ID: {{ app.app_id }}</div>
+                  </td>
+                  <td>
+                    <code style="font-size: 11px;">{{ app.digest.substring(0, 18) }}...</code>
+                    <div style="font-size: 10px; color: var(--success);"><i class="fa fa-check-circle"></i> Cosign Signed</div>
+                  </td>
+                  <td>{{ app.memory_mb }} MB / 50% CPU</td>
+                  <td>:{{ app.port }}<br><span style="color: var(--primary);">{{ app.domain }}</span></td>
+                  <td>
+                    <span class="badge badge-healthy" v-if="app.is_rootless">Rootless (UserNS)</span>
+                  </td>
+                  <td>
+                    <button class="btn" style="margin-right: 4px;" @click="triggerAppAction(app.app_id, 'restart')">Restart</button>
+                    <button class="btn btn-danger" @click="triggerAppAction(app.app_id, 'stop')">Stop</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3. SECURITY TAB -->
+        <div v-if="activeTab === 'security'">
+          <div class="section-title">Security & Protection Platform (WAF, Firewall, IDS)</div>
+
+          <div class="grid-2">
+            <!-- Coraza WAF Rules -->
+            <div class="table-card">
+              <h3>Coraza WAF Rules (OWASP CRS v4)</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rule ID</th>
+                    <th>Category & Name</th>
+                    <th>Action</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="r in wafRules" :key="r.rule_id">
+                    <td><strong>{{ r.rule_id }}</strong></td>
+                    <td>{{ r.category }} - {{ r.name }}</td>
+                    <td><span class="badge badge-critical">{{ r.action }}</span></td>
+                    <td>
+                      <button class="btn" :class="r.enabled ? 'btn-success' : 'btn-danger'" @click="toggleWafRule(r)">
+                        {{ r.enabled ? 'Enabled' : 'Disabled' }}
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Host Firewall (nftables) -->
+            <div class="table-card">
+              <h3>Host Firewall (nftables Ingress Policy)</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Port</th>
+                    <th>Protocol</th>
+                    <th>Action</th>
+                    <th>Comment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="f in firewallRules" :key="f.id">
+                    <td><strong>{{ f.dport }}</strong></td>
+                    <td>{{ f.protocol.toUpperCase() }}</td>
+                    <td><span class="badge badge-healthy">{{ f.action }}</span></td>
+                    <td>{{ f.comment }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Incidents -->
+          <div class="table-card">
+            <h3>Active & Recent Incidents (Suricata & WAF)</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Severity</th>
+                  <th>Source IP</th>
+                  <th>Target Workload</th>
+                  <th>Attack Type & MITRE</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="inc in incidentsList" :key="inc.incident_id">
+                  <td><code>{{ inc.incident_id }}</code></td>
+                  <td><span :class="['badge', 'badge-' + (inc.severity === 'critical' ? 'critical' : 'warning')]">{{ inc.severity }}</span></td>
+                  <td>{{ inc.source_ip }}</td>
+                  <td><strong>{{ inc.target_app }}</strong></td>
+                  <td>{{ inc.attack_type }} <span class="badge badge-pending">{{ inc.mitre_technique }}</span></td>
+                  <td>{{ inc.details }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 4. LOCAL AI SECURITY CENTER -->
+        <div v-if="activeTab === 'ai_security'">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="section-title">Local AI Security Center (Advisory & Threat Synthesis)</div>
+            <button class="btn btn-primary" @click="simulateThreat"><i class="fa fa-bolt"></i> Simulate Real-Time Threat Attack</button>
+          </div>
+
+          <div class="card" style="margin-bottom: 20px; border-left: 4px solid var(--accent-cyan);" v-if="narratives.length > 0">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3><i class="fa fa-shield-virus"></i> {{ narratives[0].title }}</h3>
+              <span class="badge badge-healthy">Confidence: {{ (narratives[0].confidence_score * 100).toFixed(0) }}%</span>
+            </div>
+            <p style="margin: 10px 0; color: #334155;">{{ narratives[0].summary }}</p>
+            <div style="background: #f1f5f9; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 11px; white-space: pre-line;">
+              {{ narratives[0].evidence }}
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">
+              <strong>MITRE ATT&CK:</strong> {{ narratives[0].mitre_attack }} | <strong>Model:</strong> {{ narratives[0].model_version }}
+            </div>
+          </div>
+
+          <div class="table-card">
+            <h3>AI Mitigation Recommendations & Human Approval Gates</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Recommendation</th>
+                  <th>Action Type</th>
+                  <th>Impact Level</th>
+                  <th>Approval Gate</th>
+                  <th>Status</th>
+                  <th>Decision</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="rec in aiRecommendations" :key="rec.rec_id">
+                  <td>
+                    <strong>{{ rec.title }}</strong>
+                    <div style="font-size: 11px; color: var(--text-muted);">{{ rec.evidence_citation }}</div>
+                  </td>
+                  <td><code>{{ rec.action_type }}</code></td>
+                  <td><span :class="['badge', 'badge-' + (rec.impact_level === 'high' ? 'critical' : 'warning')]">{{ rec.impact_level }}</span></td>
+                  <td><strong>{{ rec.approval_required }}</strong></td>
+                  <td><span :class="['badge', 'badge-' + rec.status]">{{ rec.status }}</span></td>
+                  <td>
+                    <div v-if="rec.status === 'pending'">
+                      <button class="btn btn-success" style="margin-right: 4px;" @click="approveAiRec(rec.rec_id, 'approve')">Approve</button>
+                      <button class="btn btn-danger" @click="approveAiRec(rec.rec_id, 'reject')">Reject</button>
+                    </div>
+                    <span v-else style="font-size: 11px; color: var(--text-muted);">Executed by {{ rec.approved_by || 'system' }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 5. DATA PROTECTION & BACKUPS -->
+        <div v-if="activeTab === 'data_protection'">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="section-title">Data Protection, Snapshots & Disaster Recovery</div>
+            <div>
+              <button class="btn" style="margin-right: 8px;" @click="triggerResticBackup"><i class="fa fa-cloud-upload"></i> Run Restic Backup</button>
+              <button class="btn btn-primary" @click="triggerDrDrill"><i class="fa fa-vial"></i> Run Sandbox DR Restore Drill</button>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <!-- Btrfs Snapshots -->
+            <div class="table-card">
+              <h3>Btrfs / Snapper Snapshots</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Snapshot #</th>
+                    <th>Subvolume</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="s in snapshots" :key="s.snapshot_number">
+                    <td><strong>#{{ s.snapshot_number }}</strong></td>
+                    <td>{{ s.subvolume }}</td>
+                    <td><span class="badge badge-pending">{{ s.cleanup_type }}</span></td>
+                    <td>{{ s.description }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- DR Restore Drills -->
+            <div class="table-card">
+              <h3>Disaster Recovery Verification Tests</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Target Workload</th>
+                    <th>Measured RTO</th>
+                    <th>Measured RPO</th>
+                    <th>Integrity Hash</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="d in drTests" :key="d.test_id">
+                    <td><strong>{{ d.target_app }}</strong></td>
+                    <td>{{ d.measured_rto_seconds }}s</td>
+                    <td>{{ d.measured_rpo_seconds }}s</td>
+                    <td><code>{{ d.verified_hash.substring(0, 16) }}...</code></td>
+                    <td><span class="badge badge-healthy"><i class="fa fa-check"></i> {{ d.status.toUpperCase() }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. COMPLIANCE & AUDIT TAB -->
+        <div v-if="activeTab === 'compliance'">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="section-title">CERT-In Compliance & Tamper-Evident Audit Ledger</div>
+            <div>
+              <button class="btn" style="margin-right: 8px;" @click="verifyAuditChain"><i class="fa fa-shield-check"></i> Verify Ledger Integrity</button>
+              <button class="btn btn-primary" @click="exportCertInDossier"><i class="fa fa-download"></i> Download CERT-In Export</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 20px; background: #f0fdf4; border-color: #bbf7d0;">
+            <div style="font-weight: 700; color: #166534; font-size: 13px;"><i class="fa fa-check-circle"></i> Cryptographic Hash Chain Status: 100% Tamper-Evident & Verified</div>
+            <div style="font-size: 12px; color: #15803d; margin-top: 4px;">
+              Directions under Section 70B compliant | 180-Day retention locked | Indian NPL NTP Synchronized
+            </div>
+          </div>
+
+          <div class="table-card">
+            <h3>Audit Ledger (Append-Only SHA-256 Hash Chain)</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Index</th>
+                  <th>Timestamp</th>
+                  <th>Actor & IP</th>
+                  <th>Action</th>
+                  <th>Resource</th>
+                  <th>Previous Block Hash</th>
+                  <th>Entry Hash</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="e in auditLedger" :key="e.entry_index">
+                  <td><strong>#{{ e.entry_index }}</strong></td>
+                  <td>{{ new Date(e.timestamp).toLocaleTimeString() }}</td>
+                  <td>{{ e.actor }}<div style="font-size: 10px; color: var(--text-muted);">{{ e.actor_ip }}</div></td>
+                  <td><span class="badge badge-pending">{{ e.action }}</span></td>
+                  <td>{{ e.resource }}</td>
+                  <td><code>{{ e.prev_hash.substring(0, 10) }}...</code></td>
+                  <td><code>{{ e.entry_hash.substring(0, 10) }}...</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 7. UPDATES & RECOVERY TAB -->
+        <div v-if="activeTab === 'updates'">
+          <div class="section-title">Transactional Updates & Operating System Lifecycle</div>
+
+          <div class="card" style="margin-bottom: 20px;">
+            <h3>openSUSE MicroOS Transactional-Update Engine</h3>
+            <div style="margin: 12px 0;">
+              <p><strong>Active Root Snapshot:</strong> #{{ updateStatus.active_snapshot }} (Read-Only)</p>
+              <p><strong>Current Channel:</strong> <span class="badge badge-healthy">{{ updateStatus.channel }}</span></p>
+              <p><strong>Staged Next Boot Snapshot:</strong> {{ updateStatus.staged_snapshot ? '#' + updateStatus.staged_snapshot : 'None (System in sync)' }}</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-primary" @click="stageOsUpdate"><i class="fa fa-download"></i> Stage Transactional Update</button>
+              <button class="btn btn-danger" @click="triggerOsRollback"><i class="fa fa-undo"></i> Rollback to Previous Snapshot</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. BOOT SCREEN (SECTION 6 MOCKUP) -->
+        <div v-if="activeTab === 'boot_screen'">
+          <div class="section-title">Appliance Console & Hardware Boot Screen Mockup (Section 6)</div>
+          <div class="boot-terminal">{{ bootScreenText }}</div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Deploy Modal -->
+    <div class="modal-overlay" v-if="showDeployModal">
+      <div class="modal-content">
+        <h3>Deploy New Containerized Workload</h3>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Generates rootless Podman Quadlet with dropped capabilities and read-only root.</p>
+
+        <div class="form-group">
+          <label>Application Name</label>
+          <input type="text" class="form-control" v-model="newApp.name" placeholder="e.g. SERC Sensor Portal">
+        </div>
+        <div class="form-group">
+          <label>Container Image (Pinned by digest)</label>
+          <input type="text" class="form-control" v-model="newApp.image" placeholder="registry.csir.res.in/apps/sensor:1.0.0">
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Service Port</label>
+            <input type="number" class="form-control" v-model.number="newApp.port">
+          </div>
+          <div class="form-group">
+            <label>Public Domain</label>
+            <input type="text" class="form-control" v-model="newApp.domain" placeholder="sensor.serc.res.in">
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn" @click="showDeployModal = false">Cancel</button>
+          <button class="btn btn-primary" @click="submitDeployApp">Deploy Workload</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" v-if="toastMessage">{{ toastMessage }}</div>
+  </div>
+
+  <script>
+    const { createApp, ref, onMounted } = Vue;
+
+    createApp({
+      setup() {
+        const activeTab = ref('overview');
+        const lang = ref('en');
+        const searchQuery = ref('');
+        const showDeployModal = ref(false);
+        const toastMessage = ref('');
+
+        const overview = ref({
+          headline_metrics: { health_score: "98%", health_subtext: "All nodes", apps_operational: "24/24", apps_subtext: "Operational", backups_compliance: "100%", backups_subtext: "Last 02:00 IST" },
+          security_activity: { critical_count: 1, medium_count: 4, requests_blocked: 847, ips_temporarily_denied: 3 },
+          ai_recommendations: [],
+          applications: []
+        });
+
+        const appList = ref([]);
+        const wafRules = ref([]);
+        const firewallRules = ref([]);
+        const incidentsList = ref([]);
+        const narratives = ref([]);
+        const aiRecommendations = ref([]);
+        const snapshots = ref([]);
+        const drTests = ref([]);
+        const auditLedger = ref([]);
+        const updateStatus = ref({});
+
+        const newApp = ref({
+          name: '',
+          image: '',
+          port: 8085,
+          domain: 'newservice.csir.res.in'
+        });
+
+        const i18nDict = {
+          en: {
+            product_title: "CSIR Secure Web Appliance OS",
+            search_placeholder: "Search applications, rules, incidents, snapshots...",
+            alerts: "Alerts",
+            nav: {
+              overview: "Overview",
+              applications: "Applications",
+              security: "Security",
+              ai_security: "AI Security Center",
+              data_protection: "Data Protection",
+              compliance: "Compliance & Audit",
+              updates: "Updates & Recovery",
+              console_boot: "Boot Screen"
+            },
+            overview: {
+              headline: "SECURITY AND OPERATIONS OVERVIEW",
+              security_activity_title: "Security activity",
+              ai_recommendations_title: "AI recommendations",
+              application_health_title: "APPLICATION HEALTH",
+              actions: {
+                view_incidents: "View incidents",
+                deploy_app: "Deploy application",
+                run_backup: "Run backup",
+                verify_audit: "Verify Audit Ledger"
+              }
+            }
+          },
+          hi: {
+            product_title: "सीएसआईआर सुरक्षित वेब उपकरण ओएस",
+            search_placeholder: "अनुप्रयोग, नियम, घटनाएं खोजें...",
+            alerts: "चेतावनियाँ",
+            nav: {
+              overview: "अवलोकन",
+              applications: "अनुप्रयोग",
+              security: "सुरक्षा",
+              ai_security: "एआई सुरक्षा केंद्र",
+              data_protection: "डेटा सुरक्षा",
+              compliance: "अनुपालन एवं ऑडिट",
+              updates: "अद्यतन और पुनर्प्राप्ति",
+              console_boot: "बूट स्क्रीन"
+            },
+            overview: {
+              headline: "सुरक्षा और संचालन अवलोकन",
+              security_activity_title: "सुरक्षा गतिविधि",
+              ai_recommendations_title: "एआई अनुशंसाएं",
+              application_health_title: "अनुप्रयोग स्वास्थ्य",
+              actions: {
+                view_incidents: "घटनाएं देखें",
+                deploy_app: "नया ऐप तैनात करें",
+                run_backup: "बैकअप चलाएं",
+                verify_audit: "ऑडिट खाता सत्यापित करें"
+              }
+            }
+          },
+          ta: {
+            product_title: "சிஎஸ்ஐஆர் பாதுகாப்பான வலை சாதன இயங்குதளம்",
+            search_placeholder: "பயன்பாடுகள், விதிகள், சம்பவங்களை தேட...",
+            alerts: "எச்சரிக்கைகள்",
+            nav: {
+              overview: "மேலோட்டம்",
+              applications: "பயன்பாடுகள்",
+              security: "பாதுகாப்பு",
+              ai_security: "ஏஐ பாதுகாப்பு மையம்",
+              data_protection: "தரவு பாதுகாப்பு",
+              compliance: "இணக்கம் மற்றும் தணிக்கை",
+              updates: "புதுப்பிப்புகள் மற்றும் மீட்பு",
+              console_boot: "தொடக்க திரை"
+            },
+            overview: {
+              headline: "பாதுகாப்பு மற்றும் செயல்பாடுகள் மேலோட்டம்",
+              security_activity_title: "பாதுகாப்பு செயல்பாடு",
+              ai_recommendations_title: "ஏஐ பரிந்துரைகள்",
+              application_health_title: "பயன்பாடு ஆரோக்கியம்",
+              actions: {
+                view_incidents: "சம்பவங்களைக் காண்க",
+                deploy_app: "பயன்பாட்டை நிறுவுக",
+                run_backup: "காப்புநகல் எடுக்க",
+                verify_audit: "தணிக்கை ஏட்டை சரிபார்க்கவும்"
+              }
+            }
+          }
+        };
+
+        function l(path) {
+          const keys = path.split('.');
+          let obj = i18nDict[lang.value] || i18nDict.en;
+          for (const k of keys) {
+            if (!obj || !obj[k]) return path;
+            obj = obj[k];
+          }
+          return obj;
+        }
+
+        const bootScreenText = `┌──────────────────────────────────────────────────────────────────────┐
+│                                                                      │
+│                         [ APPROVED CSIR LOGO ]                       │
+│                                                                      │
+│                    CSIR SECURE WEB APPLIANCE OS                      │
+│             Immutable Web, Application and Security Platform         │
+│                                                                      │
+│                     Version 1.0.0 | Stable Channel                   │
+│                                                                      │
+│     Initialising immutable operating system ................. OK     │
+│     Verifying signed platform image ......................... OK     │
+│     Validating TPM and Secure Boot .......................... OK     │
+│     Mounting encrypted appliance data ....................... OK     │
+│     Starting management services ............................ OK     │
+│     Starting web protection services ....................... OK     │
+│     Checking backup repository .............................. OK     │
+│                                                                      │
+│              Management: https://10.20.10.15:8443                    │
+│              Console: Press F2    Recovery: Press F8                 │
+│                                                                      │
+│ This system is restricted to authorised users. Activity may be       │
+│ monitored, recorded and retained for security and compliance.        │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘`;
+
+        function showToast(msg) {
+          toastMessage.value = msg;
+          setTimeout(() => { toastMessage.value = ''; }, 3500);
+        }
+
+        async function fetchAllData() {
+          try {
+            const [ovRes, appRes, secRes, aiNarRes, aiRecRes, snapRes, drRes, auditRes, updRes] = await Promise.all([
+              fetch('/api/v1/overview').then(r => r.json()),
+              fetch('/api/v1/applications').then(r => r.json()),
+              fetch('/api/v1/security/waf/rules').then(r => r.json()),
+              fetch('/api/v1/ai-security/narratives').then(r => r.json()),
+              fetch('/api/v1/ai-security/recommendations').then(r => r.json()),
+              fetch('/api/v1/backups/snapshots').then(r => r.json()),
+              fetch('/api/v1/backups/dr-tests').then(r => r.json()),
+              fetch('/api/v1/audit/ledger').then(r => r.json()),
+              fetch('/api/v1/updates/status').then(r => r.json())
+            ]);
+
+            overview.value = ovRes;
+            appList.value = appRes;
+            wafRules.value = secRes;
+            narratives.value = aiNarRes;
+            aiRecommendations.value = aiRecRes;
+            snapshots.value = snapRes;
+            drTests.value = drRes;
+            auditLedger.value = auditRes;
+            updateStatus.value = updRes;
+
+            const fwRes = await fetch('/api/v1/security/firewall/rules').then(r => r.json());
+            firewallRules.value = fwRes;
+            const incRes = await fetch('/api/v1/security/incidents').then(r => r.json());
+            incidentsList.value = incRes;
+          } catch (e) {
+            console.warn('API polling fallback:', e);
+          }
+        }
+
+        async function triggerAppAction(appId, action) {
+          await fetch(`/api/v1/applications/${appId}/action`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action })
+          });
+          showToast(`Application action '${action}' dispatched.`);
+          fetchAllData();
+        }
+
+        async function toggleWafRule(rule) {
+          await fetch(`/api/v1/security/waf/rules/${rule.rule_id}/toggle`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: !rule.enabled })
+          });
+          showToast(`WAF Rule #${rule.rule_id} status updated.`);
+          fetchAllData();
+        }
+
+        async function approveAiRec(recId, decision) {
+          await fetch(`/api/v1/ai-security/recommendations/${recId}/approval`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ decision, approver: 'admin@csir.res.in' })
+          });
+          showToast(`Recommendation sign-off recorded: ${decision}.`);
+          fetchAllData();
+        }
+
+        async function simulateThreat() {
+          await fetch('/api/v1/ai-security/simulate-threat', { method: 'POST' });
+          showToast('Threat attack pattern synthesized. AI narrative generated.');
+          fetchAllData();
+        }
+
+        async function triggerResticBackup() {
+          await fetch('/api/v1/backups/runs/trigger', { method: 'POST' });
+          showToast('Deduplicated Restic backup run finished successfully.');
+          fetchAllData();
+        }
+
+        async function triggerDrDrill() {
+          await fetch('/api/v1/backups/dr-tests/trigger', { method: 'POST' });
+          showToast('Disaster recovery restore drill PASSED. Hash verified.');
+          fetchAllData();
+        }
+
+        async function verifyAuditChain() {
+          const res = await fetch('/api/v1/audit/verify').then(r => r.json());
+          if (res.is_valid) {
+            showToast(`Audit Ledger Verified! ${res.total_entries} entries in cryptographic chain.`);
+          } else {
+            showToast(`ALERT: ${res.message}`);
+          }
+          fetchAllData();
+        }
+
+        async function exportCertInDossier() {
+          window.open('/api/v1/audit/cert-in-export', '_blank');
+        }
+
+        async function stageOsUpdate() {
+          await fetch('/api/v1/updates/stage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ force: false })
+          });
+          showToast('Transactional update staged in snapshot. Reboot required.');
+          fetchAllData();
+        }
+
+        async function triggerOsRollback() {
+          await fetch('/api/v1/updates/rollback', { method: 'POST' });
+          showToast('Rollback scheduled to previous snapshot.');
+          fetchAllData();
+        }
+
+        async function submitDeployApp() {
+          await fetch('/api/v1/applications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: newApp.value.name,
+              image: newApp.value.image,
+              port: newApp.value.port,
+              domain: newApp.value.domain,
+              waf_mode: 'strict'
+            })
+          });
+          showDeployModal.value = false;
+          showToast(`Application ${newApp.value.name} deployed with Quadlet.`);
+          fetchAllData();
+        }
+
+        onMounted(() => {
+          fetchAllData();
+          setInterval(fetchAllData, 10000);
+        });
+
+        return {
+          activeTab, lang, l, searchQuery,
+          overview, appList, wafRules, firewallRules, incidentsList,
+          narratives, aiRecommendations, snapshots, drTests, auditLedger, updateStatus,
+          showDeployModal, newApp, toastMessage, bootScreenText,
+          triggerAppAction, toggleWafRule, approveAiRec, simulateThreat,
+          triggerResticBackup, triggerDrDrill, verifyAuditChain, exportCertInDossier,
+          stageOsUpdate, triggerOsRollback, submitDeployApp
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>

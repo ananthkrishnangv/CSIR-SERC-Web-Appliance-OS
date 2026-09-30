@@ -1,0 +1,5 @@
+# Dedicated Network for CSIR Application app-ceca8474
+[Network]
+NetworkName=csir-app-ceca8474
+Subnet=10.89.177.0/24
+Internal=false

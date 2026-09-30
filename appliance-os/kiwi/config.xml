@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  CSIR Secure Web Appliance OS (CSIR-SWA OS)
+  KIWI NG 9 Description Schema for openSUSE MicroOS / SUSE Linux Micro
+  Baseline: 28 September 2026
+-->
+<image schemaversion="7.4" name="csir-swa-os">
+  <description type="system">
+    <author>CSIR-SERC Engineering Team</author>
+    <contact>webos-admin@csir.res.in</contact>
+    <specification>CSIR Secure Web Appliance OS - Immutable Podman & Web Platform</specification>
+  </description>
+
+  <preferences>
+    <type image="oem"
+          filesystem="btrfs"
+          bootloader="grub2"
+          firmware="uefi"
+          efipartsize="512"
+          kernelcmdline="quiet splash mitigations=auto,nosmt audit=1 security=apparmor console=tty0 console=ttyS0,115200"
+          target_removable="false"
+          installiso="true"
+          installimg="true">
+      <bootpartition name="boot" size="1024" filesystem="ext4"/>
+      <systemdisk>
+        <volume name="@" mountpoint="/"/>
+        <volume name="@/.snapshots" mountpoint="/.snapshots"/>
+        <volume name="@/var" mountpoint="/var"/>
+        <volume name="@/var/lib/containers" mountpoint="/var/lib/containers"/>
+        <volume name="@/var/lib/csir-swa" mountpoint="/var/lib/csir-swa"/>
+        <volume name="@/var/log" mountpoint="/var/log"/>
+        <volume name="@/srv" mountpoint="/srv"/>
+        <volume name="@/srv/apps" mountpoint="/srv/apps"/>
+        <volume name="@/srv/app-data" mountpoint="/srv/app-data"/>
+        <volume name="@/srv/backups" mountpoint="/srv/backups"/>
+        <volume name="@/srv/repository" mountpoint="/srv/repository"/>
+        <volume name="@/srv/models" mountpoint="/srv/models"/>
+        <volume name="@/home" mountpoint="/home"/>
+        <volume name="@/root" mountpoint="/root"/>
+        <volume name="@/opt" mountpoint="/opt"/>
+      </systemdisk>
+      <oemconfig>
+        <oem-swap>true</oem-swap>
+        <oem-swapsize>4096</oem-swapsize>
+        <oem-skip-verify>false</oem-skip-verify>
+        <oem-unattended>true</oem-unattended>
+      </oemconfig>
+    </type>
+    <version>1.0.0</version>
+    <packagemanager>zypper</packagemanager>
+    <rpm-check-signatures>true</rpm-check-signatures>
+    <rpm-excludedocs>true</rpm-excludedocs>
+    <locale>en_US</locale>
+    <keytable>us</keytable>
+    <timezone>Asia/Kolkata</timezone>
+    <hwclock>utc</hwclock>
+  </preferences>
+
+  <repository type="rpm-md" alias="microos-repo" imageinclude="true">
+    <source path="obs://openSUSE:MicroOS/standard"/>
+  </repository>
+  <repository type="rpm-md" alias="microos-updates" imageinclude="true">
+    <source path="obs://openSUSE:MicroOS:Update/standard"/>
+  </repository>
+  <repository type="rpm-md" alias="csir-appliance-repo" imageinclude="true">
+    <source path="https://repo.csir.res.in/packages/swa/1.0/"/>
+  </repository>
+
+  <packages type="image">
+    <!-- Kernel & Hardware Support -->
+    <package name="kernel-default"/>
+    <package name="kernel-firmware-all"/>
+    <package name="grub2"/>
+    <package name="grub2-x86_64-efi"/>
+    <package name="shim"/>
+    <package name="mokutil"/>
+    <package name="tpm2.0-tools"/>
+    <package name="tpm2-tss"/>
+    <package name="cryptsetup"/>
+
+    <!-- MicroOS Immutability & Snapshots -->
+    <package name="microos-tools"/>
+    <package name="transactional-update"/>
+    <package name="snapper"/>
+    <package name="btrfsprogs"/>
+    <package name="btrfsmaintenance"/>
+    <package name="rebootmgr"/>
+    <package name="combustion"/>
+    <package name="ignition"/>
+
+    <!-- Base Utilities & Networking -->
+    <package name="systemd"/>
+    <package name="systemd-network"/>
+    <package name="iproute2"/>
+    <package name="curl"/>
+    <package name="wget"/>
+    <package name="jq"/>
+    <package name="tar"/>
+    <package name="zstd"/>
+    <package name="openssh"/>
+    <package name="sudo"/>
+    <package name="chrony"/>
+
+    <!-- Security & Protection Core -->
+    <package name="apparmor-parser"/>
+    <package name="apparmor-profiles"/>
+    <package name="apparmor-utils"/>
+    <package name="nftables"/>
+    <package name="firewalld"/>
+    <package name="suricata"/>
+    <package name="haproxy"/>
+    <package name="openssl"/>
+    <package name="ca-certificates"/>
+
+    <!-- Workload & Container Plane (Podman 6.1.2 Stack) -->
+    <package name="podman"/>
+    <package name="podman-plugins"/>
+    <package name="podman-cni-config"/>
+    <package name="netavark"/>
+    <package name="aardvark-dns"/>
+    <package name="crun"/>
+    <package name="conmon"/>
+    <package name="slirp4netns"/>
+    <package name="fuse-overlayfs"/>
+    <package name="catatonit"/>
+
+    <!-- Backup & State Management -->
+    <package name="restic"/>
+    <package name="postgresql16"/>
+    <package name="postgresql16-server"/>
+
+    <!-- Python 3.14 Runtime for Control Plane -->
+    <package name="python314"/>
+    <package name="python314-pip"/>
+    <package name="python314-cryptography"/>
+  </packages>
+
+  <packages type="bootstrap">
+    <package name="filesystem"/>
+    <package name="openSUSE-release"/>
+    <package name="glibc"/>
+  </packages>
+</image>
