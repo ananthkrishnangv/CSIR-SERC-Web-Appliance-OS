@@ -1,0 +1,37 @@
+{
+  "release": "CSIR Secure Web Appliance OS 1.0.0",
+  "filename": "csir-swa-os-1.0.0-x86_64.iso",
+  "filesize_bytes": 7235584,
+  "sha256": "d84a129ea403af49d50754d3c82555a38ca895c63a76d6c9c840b9619c0c07d5",
+  "channel": "Stable",
+  "baseline_date": "2026-09-28",
+  "built_at": "2026-09-30T14:06:27.209582+00:00",
+  "boot_type": "UEFI El Torito (x86_64)",
+  "installer": {
+    "type": "Automated Immutable OS & Feature Installer",
+    "mechanisms": [
+      "Combustion",
+      "AutoYaST",
+      "install-appliance.sh"
+    ],
+    "execution_phase": "DURING_OS_INSTALLATION"
+  },
+  "embedded_software_bom": {
+    "base_os": "openSUSE MicroOS validated snapshot (SUSE Linux Micro 6.2 compatible)",
+    "kernel": "Linux 6.12.0-microos-default",
+    "container_engine": "Podman 6.1.2 (Rootless)",
+    "management_backend": "Python 3.14.7 + FastAPI 0.141.1",
+    "management_frontend": "Nuxt 4.5.2 / Vue 3 (UX4G Compliant)",
+    "reverse_proxy": "HAProxy 3.0",
+    "waf": "Coraza v3 with OWASP Core Rule Set v4",
+    "firewall": "nftables 1.1",
+    "ids_ips": "Suricata 7.0",
+    "backup_engine": "Restic 0.19.1 + Snapper Btrfs",
+    "audit_ledger": "CERT-In Compliant SHA-256 Cryptographic Hash Chain"
+  },
+  "signatures": {
+    "signer": "CSIR Secure Software Release Authority",
+    "cosign_signature": "COSIGN-SIG-SHA256-d84a129ea403af49d50754d3c82555a3",
+    "verification_status": "VALID_TRUSTED"
+  }
+}

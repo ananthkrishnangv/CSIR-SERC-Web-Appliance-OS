@@ -1,0 +1,43 @@
+#!/bin/bash
+# combustion: network
+#=============================================================================
+# CSIR-SWA OS Combustion Automation Hook
+# Triggers Feature Installation immediately during OS Installation
+#=============================================================================
+set -euxo pipefail
+
+echo "=========================================================="
+echo " Combustion: CSIR-SWA OS Feature Installation Trigger"
+echo "=========================================================="
+
+# Locate installer payload from ISO mount
+ISO_MOUNT="/mnt"
+INSTALLER_SCRIPT=""
+
+for m in /mounts/* /media/* /run/media/* /iso /; do
+    if [ -f "${m}/csir-installer/install-appliance.sh" ]; then
+        INSTALLER_SCRIPT="${m}/csir-installer/install-appliance.sh"
+        break
+    fi
+done
+
+if [ -n "${INSTALLER_SCRIPT}" ]; then
+    echo "Found CSIR Feature Installer at: ${INSTALLER_SCRIPT}"
+    bash "${INSTALLER_SCRIPT}" "/"
+else
+    echo "Installer payload embedded in rootfs. Triggering local installer..."
+    if [ -f "/usr/lib/csir-swa/bin/install-appliance.sh" ]; then
+        bash "/usr/lib/csir-swa/bin/install-appliance.sh" "/"
+    fi
+fi
+
+# Enable necessary systemd services
+systemctl enable csir-node-agent.service || true
+systemctl enable csir-control-plane.service || true
+systemctl enable csir-health-gate.service || true
+systemctl enable nftables.service || true
+systemctl enable transactional-update.timer || true
+systemctl enable snapper-timeline.timer || true
+
+echo "Combustion CSIR feature installation phase complete."
+exit 0

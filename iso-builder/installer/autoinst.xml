@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE profile>
+<profile xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+  <general>
+    <mode>
+      <confirm config:type="boolean">false</confirm>
+      <final_reboot config:type="boolean">true</final_reboot>
+    </mode>
+  </general>
+
+  <!-- Partitioning for Immutable MicroOS -->
+  <partitioning config:type="list">
+    <drive>
+      <use>all</use>
+      <partitions config:type="list">
+        <!-- EFI Boot Partition -->
+        <partition>
+          <mount>/boot/efi</mount>
+          <size>512M</size>
+          <filesystem config:type="symbol">vfat</filesystem>
+        </partition>
+        <!-- Btrfs Root with Subvolumes -->
+        <partition>
+          <mount>/</mount>
+          <filesystem config:type="symbol">btrfs</filesystem>
+          <btrfs_options>ro</btrfs_options>
+          <subvolumes config:type="list">
+            <subvolume><path>@</path></subvolume>
+            <subvolume><path>@/.snapshots</path></subvolume>
+            <subvolume><path>@/var</path></subvolume>
+            <subvolume><path>@/srv</path></subvolume>
+            <subvolume><path>@/home</path></subvolume>
+            <subvolume><path>@/opt</path></subvolume>
+            <subvolume><path>@/root</path></subvolume>
+          </subvolumes>
+        </partition>
+      </partitions>
+    </drive>
+  </partitioning>
+
+  <!-- AutoYaST Post-Script: Executes CSIR Feature Installation during OS install -->
+  <scripts>
+    <post-scripts config:type="list">
+      <script>
+        <filename>csir-feature-installation.sh</filename>
+        <interpreter>shell</interpreter>
+        <notification>Installing CSIR Secure Web Appliance Features...</notification>
+        <source><![CDATA[
+#!/bin/bash
+set -euxo pipefail
+echo "=== AutoYaST: Invoking CSIR Appliance Feature Installation ==="
+TARGET="/mnt"
+if [ -f "/media/csir-installer/install-appliance.sh" ]; then
+    bash "/media/csir-installer/install-appliance.sh" "$TARGET"
+fi
+        ]]></source>
+      </script>
+    </post-scripts>
+  </scripts>
+</profile>

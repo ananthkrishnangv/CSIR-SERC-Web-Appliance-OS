@@ -10,3 +10,4 @@ node_modules/
 .output/
 dist/
 build_output/
+iso-builder/staging/
