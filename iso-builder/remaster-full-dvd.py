@@ -181,18 +181,25 @@ def step3_brand_bootloader():
 set default=0
 set timeout=15
 
-menuentry 'Install CSIR Secure Web Appliance OS (Automated Feature Provisioning)' --class opensuse --class gnu-linux --class os {
+menuentry 'Install CSIR Secure Web Appliance OS (GUI Easy Installer)' --class opensuse --class gnu-linux --class os {
   set gfxpayload=keep
-  echo 'Loading Linux kernel and CSIR Feature Ingestion Subsystem...'
-  linux /boot/x86_64/loader/linux combustion=script autoyast=file:///autoyast/autoinst.xml splash=silent
+  echo 'Loading Linux kernel and launching CSIR Graphical Easy Installer...'
+  linux /boot/x86_64/loader/linux combustion=script insecure=1 splash=silent vga=791 video=1024x768
   echo 'Loading initial ramdisk...'
+  initrd /boot/x86_64/loader/initrd
+}
+
+menuentry 'Install CSIR Secure Web Appliance OS (Automated Express Installation)' --class opensuse --class gnu-linux --class os {
+  set gfxpayload=keep
+  echo 'Loading Linux kernel and automated provisioning engine...'
+  linux /boot/x86_64/loader/linux combustion=script autoyast=file:///autoyast/autoinst.xml insecure=1 splash=silent vga=791 video=1024x768
   initrd /boot/x86_64/loader/initrd
 }
 
 menuentry 'Install CSIR-SWA OS (Hardened Strategic Air-Gapped Mode)' --class opensuse --class gnu-linux --class os {
   set gfxpayload=keep
   echo 'Loading CSIR Air-Gapped Hardened Profile...'
-  linux /boot/x86_64/loader/linux combustion=script autoyast=file:///autoyast/autoinst.xml csir.profile=airgap splash=silent
+  linux /boot/x86_64/loader/linux combustion=script autoyast=file:///autoyast/autoinst.xml csir.profile=airgap insecure=1 splash=silent vga=791 video=1024x768
   initrd /boot/x86_64/loader/initrd
 }
 
@@ -208,11 +215,24 @@ menuentry 'Install CSIR-SWA OS (Hardened Strategic Air-Gapped Mode)' --class ope
         with open(isolinux_cfg, "r", encoding="utf-8", errors="ignore") as f:
             orig_iso = f.read()
 
-        csir_iso_entry = """# CSIR-SWA OS Automated Installation
-label csir_install
-  menu label Install CSIR Secure Web Appliance OS
+        csir_iso_entry = """# CSIR-SWA OS GUI & Automated Installations
+default csir_install_gui
+timeout 150
+
+label csir_install_gui
+  menu label ^Install CSIR Secure Web Appliance OS (GUI Easy Installer)
   kernel linux
-  append initrd=initrd combustion=script autoyast=file:///autoyast/autoinst.xml splash=silent showopts
+  append initrd=initrd combustion=script insecure=1 splash=silent vga=791 video=1024x768 showopts
+
+label csir_install_auto
+  menu label Install CSIR-SWA OS (Automated Express Installation)
+  kernel linux
+  append initrd=initrd combustion=script autoyast=file:///autoyast/autoinst.xml insecure=1 splash=silent vga=791 video=1024x768 showopts
+
+label csir_install_airgap
+  menu label Install CSIR-SWA OS (Hardened Strategic Air-Gapped Mode)
+  kernel linux
+  append initrd=initrd combustion=script autoyast=file:///autoyast/autoinst.xml csir.profile=airgap insecure=1 splash=silent vga=791 video=1024x768 showopts
 
 """
         with open(isolinux_cfg, "w", encoding="utf-8") as f:

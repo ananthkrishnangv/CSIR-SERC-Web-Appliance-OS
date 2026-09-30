@@ -6,7 +6,70 @@
       <confirm config:type="boolean">false</confirm>
       <final_reboot config:type="boolean">true</final_reboot>
     </mode>
+    <!-- Suppress all GPG/signature confirmation dialogs during installation -->
+    <signature-handling>
+      <accept_unsigned_file config:type="boolean">true</accept_unsigned_file>
+      <accept_file_without_checksum config:type="boolean">true</accept_file_without_checksum>
+      <accept_unknown_gpg_key config:type="boolean">true</accept_unknown_gpg_key>
+      <accept_non_trusted_gpg_key config:type="boolean">true</accept_non_trusted_gpg_key>
+      <import_gpg_key config:type="boolean">true</import_gpg_key>
+    </signature-handling>
   </general>
+
+  <!-- 3rd Party & Production Repositories for Full Feature Stack -->
+  <add-on>
+    <add_on_products config:type="list">
+      <listentry>
+        <media_url>https://download.opensuse.org/tumbleweed/repo/oss/</media_url>
+        <product>openSUSE-Tumbleweed-Oss</product>
+        <product_dir>/</product_dir>
+        <name>openSUSE Tumbleweed Main OSS</name>
+        <ask_on_error config:type="boolean">false</ask_on_error>
+      </listentry>
+      <listentry>
+        <media_url>https://download.opensuse.org/repositories/security/openSUSE_Tumbleweed/</media_url>
+        <product>openSUSE-Security</product>
+        <product_dir>/</product_dir>
+        <name>openSUSE Security Tools (Suricata, Falco, Coraza, Cosign)</name>
+        <ask_on_error config:type="boolean">false</ask_on_error>
+      </listentry>
+      <listentry>
+        <media_url>https://download.opensuse.org/repositories/Virtualization/openSUSE_Tumbleweed/</media_url>
+        <product>openSUSE-Virtualization</product>
+        <product_dir>/</product_dir>
+        <name>openSUSE Virtualization (KVM, QEMU, libvirt)</name>
+        <ask_on_error config:type="boolean">false</ask_on_error>
+      </listentry>
+      <listentry>
+        <media_url>https://download.opensuse.org/repositories/devel:/microos/openSUSE_Tumbleweed/</media_url>
+        <product>openSUSE-devel-microos</product>
+        <product_dir>/</product_dir>
+        <name>openSUSE Container Stack (Podman 6.1, Netavark, Quadlet)</name>
+        <ask_on_error config:type="boolean">false</ask_on_error>
+      </listentry>
+      <listentry>
+        <media_url>https://download.opensuse.org/repositories/server:/database:/postgresql/openSUSE_Tumbleweed/</media_url>
+        <product>openSUSE-Database</product>
+        <product_dir>/</product_dir>
+        <name>openSUSE Database Platform (PostgreSQL 17, PgBouncer)</name>
+        <ask_on_error config:type="boolean">false</ask_on_error>
+      </listentry>
+      <listentry>
+        <media_url>https://download.opensuse.org/repositories/network/openSUSE_Tumbleweed/</media_url>
+        <product>openSUSE-Network</product>
+        <product_dir>/</product_dir>
+        <name>openSUSE Edge Proxy Platform (HAProxy 3.0, NGINX)</name>
+        <ask_on_error config:type="boolean">false</ask_on_error>
+      </listentry>
+      <listentry>
+        <media_url>https://download.opensuse.org/repositories/server:/monitoring/openSUSE_Tumbleweed/</media_url>
+        <product>openSUSE-Monitoring</product>
+        <product_dir>/</product_dir>
+        <name>openSUSE Observability (Prometheus, Grafana, Loki)</name>
+        <ask_on_error config:type="boolean">false</ask_on_error>
+      </listentry>
+    </add_on_products>
+  </add-on>
 
   <!-- Partitioning for Immutable MicroOS -->
   <partitioning config:type="list">
@@ -44,7 +107,7 @@
       <script>
         <filename>csir-feature-installation.sh</filename>
         <interpreter>shell</interpreter>
-        <notification>Installing CSIR Secure Web Appliance Features...</notification>
+        <notification>Installing CSIR Secure Web Appliance Features &amp; 3rd-Party Repositories...</notification>
         <source><![CDATA[
 #!/bin/bash
 set -euxo pipefail

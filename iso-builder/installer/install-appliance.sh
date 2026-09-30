@@ -95,14 +95,98 @@ GENESIS_RECORD="{\"index\":1,\"timestamp\":\"${INIT_TIMESTAMP}\",\"actor\":\"ins
 echo "${GENESIS_RECORD}" > "${TARGET_ROOT}/var/log/audit/csir_audit.ledger"
 chmod 600 "${TARGET_ROOT}/var/log/audit/csir_audit.ledger"
 
-# 10. Install Console Banner & Issue Files (Section 6 Mockup)
-echo "[9/10] Setting Console Boot Banner..."
+# 10. Install 3rd-Party Repositories (/etc/zypp/repos.d/)
+echo "[9/11] Configuring 3rd-Party & Production Repositories..."
+mkdir -p "${TARGET_ROOT}/etc/zypp/repos.d"
+
+cat <<'EOF' > "${TARGET_ROOT}/etc/zypp/repos.d/csir-swa-oss.repo"
+[csir-swa-oss]
+name=openSUSE Tumbleweed Main OSS
+enabled=1
+autorefresh=1
+baseurl=https://download.opensuse.org/tumbleweed/repo/oss/
+type=rpm-md
+gpgcheck=0
+EOF
+
+cat <<'EOF' > "${TARGET_ROOT}/etc/zypp/repos.d/csir-swa-security.repo"
+[csir-swa-security]
+name=openSUSE Security Tools (Suricata, Falco, Coraza, Cosign)
+enabled=1
+autorefresh=1
+baseurl=https://download.opensuse.org/repositories/security/openSUSE_Tumbleweed/
+type=rpm-md
+gpgcheck=0
+EOF
+
+cat <<'EOF' > "${TARGET_ROOT}/etc/zypp/repos.d/csir-swa-virtualization.repo"
+[csir-swa-virtualization]
+name=openSUSE Virtualization (KVM, QEMU, libvirt)
+enabled=1
+autorefresh=1
+baseurl=https://download.opensuse.org/repositories/Virtualization/openSUSE_Tumbleweed/
+type=rpm-md
+gpgcheck=0
+EOF
+
+cat <<'EOF' > "${TARGET_ROOT}/etc/zypp/repos.d/csir-swa-microos.repo"
+[csir-swa-microos]
+name=openSUSE Container Stack (Podman 6.1, Netavark, Quadlet)
+enabled=1
+autorefresh=1
+baseurl=https://download.opensuse.org/repositories/devel:/microos/openSUSE_Tumbleweed/
+type=rpm-md
+gpgcheck=0
+EOF
+
+cat <<'EOF' > "${TARGET_ROOT}/etc/zypp/repos.d/csir-swa-database.repo"
+[csir-swa-database]
+name=openSUSE Database Platform (PostgreSQL 17, PgBouncer)
+enabled=1
+autorefresh=1
+baseurl=https://download.opensuse.org/repositories/server:/database:/postgresql/openSUSE_Tumbleweed/
+type=rpm-md
+gpgcheck=0
+EOF
+
+cat <<'EOF' > "${TARGET_ROOT}/etc/zypp/repos.d/csir-swa-network.repo"
+[csir-swa-network]
+name=openSUSE Edge Proxy Platform (HAProxy 3.0, NGINX)
+enabled=1
+autorefresh=1
+baseurl=https://download.opensuse.org/repositories/network/openSUSE_Tumbleweed/
+type=rpm-md
+gpgcheck=0
+EOF
+
+cat <<'EOF' > "${TARGET_ROOT}/etc/zypp/repos.d/csir-swa-monitoring.repo"
+[csir-swa-monitoring]
+name=openSUSE Observability (Prometheus, Grafana, Loki)
+enabled=1
+autorefresh=1
+baseurl=https://download.opensuse.org/repositories/server:/monitoring/openSUSE_Tumbleweed/
+type=rpm-md
+gpgcheck=0
+EOF
+
+cat <<'EOF' > "${TARGET_ROOT}/etc/zypp/repos.d/csir-swa-dvd.repo"
+[csir-swa-dvd]
+name=CSIR-SWA OS Local DVD Offline Repository
+enabled=1
+autorefresh=0
+baseurl=cd:/?devices=/dev/sr0,/dev/cdrom
+type=rpm-md
+gpgcheck=0
+EOF
+
+# 11. Install Console Banner & Issue Files (Section 6 Mockup)
+echo "[10/11] Setting Console Boot Banner..."
 if [ -f "${PAYLOAD_DIR}/issue" ]; then
     cp "${PAYLOAD_DIR}/issue" "${TARGET_ROOT}/etc/issue"
 fi
 
-# 11. Stamping Feature Installation Proof
-echo "[10/10] Finalizing Feature Stamping..."
+# 12. Stamping Feature Installation Proof
+echo "[11/11] Finalizing Feature Stamping..."
 cat <<EOF > "${TARGET_ROOT}/etc/csir-swa/installation-receipt.json"
 {
   "product": "CSIR Secure Web Appliance OS",
