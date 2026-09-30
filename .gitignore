@@ -11,3 +11,5 @@ node_modules/
 dist/
 build_output/
 iso-builder/staging/
+iso-builder/cache/
+iso-builder/full_dvd_staging/
