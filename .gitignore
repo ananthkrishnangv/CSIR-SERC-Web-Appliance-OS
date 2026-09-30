@@ -14,3 +14,6 @@ iso-builder/staging/
 iso-builder/cache/
 iso-builder/full_dvd_staging/
 *.iso
+*.db
+backend/data/quadlets/app-*.container
+backend/data/quadlets/app-*.network

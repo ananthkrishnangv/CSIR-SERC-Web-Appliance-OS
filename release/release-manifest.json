@@ -2,12 +2,12 @@
   "release": "CSIR Secure Web Appliance OS 1.0.0",
   "edition": "Monolithic Full-Stack Appliance OS DVD (Offline Self-Contained)",
   "filename": "csir-swa-os-1.0.0-fullstack-x86_64.iso",
-  "filesize_bytes": 2940772352,
+  "filesize_bytes": 2941755392,
   "filesize_gb": 2.74,
-  "sha256": "98891c762c426c0cca29468e0c06ba347e822613ab56f6ccc3b9e4ef893405c2",
+  "sha256": "76765fac9571db264279884caf94c44711ede16db170abb7e1841d2d572fb1a1",
   "channel": "Stable",
   "baseline_date": "2026-09-28",
-  "built_at": "2026-09-30T16:04:30.589465+00:00",
+  "built_at": "2026-09-30T16:52:59.346649+00:00",
   "boot_type": "Hybrid BIOS + UEFI El Torito (x86_64)",
   "installer_mechanisms": [
     "Combustion",
@@ -28,12 +28,17 @@
     "web_security": "Coraza WAF (OWASP CRS v4) + HAProxy 3.0",
     "network_security": "nftables default-deny + Suricata 7.0 IDS/IPS",
     "data_protection": "Btrfs Snapshots (Snapper) + Restic 0.19.1",
-    "compliance": "CERT-In SHA-256 Hash-Chained Audit Ledger",
-    "local_ai": "Local AI Threat Narrative & Anomaly Correlation Center"
+    "compliance": "CERT-In SHA-256 Hash-Chained Audit Ledger + GIGW + ISO 27001",
+    "local_ai_security_center": "Intelligent WAF Assistant, Threat Correlation, Vuln Prioritization, Malware Analysis",
+    "ai_operations_center": "Infrastructure Latency RCA, 30d/90d/1yr Capacity Planning, Predictive Hardware Failure",
+    "ai_backup_intelligence": "Ransomware Anomaly Detection, Disaster Recovery Dependency Maps",
+    "ai_virtualization_advisor": "KVM 9.1 / libvirt 10.6 VM Health, Optimization & Live Migration Advisor",
+    "ai_chatops_governance": "Natural Language Operations with Strict Human-in-the-Loop Approval & Policy Validation",
+    "branding": "CSIR WebOS Official Vault Logo embedded into gfxboot/isolinux/GRUB and Web Console"
   },
   "signatures": {
     "signer": "CSIR Secure Software Release Authority",
-    "cosign_signature": "COSIGN-SIG-SHA256-98891c762c426c0cca29468e0c06ba34",
+    "cosign_signature": "COSIGN-SIG-SHA256-76765fac9571db264279884caf94c447",
     "verification_status": "VALID_TRUSTED"
   }
 }

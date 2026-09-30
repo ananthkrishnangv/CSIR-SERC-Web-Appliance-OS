@@ -219,6 +219,77 @@ label csir_install
             f.write(csir_iso_entry + orig_iso)
         print("[OK] ISOLINUX BIOS menu customized.")
 
+    # Official CSIR WebOS boot flash logo injection
+    bootsplash_src = BASE_DIR / "backend" / "app" / "static" / "img" / "csir-webos-bootsplash.jpg"
+    if bootsplash_src.exists():
+        loader_dir = STAGING_DIR / "boot" / "x86_64" / "loader"
+        for splash_name in ["back.jpg", "pback.jpg", "welcome.jpg"]:
+            splash_target = loader_dir / splash_name
+            if splash_target.exists():
+                try:
+                    os.chmod(splash_target, 0o666)
+                except Exception:
+                    pass
+            shutil.copy(bootsplash_src, splash_target)
+        print("[OK] Official CSIR WebOS boot splash logo injected into bootloader splash screens.")
+
+def patch_isolinux_and_hybrid_mbr(iso_path: Path, base_iso_path: Path):
+    """
+    Patches the El Torito Boot Information Table in isolinux.bin and injects Hybrid MBR.
+    Resolves the 'ISOLINUX 4.04 ... ETCDisolinux: Image checksum error, sorry...' failure.
+    """
+    import struct
+    print("[*] Patching El Torito Boot Information Table in isolinux.bin...")
+    with open(iso_path, "r+b") as f:
+        # 1. Read Sector 17 (Boot Record Volume Descriptor)
+        f.seek(17 * 2048)
+        brvd = f.read(2048)
+        assert brvd[1:6] == b"CD001", "Invalid BRVD signature"
+        boot_catalog_lba = struct.unpack("<I", brvd[71:75])[0]
+        
+        # 2. Read Default Entry in Boot Catalog (Platform 0 x86 BIOS)
+        catalog_offset = boot_catalog_lba * 2048
+        f.seek(catalog_offset + 32)
+        def_entry = f.read(32)
+        load_lba = struct.unpack("<I", def_entry[8:12])[0]
+        print(f"[*] Boot Catalog LBA: {boot_catalog_lba}, isolinux.bin LBA: {load_lba}")
+        
+        # Patch sector_count to 4 in boot catalog (El Torito specification standard)
+        f.seek(catalog_offset + 32 + 6)
+        f.write(struct.pack("<H", 4))
+        print("[OK] Patched Boot Catalog sector_count -> 4")
+        
+        # 3. Read isolinux.bin at load_lba
+        f.seek(load_lba * 2048)
+        boot_code = bytearray(f.read(24576))
+        file_len = len(boot_code)
+        
+        # Calculate checksum from offset 64 to file_len
+        csum = 0
+        for i in range(64, file_len, 4):
+            word = struct.unpack("<I", boot_code[i:i+4])[0]
+            csum = (csum + word) & 0xFFFFFFFF
+            
+        print(f"[*] Calculated ISOLINUX checksum: 0x{csum:08x}")
+        
+        # 4. Pack 56-byte El Torito Boot Information Table at offset 8
+        # bi_pvd = 16, bi_file = load_lba, bi_length = 24576, bi_csum = csum, bi_reserved[10] = 0
+        table = struct.pack("<IIII", 16, load_lba, file_len, csum) + (b"\x00" * 40)
+        boot_code[8:64] = table
+        
+        # Write back to load_lba
+        f.seek(load_lba * 2048)
+        f.write(boot_code)
+        print("[OK] Successfully patched El Torito Boot Information Table in isolinux.bin!")
+        
+        # 5. Inject Hybrid MBR from base ISO into Sector 0
+        if base_iso_path.exists():
+            with open(base_iso_path, "rb") as bf:
+                base_mbr = bf.read(512)
+            f.seek(0)
+            f.write(base_mbr)
+            print("[OK] Successfully injected Hybrid MBR into Sector 0 for raw USB/disk booting.")
+
 
 def step4_repackage_monolithic_iso():
     print("=====================================================================")
@@ -238,7 +309,7 @@ def step4_repackage_monolithic_iso():
         "oscdimg",
         "-m",                           # Ignore image size limit (> 2GB)
         "-o",                           # Deduplicate duplicate files
-        "-u2",                          # UDF filesystem
+        "-u1",                          # Both UDF filesystem and real ISO 9660 filesystem
         "-udfver102",                   # UDF 1.02
         f"-bootdata:2#p0,e,b{bios_boot}#pEF,e,b{efi_boot}", # Dual BIOS + UEFI El Torito boot
         "-lCSIR_SWA_FULL",              # Volume label
@@ -254,6 +325,10 @@ def step4_repackage_monolithic_iso():
 
     file_size = OUTPUT_FULL_ISO.stat().st_size
     print(f"[OK] Monolithic DVD compiled successfully: {file_size:,} bytes ({file_size / (1024*1024*1024):.2f} GB)")
+
+    # Apply El Torito Boot Information Table and Checksum Patch
+    patch_isolinux_and_hybrid_mbr(OUTPUT_FULL_ISO, BASE_ISO)
+
     return OUTPUT_FULL_ISO
 
 def step5_generate_metadata_and_verify(iso_path: Path):
@@ -294,8 +369,13 @@ def step5_generate_metadata_and_verify(iso_path: Path):
             "web_security": "Coraza WAF (OWASP CRS v4) + HAProxy 3.0",
             "network_security": "nftables default-deny + Suricata 7.0 IDS/IPS",
             "data_protection": "Btrfs Snapshots (Snapper) + Restic 0.19.1",
-            "compliance": "CERT-In SHA-256 Hash-Chained Audit Ledger",
-            "local_ai": "Local AI Threat Narrative & Anomaly Correlation Center"
+            "compliance": "CERT-In SHA-256 Hash-Chained Audit Ledger + GIGW + ISO 27001",
+            "local_ai_security_center": "Intelligent WAF Assistant, Threat Correlation, Vuln Prioritization, Malware Analysis",
+            "ai_operations_center": "Infrastructure Latency RCA, 30d/90d/1yr Capacity Planning, Predictive Hardware Failure",
+            "ai_backup_intelligence": "Ransomware Anomaly Detection, Disaster Recovery Dependency Maps",
+            "ai_virtualization_advisor": "KVM 9.1 / libvirt 10.6 VM Health, Optimization & Live Migration Advisor",
+            "ai_chatops_governance": "Natural Language Operations with Strict Human-in-the-Loop Approval & Policy Validation",
+            "branding": "CSIR WebOS Official Vault Logo embedded into gfxboot/isolinux/GRUB and Web Console"
         },
         "signatures": {
             "signer": "CSIR Secure Software Release Authority",

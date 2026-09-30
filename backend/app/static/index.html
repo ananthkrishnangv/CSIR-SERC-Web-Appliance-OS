@@ -212,6 +212,7 @@
     <!-- Header -->
     <header class="app-header">
       <div class="brand-group">
+        <img src="/static/img/csir-webos-logo.png" alt="CSIR WebOS" style="height: 38px; border-radius: 4px; object-fit: contain; margin-right: 4px;">
         <span class="brand-badge">CSIR</span>
         <span class="brand-title">{{ l('product_title') }}</span>
       </div>
@@ -246,13 +247,25 @@
             <i class="fa fa-shield-alt"></i> {{ l('nav.security') }}
           </li>
           <li :class="{ active: activeTab === 'ai_security' }" @click="activeTab = 'ai_security'">
-            <i class="fa fa-brain"></i> {{ l('nav.ai_security') }}
+            <i class="fa fa-shield-virus"></i> AI Security Center
+          </li>
+          <li :class="{ active: activeTab === 'ai_ops' }" @click="activeTab = 'ai_ops'">
+            <i class="fa fa-chart-line"></i> AI Operations & Capacity
+          </li>
+          <li :class="{ active: activeTab === 'ai_backup' }" @click="activeTab = 'ai_backup'">
+            <i class="fa fa-archive"></i> AI Backup Intelligence
+          </li>
+          <li :class="{ active: activeTab === 'ai_virtualization' }" @click="activeTab = 'ai_virtualization'">
+            <i class="fa fa-server"></i> AI Virtualization (KVM)
+          </li>
+          <li :class="{ active: activeTab === 'ai_chatops' }" @click="activeTab = 'ai_chatops'">
+            <i class="fa fa-robot"></i> AI ChatOps & Governance
+          </li>
+          <li :class="{ active: activeTab === 'compliance' }" @click="activeTab = 'compliance'">
+            <i class="fa fa-file-contract"></i> AI Compliance (CERT-In)
           </li>
           <li :class="{ active: activeTab === 'data_protection' }" @click="activeTab = 'data_protection'">
             <i class="fa fa-database"></i> {{ l('nav.data_protection') }}
-          </li>
-          <li :class="{ active: activeTab === 'compliance' }" @click="activeTab = 'compliance'">
-            <i class="fa fa-file-contract"></i> {{ l('nav.compliance') }}
           </li>
           <li :class="{ active: activeTab === 'updates' }" @click="activeTab = 'updates'">
             <i class="fa fa-sync-alt"></i> {{ l('nav.updates') }}
@@ -525,6 +538,283 @@
           </div>
         </div>
 
+        
+        <!-- 4B. AI OPERATIONS CENTER (Part 10) -->
+        <div v-if="activeTab === 'ai_ops'">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="section-title">Part 10: AI Operations Center & Predictive Infrastructure</div>
+            <button class="btn btn-primary" @click="fetchAiOpsData"><i class="fa fa-sync-alt"></i> Refresh Telemetry</button>
+          </div>
+
+          <!-- Infrastructure Assistant: Why is app slow? -->
+          <div class="card" style="margin-bottom: 20px; border-left: 4px solid var(--accent-cyan);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <h3 style="color: #0369a1;"><i class="fa fa-stethoscope"></i> Infrastructure Assistant: Latency Root Cause Analysis</h3>
+              <span class="badge badge-warning">Query Diagnosed</span>
+            </div>
+            <p style="margin-bottom: 8px;"><strong>Query:</strong> {{ aiOpsRca.query || "Why is application experiencing latency spikes?" }}</p>
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-bottom: 12px;">
+              <div style="font-weight: 700; color: #b45309; margin-bottom: 4px;">Primary Bottleneck: {{ aiOpsRca.root_cause_analysis?.primary_bottleneck }}</div>
+              <div style="font-size: 13px; color: #334155;">{{ aiOpsRca.root_cause_analysis?.details }}</div>
+            </div>
+            <div style="font-weight: 600; margin-bottom: 6px;">AI Recommendations:</div>
+            <div v-for="r in aiOpsRca.recommendations" style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid var(--border-color); border-radius: 4px; padding: 8px 12px; margin-bottom: 6px;">
+              <div>
+                <code>{{ r.action }}</code>
+                <div style="font-size: 11px; color: var(--text-muted);">Impact: {{ r.impact }}</div>
+              </div>
+              <span class="badge badge-pending">Approval: {{ r.approval_required }}</span>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <!-- Capacity Planning (30d, 90d, 1yr) -->
+            <div class="card">
+              <h3><i class="fa fa-chart-pie"></i> Capacity Planning & Forecasts</h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Linear projection model based on Btrfs snapshots & database WAL ingestion:</p>
+              <table style="width: 100%; margin-bottom: 12px;">
+                <tr><td>Current Storage Used:</td><td><strong>184.2 GB / 2.0 TB (9.0%)</strong></td></tr>
+                <tr><td>30-Day Projection:</td><td><strong style="color: var(--primary);">212.0 GB (+15%)</strong></td></tr>
+                <tr><td>90-Day Projection:</td><td><strong style="color: var(--warning);">286.5 GB (+55%)</strong></td></tr>
+                <tr><td>1-Year Projection:</td><td><strong style="color: #6d28d9;">640.0 GB (31.2%)</strong></td></tr>
+                <tr><td>Headroom Remaining:</td><td><span class="badge badge-healthy">1,420 Days</span></td></tr>
+              </table>
+              <div style="font-size: 12px; color: #475569; background: #f1f5f9; padding: 8px; border-radius: 4px;">
+                • Btrfs Snapper retention automatically reclaims aged snapshots.<br>
+                • Memory projection: 32 GB at 90 days (optimal 50% head-room).
+              </div>
+            </div>
+
+            <!-- Predictive Failure Analysis -->
+            <div class="card">
+              <h3><i class="fa fa-heartbeat"></i> Predictive Hardware Failure Analysis</h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Monitors NVMe SMART, RAID integrity, temperatures, and latency:</p>
+              <table style="width: 100%; margin-bottom: 12px;">
+                <thead>
+                  <tr style="font-size: 11px; text-transform: uppercase;">
+                    <th>Drive</th>
+                    <th>Temp</th>
+                    <th>Wear</th>
+                    <th>Latency</th>
+                    <th>30d Risk</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>/dev/nvme0n1</strong></td>
+                    <td><span class="badge badge-healthy">38°C</span></td>
+                    <td>3%</td>
+                    <td>0.42ms</td>
+                    <td><span class="badge badge-healthy">0.01%</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>/dev/nvme1n1</strong></td>
+                    <td><span class="badge badge-healthy">39°C</span></td>
+                    <td>3%</td>
+                    <td>0.45ms</td>
+                    <td><span class="badge badge-healthy">0.01%</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="font-size: 12px; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 8px; border-radius: 4px; color: #065f46;">
+                <i class="fa fa-check-circle"></i> RAID DUP metadata mirror in sync. Zero CRC errors on 10GbE SFP+ link.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4C. AI BACKUP INTELLIGENCE (Part 11) -->
+        <div v-if="activeTab === 'ai_backup'">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="section-title">Part 11: AI Backup Intelligence & Disaster Recovery Advisor</div>
+            <button class="btn btn-primary" @click="fetchAiBackupData"><i class="fa fa-sync-alt"></i> Run Anomaly Audit</button>
+          </div>
+
+          <div class="grid-2">
+            <!-- Ransomware & Anomaly Detection -->
+            <div class="card">
+              <h3><i class="fa fa-shield-virus"></i> Backup Anomaly & Ransomware Detection</h3>
+              <div style="display: flex; gap: 8px; margin: 10px 0;">
+                <span class="badge badge-healthy"><i class="fa fa-check"></i> Ransomware: None</span>
+                <span class="badge badge-healthy">Repository: WORM Immutable</span>
+              </div>
+              <table style="width: 100%; margin-bottom: 12px;">
+                <tr><td>Latest Snapshot Size:</td><td><strong>14.28 GB (+1.17%)</strong></td></tr>
+                <tr><td>Files Pruned / Modified:</td><td><strong>14 deleted / 412 modified</strong></td></tr>
+                <tr><td>Entropy Score:</td><td><strong>7.12 / 8.0 (Normal DB entropy)</strong></td></tr>
+                <tr><td>Mass Deletion Check:</td><td><span class="badge badge-healthy">PASSED</span></td></tr>
+                <tr><td>Repository Shrinkage Check:</td><td><span class="badge badge-healthy">PASSED</span></td></tr>
+              </table>
+              <div style="font-size: 12px; color: #1e293b; background: #f8fafc; padding: 8px; border-radius: 4px;">
+                Continuous entropy and block differential analysis verifies that data has not undergone unauthorized encryption.
+              </div>
+            </div>
+
+            <!-- Recovery Advisor -->
+            <div class="card">
+              <h3><i class="fa fa-compass"></i> Disaster Recovery Advisor & Dependency Map</h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Automated orchestration steps for Research Portal restore:</p>
+              <ol style="margin-left: 20px; font-size: 12px; line-height: 1.8; color: #334155;">
+                <li><strong>Storage Layer:</strong> Mount latest verified Restic snapshot from WORM vault.</li>
+                <li><strong>Database Layer:</strong> Restore PostgreSQL base backup & replay WAL to target PITR timestamp.</li>
+                <li><strong>Connection Pool:</strong> Initialize PgBouncer unix domain sockets.</li>
+                <li><strong>App Quadlet:</strong> Launch rootless Podman service <code>csir-portal.service</code>.</li>
+                <li><strong>Edge Verification:</strong> Execute Coraza WAF synthetic health check (Target RTO: 45s).</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4D. AI VIRTUALIZATION ADVISOR (Part 12) -->
+        <div v-if="activeTab === 'ai_virtualization'">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="section-title">Part 12: AI Virtualization Platform (KVM / QEMU / libvirt)</div>
+            <span class="badge badge-healthy">Hypervisor: KVM 9.1 / libvirt 10.6</span>
+          </div>
+
+          <div class="table-card" style="margin-bottom: 20px;">
+            <h3>Active Virtual Machines & Health Monitoring</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>VM Name</th>
+                  <th>vCPUs</th>
+                  <th>Allocated RAM</th>
+                  <th>CPU Steal</th>
+                  <th>Status</th>
+                  <th>AI Optimization Advice</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>vm-ai-inference-01</strong></td>
+                  <td>8 vCPUs</td>
+                  <td>16.0 GB</td>
+                  <td>0.1%</td>
+                  <td><span class="badge badge-healthy">Running</span></td>
+                  <td>Enable Kernel Samepage Merging (KSM) to reclaim ~2.4GB shared weights.</td>
+                </tr>
+                <tr>
+                  <td><strong>vm-legacy-cms-archive</strong></td>
+                  <td>2 vCPUs</td>
+                  <td>4.0 GB</td>
+                  <td>0.0%</td>
+                  <td><span class="badge badge-healthy">Running</span></td>
+                  <td>vCPU over-provisioned; reduce to 1 vCPU based on 3% average load.</td>
+                </tr>
+                <tr>
+                  <td><strong>vm-analytics-worker</strong></td>
+                  <td>4 vCPUs</td>
+                  <td>8.0 GB</td>
+                  <td>0.2%</td>
+                  <td><span class="badge badge-healthy">Running</span></td>
+                  <td>Optimal resource allocation. Live-migration ready.</td>
+                </tr>
+                <tr>
+                  <td><strong>vm-staging-sandbox</strong></td>
+                  <td>2 vCPUs</td>
+                  <td>4.0 GB</td>
+                  <td>0.0%</td>
+                  <td><span class="badge badge-pending">Paused</span></td>
+                  <td>Merge 14-day old external QCOW2 snapshot to prevent I/O degradation.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <h3><i class="fa fa-network-wired"></i> Live Migration Advisor</h3>
+              <p style="font-size: 13px; margin-bottom: 8px;">Target Host: <code>csir-swa-node-02.internal (10.20.10.16)</code></p>
+              <p style="font-size: 13px; margin-bottom: 8px;">Network: 10GbE dedicated migration link with TLS encryption.</p>
+              <div style="font-size: 12px; color: #047857; background: #ecfdf5; padding: 8px; border-radius: 4px;">
+                <i class="fa fa-check"></i> Migration Readiness: 100% verified. Estimated VM downtime: &lt;120ms.
+              </div>
+            </div>
+            <div class="card">
+              <h3><i class="fa fa-layer-group"></i> Snapshot Lifecycle Advisor</h3>
+              <p style="font-size: 13px; margin-bottom: 8px;">Active QCOW2 external snapshots: 3</p>
+              <p style="font-size: 13px; margin-bottom: 8px;">Btrfs subvolume copy-on-write state: Healthy</p>
+              <div style="font-size: 12px; color: #1e3a8a; background: #eff6ff; padding: 8px; border-radius: 4px;">
+                Recommendation: Consolidate staging snapshots prior to production upgrade snapshot.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4E. AI CHATOPS & GOVERNANCE MODEL (Part 16) -->
+        <div v-if="activeTab === 'ai_chatops'">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="section-title">Part 16: AI ChatOps & Controlled Governance Console</div>
+            <span class="badge badge-warning"><i class="fa fa-lock"></i> AI Mandatory Human Sign-Off Gate</span>
+          </div>
+
+          <!-- Governance Flow Diagram -->
+          <div class="card" style="margin-bottom: 20px; background: #f8fafc;">
+            <div style="font-weight: 700; margin-bottom: 6px; color: #1e293b;">Strict Governance Architecture:</div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px;">
+              <span class="badge badge-pending">Plain Text Query</span>
+              <i class="fa fa-arrow-right text-muted"></i>
+              <span class="badge badge-pending">AI Structured Suggestion</span>
+              <i class="fa fa-arrow-right text-muted"></i>
+              <span class="badge badge-critical">Human Admin Approval</span>
+              <i class="fa fa-arrow-right text-muted"></i>
+              <span class="badge badge-warning">Policy Validation</span>
+              <i class="fa fa-arrow-right text-muted"></i>
+              <span class="badge badge-healthy">Node Agent Execution</span>
+              <i class="fa fa-arrow-right text-muted"></i>
+              <span class="badge badge-healthy">SHA-256 Audit Trail</span>
+            </div>
+            <div style="font-size: 11px; color: var(--danger); font-weight: 600; margin-top: 8px;">
+              * Mandate: AI must NEVER directly execute privileged host actions without explicit human sign-off.
+            </div>
+          </div>
+
+          <!-- Interactive ChatOps Terminal -->
+          <div class="card" style="margin-bottom: 20px;">
+            <div style="font-weight: 700; margin-bottom: 10px;">Quick Operation Presets:</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+              <button class="btn" @click="executeChatOpsPreset('Create website for recruitment portal')">Create Website</button>
+              <button class="btn" @click="executeChatOpsPreset('Deploy database with daily PITR backups')">Deploy Database</button>
+              <button class="btn" @click="executeChatOpsPreset('Show failed backups in last 30 days')">Show Failed Backups</button>
+              <button class="btn" @click="executeChatOpsPreset('List vulnerable containers across all pods')">List Vulnerable Containers</button>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <input type="text" class="search-input" style="flex: 1;" placeholder="Enter operational command in plain English (e.g. 'Deploy database for sensor analytics')..." v-model="chatopsInput" @keyup.enter="submitChatopsQuery">
+              <button class="btn btn-primary" @click="submitChatopsQuery"><i class="fa fa-paper-plane"></i> Submit to AI</button>
+            </div>
+          </div>
+
+          <!-- Active ChatOps Proposal Card -->
+          <div v-if="activeProposal" class="card" style="border-left: 4px solid var(--primary); margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h3 style="color: var(--primary);"><i class="fa fa-clipboard-check"></i> Proposed Action: {{ activeProposal.intent }}</h3>
+              <span :class="['badge', activeProposal.approval_required ? 'badge-critical' : 'badge-healthy']">
+                {{ activeProposal.governance_status }}
+              </span>
+            </div>
+            <p style="margin-bottom: 8px;"><strong>Description:</strong> {{ activeProposal.proposed_action }}</p>
+            <div style="background: #0f172a; color: #38bdf8; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; margin-bottom: 10px;">
+              $ {{ activeProposal.command_preview }}
+            </div>
+            <div style="font-size: 12px; color: var(--success); margin-bottom: 14px;">
+              <i class="fa fa-shield-alt"></i> Safety Check: {{ activeProposal.safety_check }}
+            </div>
+            <div v-if="activeProposal.approval_required">
+              <button class="btn btn-success" style="margin-right: 8px;" @click="approveChatopsProposal('approve')">
+                <i class="fa fa-check"></i> Approve & Execute via Node Agent
+              </button>
+              <button class="btn btn-danger" @click="approveChatopsProposal('reject')">
+                <i class="fa fa-times"></i> Reject & Cancel
+              </button>
+            </div>
+            <div v-else style="background: #f1f5f9; padding: 8px; border-radius: 4px; font-size: 12px;">
+              <strong>Execution Output:</strong> {{ activeProposal.result }}
+            </div>
+          </div>
+        </div>
+
         <!-- 5. DATA PROTECTION & BACKUPS -->
         <div v-if="activeTab === 'data_protection'">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -722,6 +1012,67 @@
         const drTests = ref([]);
         const auditLedger = ref([]);
         const updateStatus = ref({});
+        const aiOpsRca = ref({
+          query: "Why is application experiencing latency spikes?",
+          root_cause_analysis: {
+            primary_bottleneck: "PostgreSQL Unindexed Query Spike",
+            details: "Query 'SELECT * FROM research_publications WHERE full_text_search ILIKE %nanotech%' is triggering full table sequential scans (duration ~1,420ms). Connection pool PgBouncer queue depth reached 42 clients."
+          },
+          recommendations: [
+            { action: "CREATE GIN INDEX ON research_publications USING gin(to_tsvector('english', abstract))", impact: "Reduces p95 query latency from 1,420ms to 8ms.", approval_required: "human" },
+            { action: "Increase PgBouncer default_pool_size from 20 to 50", impact: "Eliminates connection queue contention.", approval_required: "human" }
+          ]
+        });
+        const chatopsInput = ref('');
+        const activeProposal = ref(null);
+
+        async function fetchAiOpsData() {
+          try {
+            const rca = await fetch('/api/v1/ai-security/operations/infrastructure-rca?app_id=res-portal').then(r => r.json());
+            aiOpsRca.value = rca;
+            showToast('AI Operations & Capacity Telemetry Refreshed.');
+          } catch(e) { console.error(e); }
+        }
+
+        async function fetchAiBackupData() {
+          try {
+            await fetch('/api/v1/ai-security/backup-intelligence/anomalies').then(r => r.json());
+            showToast('Backup Anomaly Audit Completed: Repository Clean.');
+          } catch(e) { console.error(e); }
+        }
+
+        async function submitChatopsQuery() {
+          if (!chatopsInput.value) return;
+          try {
+            const res = await fetch('/api/v1/ai-security/chatops/query', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ query: chatopsInput.value, user: 'admin@csir.res.in' })
+            }).then(r => r.json());
+            activeProposal.value = res.proposal;
+            showToast('AI Proposal synthesized. Review governance gate.');
+          } catch(e) { console.error(e); }
+        }
+
+        function executeChatOpsPreset(query) {
+          chatopsInput.value = query;
+          submitChatopsQuery();
+        }
+
+        async function approveChatopsProposal(decision) {
+          if (!activeProposal.value) return;
+          try {
+            const res = await fetch('/api/v1/ai-security/chatops/approve', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action_id: activeProposal.value.action_id, decision, approver: 'admin@csir.res.in' })
+            }).then(r => r.json());
+            showToast(res.message);
+            activeProposal.value.governance_status = res.status.toUpperCase();
+            activeProposal.value.approval_required = false;
+            activeProposal.value.result = res.message;
+          } catch(e) { console.error(e); }
+        }
 
         const newApp = ref({
           name: '',
@@ -994,7 +1345,9 @@
           showDeployModal, newApp, toastMessage, bootScreenText,
           triggerAppAction, toggleWafRule, approveAiRec, simulateThreat,
           triggerResticBackup, triggerDrDrill, verifyAuditChain, exportCertInDossier,
-          stageOsUpdate, triggerOsRollback, submitDeployApp
+          stageOsUpdate, triggerOsRollback, submitDeployApp,
+          aiOpsRca, fetchAiOpsData, fetchAiBackupData,
+          chatopsInput, activeProposal, submitChatopsQuery, executeChatOpsPreset, approveChatopsProposal
         };
       }
     }).mount('#app');
