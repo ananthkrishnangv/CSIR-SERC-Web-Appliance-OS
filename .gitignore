@@ -5,15 +5,35 @@ __pycache__/
 .pytest_cache/
 test_swa.db
 *.tar.gz
+*.zip
 node_modules/
 .nuxt/
 .output/
 dist/
 build_output/
+
+# ISO & VM build artifacts
 iso-builder/staging/
 iso-builder/cache/
 iso-builder/full_dvd_staging/
+iso-builder/initrd.cpio
+iso-builder/initrd_extracted/
+iso-builder/parts_extracted/
+iso-builder/yast_logos_extracted/
+iso-builder/tools/
+iso-builder/*.png
+release/*.iso
 *.iso
+*.vdi
+*.vmdk
+*.qcow2
+*.raw
 *.db
+
+# Quadlet generated files
 backend/data/quadlets/app-*.container
 backend/data/quadlets/app-*.network
+
+# Local installer builds
+installer/dist/
+installer/build/

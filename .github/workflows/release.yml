@@ -1,0 +1,61 @@
+name: CSIR-SERC Web Appliance OS - Release Build & Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Publish Release Assets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build Installer Package
+        run: |
+          python3 installer/package-appliance.py
+
+      - name: Generate Release Notes
+        run: |
+          cat <<EOF > release_notes.md
+          ## CSIR-SERC Secure Web Appliance OS - Release ${{ github.ref_name }}
+
+          ### Features Included
+          - **Universal Conversion Installer:** Converts openSUSE MicroOS, openSUSE Leap, Rocky Linux, AlmaLinux, and Fedora into a hardened CSIR-SERC appliance.
+          - **Web Delivery & Security:** HAProxy 3.0, Coraza WAF with OWASP Core Rule Set (CRS) v4, TLS 1.3 termination.
+          - **Host Defense:** nftables default-deny ruleset and Suricata 7.0 IDS/IPS sensor.
+          - **Container Platform:** Rootless Podman 6.1+ Quadlets with user namespace isolation.
+          - **Database Platform:** PostgreSQL 17 with SCRAM-SHA-256 and PgBouncer connection pooling.
+          - **Data Protection:** Btrfs Snapper timeline snapshots, Restic encrypted deduplication, and automated DR validation.
+          - **Visual Identity:** CSIR-SERC high-resolution boot splash and GRUB2 theme.
+          - **Compliance:** Append-only SHA-256 cryptographic audit ledger and 180-day retention.
+
+          ### Quick Install Command
+          \`\`\`bash
+          curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/${{ github.ref_name }}/installer/install.sh | sudo bash
+          \`\`\`
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          files: |
+            installer/dist/csir-appliance-installer-v*.tar.gz
+            installer/dist/csir-appliance-installer-v*.tar.gz.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

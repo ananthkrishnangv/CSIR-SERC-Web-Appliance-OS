@@ -1,0 +1,19 @@
+[Unit]
+Description=CSIR-SWA OS First-Boot Configuration Wizard
+ConditionPathExists=!/etc/csir-swa/provisioned
+After=systemd-user-sessions.service getty@tty1.service
+Before=csir-control-plane.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+StandardInput=tty-force
+StandardOutput=inherit
+StandardError=inherit
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+ExecStart=/usr/lib/csir-swa/bin/csir-firstboot.sh
+
+[Install]
+WantedBy=multi-user.target

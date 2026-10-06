@@ -1,0 +1,24 @@
+[Unit]
+Description=CSIR-SWA OS Management Control Plane (FastAPI Backend)
+Documentation=file:///usr/share/doc/csir-swa/README.md
+After=network.target csir-node-agent.service postgresql.service
+Requires=csir-node-agent.service
+
+[Service]
+Type=simple
+User=csir-swa
+Group=csir-swa
+WorkingDirectory=/var/lib/csir-swa
+EnvironmentFile=-/etc/csir-swa/control-plane.env
+ExecStart=/usr/bin/python3.14 -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 4
+Restart=always
+RestartSec=5s
+LimitNOFILE=65536
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+NoNewPrivileges=true
+ReadWritePaths=/var/lib/csir-swa /var/log/audit
+
+[Install]
+WantedBy=multi-user.target

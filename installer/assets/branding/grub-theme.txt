@@ -1,0 +1,64 @@
+# CSIR-SERC Secure Web Appliance OS - GRUB2 High-Resolution Theme
+# Developed for CSIR Secure Web Appliance Platform Conversion
+
+desktop-image: "background.jpg"
+desktop-color: "#0a192f"
+
+title-text: "CSIR-SERC Secure Web Appliance OS"
+title-color: "#00d2ff"
+title-font: "DejaVu Sans Bold 14"
+
+terminal-font: "DejaVu Sans Mono Regular 12"
+
++ image {
+  width = 240
+  height = 55
+  left = 25
+  top = 15
+  file = "logo.png"
+}
+
++ boot_menu {
+  left = 12%
+  width = 76%
+  top = 32%
+  height = 36%
+
+  item_font = "DejaVu Sans Regular 12"
+  item_color = "#e0e6ed"
+  item_height = 32
+  item_spacing = 4
+
+  selected_item_font = "DejaVu Sans Bold 12"
+  selected_item_color = "#00ffcc"
+
+  icon_height = 0
+  icon_width = 0
+  scrollbar = true
+  scrollbar_width = 16
+}
+
++ progress_bar {
+  id = "__timeout__"
+  left = 20%
+  width = 60%
+  top = 70%
+  height = 24
+  font = "DejaVu Sans Regular 10"
+  text_color = "#ffffff"
+  fg_color = "#00d2ff"
+  bg_color = "#102a43"
+  border_color = "#334e68"
+  text = "Auto-booting CSIR-SERC Appliance in %d seconds..."
+}
+
++ hbox {
+  top = 100%-40
+  left = 25
+  + label {
+    text = "CSIR-SERC Platform | Press Enter to Boot | 'e' to Edit | 'c' for CLI"
+    font = "DejaVu Sans Regular 10"
+    color = "#829ab1"
+    align = "left"
+  }
+}

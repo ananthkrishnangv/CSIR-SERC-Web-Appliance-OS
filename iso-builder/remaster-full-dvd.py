@@ -29,9 +29,15 @@ def hash_file(filepath: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+def to_cygwin_path(p: Path) -> str:
+    resolved = p.resolve()
+    drive = resolved.drive.replace(":", "").lower()
+    rest = resolved.as_posix().split(":", 1)[-1]
+    return f"/cygdrive/{drive}{rest}"
+
 def step1_mount_and_copy_base_iso():
     print("=====================================================================")
-    print(" [1/5] Extracting 2.74 GB Base openSUSE MicroOS DVD via robocopy...")
+    print(" [1/5] Extracting 2.74 GB Base openSUSE MicroOS DVD via xorriso (Rock Ridge)...")
     print(f" Source ISO: {BASE_ISO}")
     print("=====================================================================")
 
@@ -39,8 +45,9 @@ def step1_mount_and_copy_base_iso():
         raise FileNotFoundError(f"Base ISO not found at {BASE_ISO}")
 
     # Check if already copied to speed up development
-    if (STAGING_DIR / "x86_64").exists() and (STAGING_DIR / "boot").exists():
-        print("[OK] Found existing extracted base distribution in staging. Clearing read-only flags...")
+    if (STAGING_DIR / "x86_64").exists() and (STAGING_DIR / "boot").exists() and (STAGING_DIR / "repodata").exists():
+        print("[OK] Found existing extracted base distribution in staging. Ensuring full write permissions...")
+        subprocess.run(["icacls", str(STAGING_DIR), "/grant", "Everyone:(F)", "/t", "/c", "/q"], check=False)
         subprocess.run(["attrib", "-r", str(STAGING_DIR / "*.*"), "/s", "/d"], check=False)
         return
 
@@ -48,35 +55,26 @@ def step1_mount_and_copy_base_iso():
         shutil.rmtree(STAGING_DIR, ignore_errors=True)
     STAGING_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Mount using PowerShell Mount-DiskImage
-    ps_mount = f"""
-    $mount = Mount-DiskImage -ImagePath "{BASE_ISO}" -PassThru
-    $vol = $mount | Get-Volume
-    Write-Output $vol.DriveLetter
-    """
-    res = subprocess.run(["powershell", "-NoProfile", "-Command", ps_mount], capture_output=True, text=True, check=True)
-    drive_letter = res.stdout.strip().splitlines()[-1].strip()
-    drive_path = f"{drive_letter}:\\"
-    print(f"[OK] Base MicroOS DVD mounted on {drive_path}")
+    xorriso_exe = BASE_DIR / "iso-builder" / "tools" / "xorriso" / "xorriso.exe"
+    cyg_base_iso = to_cygwin_path(BASE_ISO)
+    cyg_staging_dir = to_cygwin_path(STAGING_DIR)
 
-    try:
-        # Use robocopy for high-speed multi-threaded transfer of 2.74 GB
-        print("[*] Copying base distribution packages, repositories, kernel & installer...")
-        robocopy_cmd = [
-            "robocopy",
-            drive_path,
-            str(STAGING_DIR),
-            "/E", "/MT:8", "/R:1", "/W:1", "/NFL", "/NDL", "/NP"
-        ]
-        # robocopy returns codes 0-7 on success (1=files copied)
-        rc = subprocess.run(robocopy_cmd, capture_output=True)
-        print(f"[OK] Base distribution copied to staging (Robocopy return code: {rc.returncode})")
-        subprocess.run(["attrib", "-r", str(STAGING_DIR / "*.*"), "/s", "/d"], check=False)
-    finally:
-        # Dismount base ISO
-        ps_dismount = f'Dismount-DiskImage -ImagePath "{BASE_ISO}" | Out-Null'
-        subprocess.run(["powershell", "-NoProfile", "-Command", ps_dismount], check=True)
-        print("[OK] Base ISO dismounted cleanly.")
+    print("[*] Extracting base distribution via xorriso with POSIX Rock Ridge extensions preserved...")
+    extract_cmd = [
+        str(xorriso_exe),
+        "-osirrox", "on",
+        "-indev", cyg_base_iso,
+        "-extract", "/", cyg_staging_dir
+    ]
+    res = subprocess.run(extract_cmd, capture_output=True, text=True)
+    if res.returncode != 0:
+        print("[!] xorriso extraction error:", res.stderr or res.stdout)
+        raise RuntimeError(f"xorriso extraction failed with code {res.returncode}")
+    print("[OK] Base distribution extracted cleanly with Rock Ridge metadata.")
+
+    print("[*] Ensuring full write permissions via icacls and attrib...")
+    subprocess.run(["icacls", str(STAGING_DIR), "/grant", "Everyone:(F)", "/t", "/c", "/q"], check=False)
+    subprocess.run(["attrib", "-r", str(STAGING_DIR / "*.*"), "/s", "/d"], check=False)
 
 
 def step2_inject_csir_features():
@@ -163,7 +161,15 @@ def step2_inject_csir_features():
     with open(payload_dir / "manifest.json", "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 
-    print("[OK] CSIR-SWA Appliance Feature Layer injected successfully.")
+    # 12. Linuxrc /info configuration at root of DVD (forces insecure mode & suppresses GPG prompts)
+    info_content = """insecure: 1
+zypp.gpgcheck: 0
+splash: silent
+"""
+    with open(STAGING_DIR / "info", "w", encoding="utf-8") as f:
+        f.write(info_content)
+
+    print("[OK] CSIR-SWA Appliance Feature Layer injected successfully (including /info configuration).")
 
 def step3_brand_bootloader():
     print("=====================================================================")
@@ -174,17 +180,45 @@ def step3_brand_bootloader():
     efi_grub_cfg = STAGING_DIR / "EFI" / "BOOT" / "grub.cfg"
     if efi_grub_cfg.exists():
         os.chmod(efi_grub_cfg, 0o666)
-        with open(efi_grub_cfg, "r", encoding="utf-8", errors="ignore") as f:
-            orig_grub = f.read()
+        csir_grub_content = """# CSIR Secure Web Appliance OS Boot Menu (UEFI)
+with_gfx=1
 
-        csir_grub_header = """# CSIR Secure Web Appliance OS Boot Menu
-set default=0
-set timeout=15
+gfxmode=auto
+locale_dir=$prefix/locale
+lang=en_US
+
+search --no-floppy --file /boot/x86_64/efi --set
+prefix=($root)/boot/x86_64/grub2-efi
+
+insmod efi_gop
+insmod efi_uga
+insmod gzio
+insmod gettext
+
+if [ "$with_gfx" = 1 ] ; then
+  insmod gfxterm
+  insmod gfxmenu
+  insmod png
+
+  echo "Please press 't' to show the boot menu on this console"
+  terminal_output gfxterm
+
+  theme=$prefix/themes/openSUSE/theme.txt
+  export theme
+
+  loadfont $prefix/unicode.pf2
+  loadfont $prefix/themes/openSUSE/DejaVuSans10.pf2
+  loadfont $prefix/themes/openSUSE/DejaVuSans12.pf2
+  loadfont $prefix/themes/openSUSE/DejaVuSans-Bold14.pf2
+fi
+
+default=0
+timeout=15
 
 menuentry 'Install CSIR Secure Web Appliance OS (GUI Easy Installer)' --class opensuse --class gnu-linux --class os {
   set gfxpayload=keep
   echo 'Loading Linux kernel and launching CSIR Graphical Easy Installer...'
-  linux /boot/x86_64/loader/linux combustion=script insecure=1 splash=silent vga=791 video=1024x768
+  linux /boot/x86_64/loader/linux combustion=script insecure=1 zypp.gpgcheck=0 splash=silent
   echo 'Loading initial ramdisk...'
   initrd /boot/x86_64/loader/initrd
 }
@@ -192,52 +226,111 @@ menuentry 'Install CSIR Secure Web Appliance OS (GUI Easy Installer)' --class op
 menuentry 'Install CSIR Secure Web Appliance OS (Automated Express Installation)' --class opensuse --class gnu-linux --class os {
   set gfxpayload=keep
   echo 'Loading Linux kernel and automated provisioning engine...'
-  linux /boot/x86_64/loader/linux combustion=script autoyast=file:///autoyast/autoinst.xml insecure=1 splash=silent vga=791 video=1024x768
+  linux /boot/x86_64/loader/linux combustion=script autoyast=file:///autoyast/autoinst.xml insecure=1 zypp.gpgcheck=0 splash=silent
+  echo 'Loading initial ramdisk...'
   initrd /boot/x86_64/loader/initrd
 }
 
 menuentry 'Install CSIR-SWA OS (Hardened Strategic Air-Gapped Mode)' --class opensuse --class gnu-linux --class os {
   set gfxpayload=keep
   echo 'Loading CSIR Air-Gapped Hardened Profile...'
-  linux /boot/x86_64/loader/linux combustion=script autoyast=file:///autoyast/autoinst.xml csir.profile=airgap insecure=1 splash=silent vga=791 video=1024x768
+  linux /boot/x86_64/loader/linux combustion=script autoyast=file:///autoyast/autoinst.xml csir.profile=airgap insecure=1 zypp.gpgcheck=0 splash=silent
+  echo 'Loading initial ramdisk...'
   initrd /boot/x86_64/loader/initrd
 }
 
+menuentry 'CSIR Rescue & Recovery System' --class opensuse --class gnu-linux --class os {
+  set gfxpayload=keep
+  echo 'Loading rescue system...'
+  linux /boot/x86_64/loader/linux splash=silent rescue=1 insecure=1
+  echo 'Loading initial ramdisk...'
+  initrd /boot/x86_64/loader/initrd
+}
+
+menuentry 'Boot from Local Hard Disk' --class opensuse --class gnu-linux --class gnu --class os {
+  if search --no-floppy --file /efi/boot/fallback.efi --set ; then
+    for os in opensuse sles caasp ; do
+      if [ -f /efi/$os/grub.efi ] ; then
+        chainloader /efi/$os/grub.efi
+        boot
+      fi
+    done
+  fi
+  exit
+}
+
+hiddenentry 'Text mode' --hotkey 't' {
+  set textmode=true
+  terminal_output console
+}
 """
         with open(efi_grub_cfg, "w", encoding="utf-8") as f:
-            f.write(csir_grub_header + orig_grub)
-        print("[OK] EFI GRUB2 menu customized with CSIR installation entry.")
+            f.write(csir_grub_content)
+        print("[OK] EFI GRUB2 menu customized with CSIR GUI installation entry as default.")
 
     # Custom isolinux entry for legacy BIOS boot
     isolinux_cfg = STAGING_DIR / "boot" / "x86_64" / "loader" / "isolinux.cfg"
     if isolinux_cfg.exists():
         os.chmod(isolinux_cfg, 0o666)
-        with open(isolinux_cfg, "r", encoding="utf-8", errors="ignore") as f:
-            orig_iso = f.read()
-
-        csir_iso_entry = """# CSIR-SWA OS GUI & Automated Installations
-default csir_install_gui
+        csir_isolinux_content = """default linux
+implicit 1
+prompt 1
 timeout 150
+ui gfxboot bootlogo message
 
-label csir_install_gui
+# Install CSIR Secure Web Appliance OS (GUI Easy Installer)
+label linux
   menu label ^Install CSIR Secure Web Appliance OS (GUI Easy Installer)
+  menu default
   kernel linux
-  append initrd=initrd combustion=script insecure=1 splash=silent vga=791 video=1024x768 showopts
+  append initrd=initrd combustion=script insecure=1 zypp.gpgcheck=0 splash=silent showopts
 
-label csir_install_auto
+# Automated Express Installation
+label autoinst
   menu label Install CSIR-SWA OS (Automated Express Installation)
   kernel linux
-  append initrd=initrd combustion=script autoyast=file:///autoyast/autoinst.xml insecure=1 splash=silent vga=791 video=1024x768 showopts
+  append initrd=initrd combustion=script autoyast=file:///autoyast/autoinst.xml insecure=1 zypp.gpgcheck=0 splash=silent showopts
 
-label csir_install_airgap
+# Hardened Strategic Air-Gapped Mode
+label airgap
   menu label Install CSIR-SWA OS (Hardened Strategic Air-Gapped Mode)
   kernel linux
-  append initrd=initrd combustion=script autoyast=file:///autoyast/autoinst.xml csir.profile=airgap insecure=1 splash=silent vga=791 video=1024x768 showopts
+  append initrd=initrd combustion=script autoyast=file:///autoyast/autoinst.xml csir.profile=airgap insecure=1 zypp.gpgcheck=0 splash=silent showopts
 
+# Rescue System
+label rescue
+  menu label CSIR Rescue & Recovery System
+  kernel linux
+  append initrd=initrd splash=silent rescue=1 insecure=1 showopts
+
+# Boot from Hard Disk
+label harddisk
+  menu label Boot from Local Hard Disk
+  localboot -2
+
+# Memory Test
+label memtest
+  menu label Memory Test (Memtest86+)
+  kernel memtest
 """
         with open(isolinux_cfg, "w", encoding="utf-8") as f:
-            f.write(csir_iso_entry + orig_iso)
-        print("[OK] ISOLINUX BIOS menu customized.")
+            f.write(csir_isolinux_content)
+        print("[OK] ISOLINUX BIOS menu customized with CSIR GUI installer as default.")
+
+    # Customize gfxboot.cfg title and branding
+    gfxboot_cfg = STAGING_DIR / "boot" / "x86_64" / "loader" / "gfxboot.cfg"
+    if gfxboot_cfg.exists():
+        try:
+            os.chmod(gfxboot_cfg, 0o666)
+            with open(gfxboot_cfg, "r", encoding="utf-8", errors="ignore") as f:
+                gfx_content = f.read()
+            gfx_content = gfx_content.replace("product=openSUSE MicroOS", "product=CSIR Secure Web Appliance OS")
+            gfx_content = gfx_content.replace("mainmenu.title=openSUSE MicroOS", "mainmenu.title=CSIR Secure Web Appliance OS")
+            with open(gfxboot_cfg, "w", encoding="utf-8") as f:
+                f.write(gfx_content)
+            print("[OK] Gfxboot branding customized: CSIR Secure Web Appliance OS")
+        except Exception as e:
+            print(f"[!] Warning updating gfxboot.cfg: {e}")
 
     # Official CSIR WebOS boot flash logo injection
     bootsplash_src = BASE_DIR / "backend" / "app" / "static" / "img" / "csir-webos-bootsplash.jpg"
@@ -313,7 +406,7 @@ def patch_isolinux_and_hybrid_mbr(iso_path: Path, base_iso_path: Path):
 
 def step4_repackage_monolithic_iso():
     print("=====================================================================")
-    print(" [4/5] Compiling Monolithic Full-Stack Appliance OS DVD via oscdimg...")
+    print(" [4/5] Compiling Monolithic Full-Stack Appliance OS DVD via xorriso (Rock Ridge)...")
     print(f" Target File: {OUTPUT_FULL_ISO}")
     print("=====================================================================")
 
@@ -321,33 +414,58 @@ def step4_repackage_monolithic_iso():
     if OUTPUT_FULL_ISO.exists():
         os.remove(OUTPUT_FULL_ISO)
 
-    # Use original hybrid dual-boot files from the base distribution
-    bios_boot = "boot\\x86_64\\loader\\isolinux.bin"
-    efi_boot = "boot\\x86_64\\efi"
+    xorriso_exe = BASE_DIR / "iso-builder" / "tools" / "xorriso" / "xorriso.exe"
+    mbr_file = BASE_DIR / "iso-builder" / "tools" / "isohdpfx.bin"
 
+    # Extract Sector 0 MBR from official openSUSE base ISO
+    if not mbr_file.exists() or mbr_file.stat().st_size != 512:
+        with open(BASE_ISO, "rb") as bf:
+            mbr_bytes = bf.read(512)
+        with open(mbr_file, "wb") as mf:
+            mf.write(mbr_bytes)
+        print(f"[OK] Extracted 512-byte isohybrid MBR to {mbr_file}")
+
+    cyg_output_iso = to_cygwin_path(OUTPUT_FULL_ISO)
+    cyg_staging_dir = to_cygwin_path(STAGING_DIR)
+    cyg_mbr_file = to_cygwin_path(mbr_file)
+
+    # Use xorriso in mkisofs emulation mode with Rock Ridge, Joliet, and Dual Hybrid Boot
     cmd = [
-        "oscdimg",
-        "-m",                           # Ignore image size limit (> 2GB)
-        "-o",                           # Deduplicate duplicate files
-        "-u1",                          # Both UDF filesystem and real ISO 9660 filesystem
-        "-udfver102",                   # UDF 1.02
-        f"-bootdata:2#p0,e,b{bios_boot}#pEF,e,b{efi_boot}", # Dual BIOS + UEFI El Torito boot
-        "-lCSIR_SWA_FULL",              # Volume label
-        str(STAGING_DIR),
-        str(OUTPUT_FULL_ISO)
+        str(xorriso_exe),
+        "-as", "mkisofs",
+        "-iso-level", "3",
+        "-r",                                   # Rationalized Rock Ridge (full Linux POSIX support)
+        "-file_name_limit", "255",              # Preserve full 255-character filenames (repodata sha256 hashes)
+        "-J",                                   # Joliet for Windows compatibility
+        "-joliet-long",                         # Allow long filenames in Joliet
+        "-pad",                                 # Pad 300 kB at end for sector read safety
+        "-V", "openSUSE-MicroOS-DVD-x86_64",     # Volume ID matching media.1/media spec
+        "-A", "openSUSE-MicroOS-DVD-x86_64-Build4854.2-Media", # Application ID for libzypp
+        "-publisher", "SUSE LLC",
+        "-p", "Product Builder - http://www.github.com/openSUSE/product-builder",
+        "-sysid", "LINUX",
+        "-isohybrid-mbr", cyg_mbr_file,         # Hybrid MBR
+        "-c", "boot/x86_64/boot.catalog",       # Boot catalog path
+        "-b", "boot/x86_64/loader/isolinux.bin",# BIOS El Torito boot image
+        "-no-emul-boot",
+        "-boot-load-size", "4",
+        "-boot-info-table",                     # Automatic boot info table calculation
+        "-eltorito-alt-boot",                   # Alternative boot entry for UEFI
+        "-e", "boot/x86_64/efi",                # EFI boot image
+        "-no-emul-boot",
+        "-isohybrid-gpt-basdat",                # EFI GPT partition table entry
+        "-o", cyg_output_iso,                   # Output ISO in cygdrive format
+        cyg_staging_dir                         # Source directory in cygdrive format
     ]
 
-    print("[*] Running oscdimg premastering...")
-    res = subprocess.run(cmd, cwd=str(STAGING_DIR), capture_output=True, text=True)
+    print("[*] Running xorriso mastering with Rock Ridge extensions...")
+    res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode != 0:
-        print("[!] oscdimg error output:", res.stderr or res.stdout)
-        raise RuntimeError(f"oscdimg compilation failed (code {res.returncode})")
+        print("[!] xorriso error output:", res.stderr or res.stdout)
+        raise RuntimeError(f"xorriso compilation failed (code {res.returncode})")
 
     file_size = OUTPUT_FULL_ISO.stat().st_size
     print(f"[OK] Monolithic DVD compiled successfully: {file_size:,} bytes ({file_size / (1024*1024*1024):.2f} GB)")
-
-    # Apply El Torito Boot Information Table and Checksum Patch
-    patch_isolinux_and_hybrid_mbr(OUTPUT_FULL_ISO, BASE_ISO)
 
     return OUTPUT_FULL_ISO
 
@@ -407,10 +525,8 @@ def step5_generate_metadata_and_verify(iso_path: Path):
         json.dump(manifest_data, f, indent=2)
     print(f"[OK] Release Manifest updated: {manifest_file}")
 
-    # Clean staging directory to preserve disk space
-    print("[*] Cleaning up staging directory...")
-    shutil.rmtree(STAGING_DIR, ignore_errors=True)
-    print("[OK] Staging cleaned.")
+    # Preserve staging directory for rapid incremental builds
+    print("[OK] Staging directory preserved.")
 
     print("=====================================================================")
     print(" MONOLITHIC FULL-STACK APPLIANCE OS DVD BUILD COMPLETE")

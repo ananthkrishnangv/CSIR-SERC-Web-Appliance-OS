@@ -2,12 +2,12 @@
   "release": "CSIR Secure Web Appliance OS 1.0.0",
   "edition": "Monolithic Full-Stack Appliance OS DVD (Offline Self-Contained)",
   "filename": "csir-swa-os-1.0.0-fullstack-x86_64.iso",
-  "filesize_bytes": 2941827072,
-  "filesize_gb": 2.74,
-  "sha256": "ee169e786359c9084b2601ad7fad9be5dcb87c6b04d43014a95fa4ea4557b5f4",
+  "filesize_bytes": 2936012800,
+  "filesize_gb": 2.73,
+  "sha256": "36a9ab4de2ce69ff79500916c48ab4b0cd74f7ed2d4fac1d2f10c85ddcc99988",
   "channel": "Stable",
   "baseline_date": "2026-09-28",
-  "built_at": "2026-09-30T17:26:15.523476+00:00",
+  "built_at": "2026-10-01T09:32:57.284595+00:00",
   "boot_type": "Hybrid BIOS + UEFI El Torito (x86_64)",
   "installer_mechanisms": [
     "Combustion",
@@ -38,7 +38,7 @@
   },
   "signatures": {
     "signer": "CSIR Secure Software Release Authority",
-    "cosign_signature": "COSIGN-SIG-SHA256-ee169e786359c9084b2601ad7fad9be5",
+    "cosign_signature": "COSIGN-SIG-SHA256-36a9ab4de2ce69ff79500916c48ab4b0",
     "verification_status": "VALID_TRUSTED"
   }
 }
