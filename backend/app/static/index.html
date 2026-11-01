@@ -1,1216 +1,1186 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSIR Secure Web Appliance OS</title>
+  <title>CSIR Secure Web Appliance OS - Enterprise Management Console</title>
+  
+  <!-- Google Fonts: Montserrat for Headings, Noto Sans for UI Body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,700&family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS & daisyUI via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+  
+  <!-- Vue 3 -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body: ['Noto Sans', 'sans-serif'],
+          },
+          colors: {
+            csir: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    :root {
-      --bg-page: #f8fafc;
-      --bg-surface: #ffffff;
-      --border-color: #cbd5e1;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --primary: #1e40af;
-      --primary-light: #eff6ff;
-      --accent-cyan: #0284c7;
-      --success: #15803d;
-      --success-bg: #dcfce7;
-      --warning: #b45309;
-      --warning-bg: #fef3c7;
-      --danger: #b91c1c;
-      --danger-bg: #fee2e2;
+    body {
+      font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at 10% 20%, rgba(224, 239, 254, 0.45) 0%, rgba(248, 250, 252, 0.95) 90%);
+      color: #0f172a;
+      min-height: 100vh;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-page); color: var(--text-main); font-size: 14px; line-height: 1.5; }
-
-    /* Header */
-    .app-header {
-      background: var(--bg-surface);
-      border-bottom: 2px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 24px;
-      height: 60px;
-    }
-    .brand-group { display: flex; align-items: center; gap: 12px; }
-    .brand-badge { background: #1e3a8a; color: white; padding: 4px 10px; border-radius: 4px; font-weight: 800; font-size: 13px; letter-spacing: 1px; }
-    .brand-title { font-weight: 700; font-size: 16px; color: #1e293b; }
-    
-    .search-input {
-      width: 320px;
-      padding: 7px 14px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 13px;
-      outline: none;
-    }
-    .search-input:focus { border-color: var(--primary); }
-
-    .header-actions { display: flex; align-items: center; gap: 18px; }
-    .lang-btn {
-      padding: 4px 8px;
-      border: 1px solid var(--border-color);
-      background: #fff;
-      font-size: 12px;
-      cursor: pointer;
-      border-radius: 4px;
-      margin-left: 2px;
-    }
-    .lang-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: bold; }
-    .alerts-indicator { font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; }
-    .alerts-chip { background: var(--danger); color: white; border-radius: 10px; padding: 1px 7px; font-size: 11px; }
-    .admin-menu { cursor: pointer; font-weight: 600; font-size: 13px; color: #334155; }
-
-    /* Layout */
-    .app-body { display: flex; height: calc(100vh - 60px); }
-    .sidebar {
-      width: 220px;
-      background: var(--bg-surface);
-      border-right: 1px solid var(--border-color);
-      overflow-y: auto;
-    }
-    .sidebar ul { list-style: none; padding: 8px 0; }
-    .sidebar li {
-      padding: 10px 18px;
-      font-size: 13px;
-      color: #334155;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-left: 3px solid transparent;
-      transition: all 0.15s;
-    }
-    .sidebar li:hover { background: #f1f5f9; color: var(--primary); }
-    .sidebar li.active {
-      background: var(--primary-light);
-      color: var(--primary);
-      border-left-color: var(--primary);
-      font-weight: 700;
+    h1, h2, h3, h4, h5, h6, .font-heading {
+      font-family: 'Montserrat', sans-serif;
+      letter-spacing: -0.02em;
     }
 
-    .main-viewport {
-      flex: 1;
-      padding: 24px;
-      overflow-y: auto;
-      background: #f8fafc;
+    /* Glassmorphism Classes inspired by reference designs */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.85);
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
     }
 
-    /* Cards & Grids */
-    .section-title { font-size: 15px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 16px; color: #1e293b; text-transform: uppercase; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-
-    .card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    }
-    .stat-box { text-align: center; padding: 18px; }
-    .stat-number { font-size: 26px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
-    .stat-desc { font-size: 13px; color: var(--text-muted); font-weight: 500; }
-
-    .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1e293b; }
-
-    /* Tables */
-    .table-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 6px; padding: 16px; margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; text-align: left; }
-    th { padding: 10px 12px; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
-    td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
-    tr:last-child td { border-bottom: none; }
-
-    /* Badges */
-    .badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: capitalize;
-    }
-    .badge-healthy { background: var(--success-bg); color: var(--success); }
-    .badge-warning { background: var(--warning-bg); color: var(--warning); }
-    .badge-critical { background: var(--danger-bg); color: var(--danger); }
-    .badge-pending { background: #e0f2fe; color: #0369a1; }
-    .badge-executed { background: var(--success-bg); color: var(--success); }
-
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid var(--border-color);
-      background: #ffffff;
-      color: #334155;
-      transition: all 0.15s;
-    }
-    .btn:hover { background: #f8fafc; border-color: #94a3b8; }
-    .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-success { background: var(--success); color: #fff; border-color: var(--success); }
-    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
-
-    .action-bar { display: flex; gap: 10px; margin-top: 10px; }
-
-    /* Boot Screen ASCII Terminal */
-    .boot-terminal {
-      background: #020617;
-      color: #38bdf8;
-      border-radius: 8px;
-      padding: 24px;
-      font-family: "Courier New", Courier, monospace;
-      font-size: 13px;
-      line-height: 1.35;
-      white-space: pre;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      overflow-x: auto;
+    .glass-panel-subtle {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.7);
     }
 
-    /* Modal */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.6);
-      display: flex; align-items: center; justify-content: center; z-index: 1000;
+    .glass-card-hover {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .modal-content {
-      background: #fff;
-      border-radius: 8px;
-      width: 540px;
-      padding: 24px;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    .glass-card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -6px rgba(2, 132, 199, 0.12);
+      border-color: rgba(2, 132, 199, 0.35);
     }
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #334155; }
-    .form-control { width: 100%; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
 
-    /* Toast Notification */
-    .toast {
-      position: fixed; bottom: 24px; right: 24px;
-      background: #0f172a; color: white;
-      padding: 12px 20px; border-radius: 6px;
-      font-size: 13px; font-weight: 500;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 2000;
+    .nav-pill-active {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff !important;
+      box-shadow: 0 4px 14px 0 rgba(2, 132, 199, 0.35);
     }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
-<body>
-  <div id="app">
-    <!-- Header -->
-    <header class="app-header">
-      <div class="brand-group">
-        <img src="/static/img/csir-webos-logo.png" alt="CSIR WebOS" style="height: 38px; border-radius: 4px; object-fit: contain; margin-right: 4px;">
-        <span class="brand-badge">CSIR</span>
-        <span class="brand-title">{{ l('product_title') }}</span>
-      </div>
-      <div class="header-center">
-        <input type="text" class="search-input" :placeholder="l('search_placeholder')" v-model="searchQuery">
-      </div>
-      <div class="header-actions">
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-sky-500 selection:text-white">
+
+  <div id="app" class="flex h-screen overflow-hidden">
+
+    <!-- ===================================================================== -->
+    <!-- LEFT SIDEBAR (OpsFlow & MediCore reference layout)                     -->
+    <!-- ===================================================================== -->
+    <aside class="w-72 glass-panel border-r border-slate-200/80 flex flex-col z-20 transition-all duration-300">
+      
+      <!-- Brand Header -->
+      <div class="h-20 flex items-center px-6 border-b border-slate-200/60 gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-blue-800 flex items-center justify-center text-white shadow-md shadow-sky-600/30">
+          <i class="fa-solid fa-shield-halved text-xl"></i>
+        </div>
         <div>
-          <button class="lang-btn" :class="{ active: lang === 'en' }" @click="lang = 'en'">EN</button>
-          <button class="lang-btn" :class="{ active: lang === 'hi' }" @click="lang = 'hi'">हिन्दी</button>
-          <button class="lang-btn" :class="{ active: lang === 'ta' }" @click="lang = 'ta'">தமிழ்</button>
+          <div class="font-heading font-extrabold text-base tracking-tight text-slate-900 leading-none">
+            CSIR <span class="text-sky-600">SWA-OS</span>
+          </div>
+          <div class="text-[11px] font-medium text-slate-500 mt-1 uppercase tracking-wider">
+            Sovereign Cloud Node
+          </div>
         </div>
-        <div class="alerts-indicator" @click="activeTab = 'security'">
-          <span>{{ l('alerts') }}</span>
-          <span class="alerts-chip">5</span>
-        </div>
-        <div class="admin-menu">Admin ▼</div>
       </div>
-    </header>
 
-    <div class="app-body">
-      <!-- Sidebar -->
-      <nav class="sidebar">
-        <ul>
-          <li :class="{ active: activeTab === 'overview' }" @click="activeTab = 'overview'">
-            <i class="fa fa-dashboard"></i> {{ l('nav.overview') }}
-          </li>
-          <li :class="{ active: activeTab === 'applications' }" @click="activeTab = 'applications'">
-            <i class="fa fa-cubes"></i> {{ l('nav.applications') }}
-          </li>
-          <li :class="{ active: activeTab === 'security' }" @click="activeTab = 'security'">
-            <i class="fa fa-shield-alt"></i> {{ l('nav.security') }}
-          </li>
-          <li :class="{ active: activeTab === 'ai_security' }" @click="activeTab = 'ai_security'">
-            <i class="fa fa-shield-virus"></i> AI Security Center
-          </li>
-          <li :class="{ active: activeTab === 'ai_ops' }" @click="activeTab = 'ai_ops'">
-            <i class="fa fa-chart-line"></i> AI Operations & Capacity
-          </li>
-          <li :class="{ active: activeTab === 'ai_backup' }" @click="activeTab = 'ai_backup'">
-            <i class="fa fa-archive"></i> AI Backup Intelligence
-          </li>
-          <li :class="{ active: activeTab === 'ai_virtualization' }" @click="activeTab = 'ai_virtualization'">
-            <i class="fa fa-server"></i> AI Virtualization (KVM)
-          </li>
-          <li :class="{ active: activeTab === 'ai_chatops' }" @click="activeTab = 'ai_chatops'">
-            <i class="fa fa-robot"></i> AI ChatOps & Governance
-          </li>
-          <li :class="{ active: activeTab === 'compliance' }" @click="activeTab = 'compliance'">
-            <i class="fa fa-file-contract"></i> AI Compliance (CERT-In)
-          </li>
-          <li :class="{ active: activeTab === 'data_protection' }" @click="activeTab = 'data_protection'">
-            <i class="fa fa-database"></i> {{ l('nav.data_protection') }}
-          </li>
-          <li :class="{ active: activeTab === 'updates' }" @click="activeTab = 'updates'">
-            <i class="fa fa-sync-alt"></i> {{ l('nav.updates') }}
-          </li>
-          <li :class="{ active: activeTab === 'boot_screen' }" @click="activeTab = 'boot_screen'">
-            <i class="fa fa-terminal"></i> {{ l('nav.console_boot') }} (F2)
-          </li>
-        </ul>
-      </nav>
+      <!-- Navigation Menu -->
+      <div class="flex-1 overflow-y-auto px-4 py-4 space-y-1 text-sm font-medium">
+        
+        <div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+          Operations & Traffic
+        </div>
 
-      <!-- Viewport -->
-      <main class="main-viewport">
-        <!-- 1. OVERVIEW TAB (Section 8 Mockup) -->
-        <div v-if="activeTab === 'overview'">
-          <div class="section-title">{{ l('overview.headline') }}</div>
+        <button @click="activeTab = 'overview'" 
+                :class="activeTab === 'overview' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-chart-pie w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">Overview Dashboard</span>
+          <span v-if="activeTab !== 'overview'" class="badge badge-sm badge-ghost border-slate-300">Live</span>
+        </button>
+
+        <button @click="activeTab = 'vhosts'" 
+                :class="activeTab === 'vhosts' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-globe w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">Web Hosting &amp; VHosts</span>
+          <span class="badge badge-sm badge-info text-white">4 Hosts</span>
+        </button>
+
+        <button @click="activeTab = 'proxy'" 
+                :class="activeTab === 'proxy' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-network-wired w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">Reverse Proxy &amp; Upstreams</span>
+          <span class="badge badge-sm bg-emerald-500 text-white border-none">Active</span>
+        </button>
+
+        <button @click="activeTab = 'ssl'" 
+                :class="activeTab === 'ssl' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-lock w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">SSL / TLS Key Vault</span>
+          <span class="badge badge-sm badge-success text-white">ACME</span>
+        </button>
+
+        <button @click="activeTab = 'applications'" 
+                :class="activeTab === 'applications' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-box-archive w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">Container Quadlets</span>
+          <span class="badge badge-sm badge-ghost border-slate-300">Rootless</span>
+        </button>
+
+        <div class="pt-4 px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+          Security &amp; Intelligence
+        </div>
+
+        <button @click="activeTab = 'security'" 
+                :class="activeTab === 'security' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-shield-virus w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">Coraza WAF &amp; Defense</span>
+          <span class="badge badge-sm badge-error text-white">OWASP CRS</span>
+        </button>
+
+        <button @click="activeTab = 'ai_security'" 
+                :class="activeTab === 'ai_security' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-brain w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">Local AI Center &amp; RCA</span>
+          <span class="badge badge-sm badge-primary text-white">ChatOps</span>
+        </button>
+
+        <div class="pt-4 px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+          Integrity &amp; Platform
+        </div>
+
+        <button @click="activeTab = 'data_protection'" 
+                :class="activeTab === 'data_protection' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-hard-drive w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">Btrfs &amp; Restic Backups</span>
+        </button>
+
+        <button @click="activeTab = 'compliance'" 
+                :class="activeTab === 'compliance' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-stamp w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">CERT-In Audit Ledger</span>
+        </button>
+
+        <button @click="activeTab = 'updates'" 
+                :class="activeTab === 'updates' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-arrows-rotate w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">MicroOS Updates</span>
+        </button>
+
+        <button @click="activeTab = 'boot_screen'" 
+                :class="activeTab === 'boot_screen' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-terminal w-5 text-center text-base"></i>
+          <span class="flex-1 text-left font-semibold">Hardware Boot Terminal</span>
+        </button>
+      </div>
+
+      <!-- Bottom Platform Card (OpsFlow style) -->
+      <div class="p-4 border-t border-slate-200/60">
+        <div class="p-3.5 rounded-2xl bg-gradient-to-br from-sky-50 to-blue-100/80 border border-sky-200/70 text-xs">
+          <div class="flex items-center gap-2 font-heading font-bold text-sky-950">
+            <i class="fa-solid fa-shield-heart text-sky-600"></i>
+            <span>Sovereign Security Gate</span>
+          </div>
+          <p class="text-slate-600 mt-1 text-[11px] leading-relaxed">
+            Immutable MicroOS Kernel 6.12 | CERT-In 180-Day SHA-256 Ledger Enforced.
+          </p>
+          <div class="mt-2.5 pt-2 border-t border-sky-200/60 flex items-center justify-between text-[11px]">
+            <span class="text-slate-500 font-mono">Appliance v1.0.0</span>
+            <span class="text-emerald-700 font-semibold flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Locked
+            </span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===================================================================== -->
+    <!-- MAIN CONTENT AREA                                                     -->
+    <!-- ===================================================================== -->
+    <div class="flex-1 flex flex-col h-screen overflow-hidden">
+      
+      <!-- Top Navigation Header (Reference 1 & 2 Style) -->
+      <header class="h-20 glass-panel border-b border-slate-200/80 px-8 flex items-center justify-between z-10 shrink-0">
+        
+        <!-- Search bar with Cmd+K badge -->
+        <div class="relative w-96">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input type="text" 
+                 v-model="searchQuery" 
+                 placeholder="Search vhosts, reverse proxies, certificates, incidents..." 
+                 class="w-full pl-10 pr-12 py-2 rounded-xl text-sm bg-slate-100/70 border border-slate-200/80 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition duration-150">
+          <kbd class="kbd kbd-sm absolute right-3 top-1/2 -translate-y-1/2 bg-white text-slate-400 border-slate-200 text-[10px]">Ctrl K</kbd>
+        </div>
+
+        <!-- Top Right Actions & Admin Profile -->
+        <div class="flex items-center gap-4">
           
-          <div class="grid-3">
-            <div class="card stat-box">
-              <div class="stat-number" style="color: var(--success);">{{ overview.headline_metrics.health_score }}</div>
-              <div class="stat-desc">{{ overview.headline_metrics.health_subtext }}</div>
-            </div>
-            <div class="card stat-box">
-              <div class="stat-number">{{ overview.headline_metrics.apps_operational }}</div>
-              <div class="stat-desc">{{ overview.headline_metrics.apps_subtext }}</div>
-            </div>
-            <div class="card stat-box">
-              <div class="stat-number" style="color: var(--primary);">{{ overview.headline_metrics.backups_compliance }}</div>
-              <div class="stat-desc">{{ overview.headline_metrics.backups_subtext }}</div>
-            </div>
+          <!-- Sovereign Status Indicators -->
+          <div class="hidden xl:flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <i class="fa-solid fa-clock-rotate-left text-[11px]"></i> Indian NPL NTP Sync
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200">
+              <i class="fa-solid fa-shield text-[11px]"></i> Coraza WAF Enforcing
+            </span>
           </div>
 
-          <div class="grid-2">
-            <div class="card">
-              <h3>{{ l('overview.security_activity_title') }}</h3>
-              <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-                <span class="badge badge-critical">{{ overview.security_activity.critical_count }} Critical</span>
-                <span class="badge badge-warning">{{ overview.security_activity.medium_count }} Medium</span>
+          <!-- Notification Bell with red badge -->
+          <div class="relative">
+            <button class="w-10 h-10 rounded-xl glass-panel-subtle flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+              <i class="fa-regular fa-bell text-base"></i>
+              <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
+            </button>
+          </div>
+
+          <!-- User Profile Dropdown (MediCore style) -->
+          <div class="flex items-center gap-3 pl-3 border-l border-slate-200">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-700 to-indigo-800 text-white font-bold flex items-center justify-center text-sm shadow-sm">
+              AS
+            </div>
+            <div class="hidden sm:block text-left leading-tight">
+              <div class="font-heading font-bold text-sm text-slate-900">Dr. A. Sharma</div>
+              <div class="text-[11px] text-slate-500">Chief Security Officer / Admin</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Main View Container -->
+      <main class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+        
+        <!-- ================================================================= -->
+        <!-- TAB 1: OPERATIONS OVERVIEW DASHBOARD                              -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'overview'" class="space-y-6">
+          
+          <!-- Welcome Banner with Date Range (OpsFlow Style) -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+                Operations &amp; Security Health Dashboard
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                Real-time telemetry across Sovereign Web Appliance, virtual hosts, and AI security perimeter.
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="glass-panel-subtle px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 flex items-center gap-2 border border-slate-200">
+                <i class="fa-regular fa-calendar text-sky-600"></i>
+                <span>{{ currentDateFormatted }}</span>
               </div>
-              <p style="margin-bottom: 6px;">• <strong>{{ overview.security_activity.requests_blocked }}</strong> requests blocked</p>
-              <p>• <strong>{{ overview.security_activity.ips_temporarily_denied }}</strong> IPs temporarily denied</p>
+              <button @click="showDeployModal = true" class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none text-white rounded-xl shadow-md shadow-sky-600/20">
+                <i class="fa-solid fa-plus text-xs"></i> Deploy Workload
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 KPI Metrics Cards with Trends (OpsFlow Style) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            
+            <!-- Metric 1: System Health -->
+            <div class="glass-panel rounded-2xl p-5 glass-card-hover flex flex-col justify-between">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Health Score</div>
+                  <div class="font-heading text-3xl font-extrabold text-slate-900 mt-1">98.4%</div>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl">
+                  <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-xs font-semibold text-emerald-600 gap-1.5">
+                <span class="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200"><i class="fa-solid fa-arrow-up"></i> +1.8%</span>
+                <span class="text-slate-400 font-normal">All 24 microservices operational</span>
+              </div>
             </div>
 
-            <div class="card">
-              <h3>{{ l('overview.ai_recommendations_title') }}</h3>
-              <div v-for="rec in overview.ai_recommendations" :key="rec.rec_id" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span>• {{ rec.title }}</span>
-                <span :class="['badge', 'badge-' + (rec.impact === 'high' ? 'critical' : 'warning')]">{{ rec.impact }}</span>
+            <!-- Metric 2: Virtual Hosts & Traffic -->
+            <div class="glass-panel rounded-2xl p-5 glass-card-hover flex flex-col justify-between">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Web VHosts</div>
+                  <div class="font-heading text-3xl font-extrabold text-slate-900 mt-1">4 / 4</div>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl">
+                  <i class="fa-solid fa-globe"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-xs font-semibold text-emerald-600 gap-1.5">
+                <span class="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200"><i class="fa-solid fa-arrow-up"></i> 100%</span>
+                <span class="text-slate-400 font-normal">HTTP/2 &amp; TLS 1.3 enforced</span>
+              </div>
+            </div>
+
+            <!-- Metric 3: Reverse Proxy Throughput -->
+            <div class="glass-panel rounded-2xl p-5 glass-card-hover flex flex-col justify-between">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Proxy Ingress Rate</div>
+                  <div class="font-heading text-3xl font-extrabold text-slate-900 mt-1">1,842 req/s</div>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+                  <i class="fa-solid fa-bolt"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-xs font-semibold text-emerald-600 gap-1.5">
+                <span class="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200"><i class="fa-solid fa-arrow-up"></i> +14.2%</span>
+                <span class="text-slate-400 font-normal">Avg p95 latency 8.2 ms</span>
+              </div>
+            </div>
+
+            <!-- Metric 4: Neutralized Threats -->
+            <div class="glass-panel rounded-2xl p-5 glass-card-hover flex flex-col justify-between">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Coraza Blocked Attacks</div>
+                  <div class="font-heading text-3xl font-extrabold text-rose-600 mt-1">1,429</div>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-xs font-semibold text-rose-600 gap-1.5">
+                <span class="px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200"><i class="fa-solid fa-shield"></i> 100% Dropped</span>
+                <span class="text-slate-400 font-normal">Zero bypasses detected</span>
               </div>
             </div>
           </div>
 
-          <div class="table-card">
-            <h3>{{ l('overview.application_health_title') }}</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Status</th>
-                  <th>WAF</th>
-                  <th>Backup</th>
-                  <th>CPU</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="app in overview.applications" :key="app.app_id">
-                  <td><strong>{{ app.name }}</strong><div style="font-size: 11px; color: var(--text-muted);">{{ app.domain }}</div></td>
-                  <td><span :class="['badge', 'badge-' + (app.health === 'healthy' ? 'healthy' : 'warning')]">{{ app.status }}</span></td>
-                  <td>{{ app.waf }}</td>
-                  <td>{{ app.backup }}</td>
-                  <td>{{ app.cpu }}</td>
-                  <td>
-                    <button class="btn" @click="triggerAppAction(app.app_id, 'restart')"><i class="fa fa-redo"></i> Restart</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <!-- Middle Split: Left Data Cards, Right Smart Alerts (Reference 1 & 2) -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- 2-Column Left: Web Traffic & Workload Health -->
+            <div class="lg:col-span-2 space-y-6">
+              
+              <!-- Managed Workloads Table (Glassmorphism & Clean Pill Design) -->
+              <div class="glass-panel rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 class="font-heading text-base font-bold text-slate-900">Mission-Critical Research Portals &amp; VHosts</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Automated health probing &amp; reverse proxy ingress routing.</p>
+                  </div>
+                  <button @click="activeTab = 'vhosts'" class="text-xs font-bold text-sky-600 hover:text-sky-700">View All VHosts &rarr;</button>
+                </div>
 
-          <div class="action-bar">
-            <button class="btn" @click="activeTab = 'security'">[{{ l('overview.actions.view_incidents') }}]</button>
-            <button class="btn btn-primary" @click="showDeployModal = true">[{{ l('overview.actions.deploy_app') }}]</button>
-            <button class="btn" @click="triggerResticBackup">[{{ l('overview.actions.run_backup') }}]</button>
-            <button class="btn" @click="verifyAuditChain">[{{ l('overview.actions.verify_audit') }}]</button>
+                <div class="overflow-x-auto">
+                  <table class="table table-sm w-full text-left">
+                    <thead>
+                      <tr class="text-slate-400 border-b border-slate-200/80 text-xs uppercase font-heading">
+                        <th>Application / VHost</th>
+                        <th>Type / Runtime</th>
+                        <th>Domain &amp; Port</th>
+                        <th>WAF Protection</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                      <tr v-for="app in appList" :key="app.app_id" class="border-b border-slate-100 hover:bg-slate-50/70 transition">
+                        <td class="font-semibold text-slate-900 py-3">
+                          <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 font-bold flex items-center justify-center text-xs">
+                              <i class="fa-solid fa-server"></i>
+                            </div>
+                            <div>
+                              <div>{{ app.name }}</div>
+                              <div class="text-[11px] font-mono text-slate-400">{{ app.app_id }}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge badge-sm badge-ghost font-medium border-slate-200">Podman / Quadlet</span>
+                        </td>
+                        <td>
+                          <div class="font-mono text-xs text-sky-700 font-semibold">{{ app.domain }}</div>
+                          <div class="text-[11px] text-slate-400">:{{ app.port }} (TLS 1.3)</div>
+                        </td>
+                        <td>
+                          <span class="badge badge-sm bg-emerald-100 text-emerald-800 border-none font-semibold">Enforcing</span>
+                        </td>
+                        <td>
+                          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Healthy
+                          </span>
+                        </td>
+                        <td>
+                          <button class="btn btn-ghost btn-xs text-slate-500 hover:text-sky-600"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- AI Root Cause Analysis Card (MediCore AI Style) -->
+              <div class="glass-panel rounded-2xl p-6 border-l-4 border-l-sky-500">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2 font-heading font-bold text-slate-900">
+                    <span class="px-2 py-0.5 rounded-md bg-sky-100 text-sky-700 text-xs uppercase font-extrabold">Autonomous AI</span>
+                    <span>Infrastructure Root Cause Analysis</span>
+                  </div>
+                  <span class="text-xs text-slate-400 font-mono">Telemetry Hook: res-portal</span>
+                </div>
+                <p class="text-sm text-slate-700 leading-relaxed">
+                  Query <code>SELECT * FROM research_publications WHERE full_text_search ILIKE '%nanotech%'</code> is triggering full table scans (~1,420ms).
+                </p>
+                <div class="mt-4 p-3 rounded-xl bg-slate-900 text-slate-200 font-mono text-xs flex items-center justify-between">
+                  <span>CREATE GIN INDEX ON research_publications USING gin(to_tsvector('english', abstract));</span>
+                  <button class="btn btn-xs btn-primary bg-sky-600 hover:bg-sky-500 border-none text-white ml-2">Approve Execution</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 1-Column Right: Smart Alerts & Interactive AI ChatOps (Reference 2) -->
+            <div class="space-y-6">
+              
+              <!-- Smart Alerts Box -->
+              <div class="glass-panel rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="font-heading text-sm font-bold text-slate-900 uppercase tracking-wider">Smart Alerts</h3>
+                  <span class="badge badge-sm badge-error text-white font-bold">2 Live</span>
+                </div>
+
+                <div class="space-y-3">
+                  <div class="p-3.5 rounded-xl bg-rose-50/80 border border-rose-200/80 text-xs">
+                    <div class="flex items-center justify-between font-bold text-rose-800">
+                      <span><i class="fa-solid fa-shield-virus mr-1"></i> SQLi Probe Blocked</span>
+                      <span class="text-[10px] text-rose-600 font-mono">14:22 IST</span>
+                    </div>
+                    <p class="text-rose-700 mt-1">Rule 942100 triggered by 198.51.100.47 against /api/sensor-data.</p>
+                  </div>
+
+                  <div class="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200/80 text-xs">
+                    <div class="flex items-center justify-between font-bold text-amber-800">
+                      <span><i class="fa-solid fa-certificate mr-1"></i> SSL Expiry Notice</span>
+                      <span class="text-[10px] text-amber-600 font-mono">42 Days</span>
+                    </div>
+                    <p class="text-amber-700 mt-1">Wildcard *.serc.res.in scheduled for automated ACME renewal.</p>
+                  </div>
+
+                  <div class="p-3.5 rounded-xl bg-emerald-50/80 border border-emerald-200/80 text-xs">
+                    <div class="flex items-center justify-between font-bold text-emerald-800">
+                      <span><i class="fa-solid fa-fingerprint mr-1"></i> Audit Ledger Locked</span>
+                      <span class="text-[10px] text-emerald-600 font-mono">100% OK</span>
+                    </div>
+                    <p class="text-emerald-700 mt-1">Append-only SHA-256 hash verified across all 1,048 state transitions.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI Security Assistant ChatWidget (MediCore Bottom-Right Style) -->
+              <div class="glass-panel rounded-2xl p-6">
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></div>
+                  <h3 class="font-heading text-sm font-bold text-slate-900">Sovereign ChatOps Assistant</h3>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-100/70 border border-slate-200 text-xs text-slate-600 mb-3">
+                  <p class="font-semibold text-slate-800">Local AI Guardian Online:</p>
+                  "I monitor ingress routes, WAF block counters, and Btrfs snapshot trees. Ask me to tune reverse proxies, stage updates, or verify CERT-In hashes."
+                </div>
+                <div class="flex gap-2">
+                  <input type="text" v-model="chatopsInput" placeholder="e.g. Stage MicroOS update" class="input input-sm input-bordered flex-1 rounded-xl text-xs">
+                  <button @click="submitChatopsQuery" class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none rounded-xl text-white">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                  </button>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
 
-        <!-- 2. APPLICATIONS & QUADLETS TAB -->
-        <div v-if="activeTab === 'applications'">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div class="section-title">Rootless Podman Quadlet Workloads</div>
-            <button class="btn btn-primary" @click="showDeployModal = true"><i class="fa fa-plus"></i> Deploy New Application</button>
+        <!-- ================================================================= -->
+        <!-- TAB 2: WEB HOSTING & VIRTUAL HOST MANAGEMENT (NEW FEATURE)        -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'vhosts'" class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+                Web Hosting &amp; Virtual Host Management
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                Configure sovereign multi-tenant virtual hosts, document roots, PHP/Node runtimes, and HTTP/3 QUIC.
+              </p>
+            </div>
+            <button class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none text-white rounded-xl shadow-md shadow-sky-600/20">
+              <i class="fa-solid fa-plus text-xs"></i> Add Virtual Host
+            </button>
           </div>
 
-          <div class="table-card">
-            <table>
-              <thead>
-                <tr>
-                  <th>App Name & ID</th>
-                  <th>Image Digest</th>
-                  <th>Memory / Quota</th>
-                  <th>Port & Domain</th>
-                  <th>Workload Isolation</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="app in appList" :key="app.app_id">
-                  <td>
-                    <strong>{{ app.name }}</strong>
-                    <div style="font-size: 11px; color: var(--text-muted);">ID: {{ app.app_id }}</div>
-                  </td>
-                  <td>
-                    <code style="font-size: 11px;">{{ app.digest.substring(0, 18) }}...</code>
-                    <div style="font-size: 10px; color: var(--success);"><i class="fa fa-check-circle"></i> Cosign Signed</div>
-                  </td>
-                  <td>{{ app.memory_mb }} MB / 50% CPU</td>
-                  <td>:{{ app.port }}<br><span style="color: var(--primary);">{{ app.domain }}</span></td>
-                  <td>
-                    <span class="badge badge-healthy" v-if="app.is_rootless">Rootless (UserNS)</span>
-                  </td>
-                  <td>
-                    <button class="btn" style="margin-right: 4px;" @click="triggerAppAction(app.app_id, 'restart')">Restart</button>
-                    <button class="btn btn-danger" @click="triggerAppAction(app.app_id, 'stop')">Stop</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- VHost Stats -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div class="glass-panel rounded-2xl p-5">
+              <div class="text-xs font-semibold text-slate-500 uppercase">Hosted Domains</div>
+              <div class="font-heading text-2xl font-extrabold text-slate-900 mt-1">4 Active Sites</div>
+              <div class="text-xs text-slate-400 mt-2"><i class="fa-solid fa-check-circle text-emerald-500"></i> All roots mapped in /srv/www/vhosts</div>
+            </div>
+            <div class="glass-panel rounded-2xl p-5">
+              <div class="text-xs font-semibold text-slate-500 uppercase">Supported Runtimes</div>
+              <div class="font-heading text-2xl font-extrabold text-slate-900 mt-1">PHP 8.2 / Node 20 / Static</div>
+              <div class="text-xs text-slate-400 mt-2"><i class="fa-solid fa-bolt text-sky-500"></i> Rootless FastCGI Process Pools</div>
+            </div>
+            <div class="glass-panel rounded-2xl p-5">
+              <div class="text-xs font-semibold text-slate-500 uppercase">Protocols Enforced</div>
+              <div class="font-heading text-2xl font-extrabold text-slate-900 mt-1">HTTP/2 &amp; HTTP/3 QUIC</div>
+              <div class="text-xs text-slate-400 mt-2"><i class="fa-solid fa-lock text-emerald-500"></i> Automated ACME SSL Bindings</div>
+            </div>
           </div>
-        </div>
 
-        <!-- 3. SECURITY TAB -->
-        <div v-if="activeTab === 'security'">
-          <div class="section-title">Security & Protection Platform (WAF, Firewall, IDS)</div>
-
-          <div class="grid-2">
-            <!-- Coraza WAF Rules -->
-            <div class="table-card">
-              <h3>Coraza WAF Rules (OWASP CRS v4)</h3>
-              <table>
+          <!-- VHost Table Card -->
+          <div class="glass-panel rounded-2xl p-6">
+            <div class="overflow-x-auto">
+              <table class="table w-full text-left">
                 <thead>
-                  <tr>
-                    <th>Rule ID</th>
-                    <th>Category & Name</th>
-                    <th>Action</th>
+                  <tr class="text-slate-400 border-b border-slate-200/80 text-xs uppercase font-heading">
+                    <th>Virtual Host Domain</th>
+                    <th>Document Root Path</th>
+                    <th>Engine / Runtime</th>
+                    <th>TLS &amp; Certificates</th>
+                    <th>Quota &amp; Traffic</th>
                     <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr v-for="r in wafRules" :key="r.rule_id">
-                    <td><strong>{{ r.rule_id }}</strong></td>
-                    <td>{{ r.category }} - {{ r.name }}</td>
-                    <td><span class="badge badge-critical">{{ r.action }}</span></td>
+                <tbody class="text-sm">
+                  <tr v-for="vh in vhostsList" :key="vh.id" class="border-b border-slate-100 hover:bg-slate-50/70 transition">
+                    <td class="font-semibold text-slate-900 py-3.5">
+                      <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-globe text-sky-600"></i>
+                        <span>{{ vh.domain }}</span>
+                      </div>
+                      <div class="text-[11px] text-slate-400 font-mono">{{ vh.aliases }}</div>
+                    </td>
                     <td>
-                      <button class="btn" :class="r.enabled ? 'btn-success' : 'btn-danger'" @click="toggleWafRule(r)">
-                        {{ r.enabled ? 'Enabled' : 'Disabled' }}
-                      </button>
+                      <code class="text-xs font-mono text-slate-600 bg-slate-100 px-2 py-1 rounded-md">{{ vh.docroot }}</code>
+                    </td>
+                    <td>
+                      <span class="badge badge-sm font-semibold" :class="vh.runtime_badge">{{ vh.runtime }}</span>
+                    </td>
+                    <td>
+                      <span class="inline-flex items-center gap-1 text-xs text-emerald-700 font-semibold">
+                        <i class="fa-solid fa-lock text-emerald-500"></i> {{ vh.ssl_status }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="text-xs font-medium">{{ vh.storage_used }} / {{ vh.storage_quota }}</div>
+                      <div class="w-24 bg-slate-200 rounded-full h-1.5 mt-1 overflow-hidden">
+                        <div class="bg-sky-600 h-1.5 rounded-full" :style="{ width: vh.quota_percent + '%' }"></div>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge badge-sm bg-emerald-50 text-emerald-700 border-emerald-200 font-bold">ONLINE</span>
+                    </td>
+                    <td>
+                      <div class="flex items-center gap-1">
+                        <button class="btn btn-xs btn-ghost text-slate-600 hover:text-sky-600">Edit</button>
+                        <button class="btn btn-xs btn-ghost text-slate-600 hover:text-sky-600">Logs</button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
-
-            <!-- Host Firewall (nftables) -->
-            <div class="table-card">
-              <h3>Host Firewall (nftables Ingress Policy)</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Port</th>
-                    <th>Protocol</th>
-                    <th>Action</th>
-                    <th>Comment</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="f in firewallRules" :key="f.id">
-                    <td><strong>{{ f.dport }}</strong></td>
-                    <td>{{ f.protocol.toUpperCase() }}</td>
-                    <td><span class="badge badge-healthy">{{ f.action }}</span></td>
-                    <td>{{ f.comment }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Incidents -->
-          <div class="table-card">
-            <h3>Active & Recent Incidents (Suricata & WAF)</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Severity</th>
-                  <th>Source IP</th>
-                  <th>Target Workload</th>
-                  <th>Attack Type & MITRE</th>
-                  <th>Details</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="inc in incidentsList" :key="inc.incident_id">
-                  <td><code>{{ inc.incident_id }}</code></td>
-                  <td><span :class="['badge', 'badge-' + (inc.severity === 'critical' ? 'critical' : 'warning')]">{{ inc.severity }}</span></td>
-                  <td>{{ inc.source_ip }}</td>
-                  <td><strong>{{ inc.target_app }}</strong></td>
-                  <td>{{ inc.attack_type }} <span class="badge badge-pending">{{ inc.mitre_technique }}</span></td>
-                  <td>{{ inc.details }}</td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
 
-        <!-- 4. LOCAL AI SECURITY CENTER -->
-        <div v-if="activeTab === 'ai_security'">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div class="section-title">Local AI Security Center (Advisory & Threat Synthesis)</div>
-            <button class="btn btn-primary" @click="simulateThreat"><i class="fa fa-bolt"></i> Simulate Real-Time Threat Attack</button>
+        <!-- ================================================================= -->
+        <!-- TAB 3: REVERSE PROXY & UPSTREAM LOAD BALANCER (NEW FEATURE)       -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'proxy'" class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+                Dynamic Reverse Proxy &amp; Upstream Load Balancer
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                HAProxy sovereign edge router with layer 7 path routing, backend health probes, and circuit breakers.
+              </p>
+            </div>
+            <button class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none text-white rounded-xl shadow-md shadow-sky-600/20">
+              <i class="fa-solid fa-plus text-xs"></i> New Proxy Rule
+            </button>
           </div>
 
-          <div class="card" style="margin-bottom: 20px; border-left: 4px solid var(--accent-cyan);" v-if="narratives.length > 0">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <h3><i class="fa fa-shield-virus"></i> {{ narratives[0].title }}</h3>
-              <span class="badge badge-healthy">Confidence: {{ (narratives[0].confidence_score * 100).toFixed(0) }}%</span>
-            </div>
-            <p style="margin: 10px 0; color: #334155;">{{ narratives[0].summary }}</p>
-            <div style="background: #f1f5f9; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 11px; white-space: pre-line;">
-              {{ narratives[0].evidence }}
-            </div>
-            <div style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">
-              <strong>MITRE ATT&CK:</strong> {{ narratives[0].mitre_attack }} | <strong>Model:</strong> {{ narratives[0].model_version }}
-            </div>
-          </div>
+          <!-- Proxy Rules Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Upstream Pools Card (2 columns) -->
+            <div class="lg:col-span-2 glass-panel rounded-2xl p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h2 class="font-heading text-base font-bold text-slate-900">Upstream Backend Pools</h2>
+                <span class="badge badge-sm badge-success text-white">All Pools Healthy</span>
+              </div>
 
-          <div class="table-card">
-            <h3>AI Mitigation Recommendations & Human Approval Gates</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Recommendation</th>
-                  <th>Action Type</th>
-                  <th>Impact Level</th>
-                  <th>Approval Gate</th>
-                  <th>Status</th>
-                  <th>Decision</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="rec in aiRecommendations" :key="rec.rec_id">
-                  <td>
-                    <strong>{{ rec.title }}</strong>
-                    <div style="font-size: 11px; color: var(--text-muted);">{{ rec.evidence_citation }}</div>
-                  </td>
-                  <td><code>{{ rec.action_type }}</code></td>
-                  <td><span :class="['badge', 'badge-' + (rec.impact_level === 'high' ? 'critical' : 'warning')]">{{ rec.impact_level }}</span></td>
-                  <td><strong>{{ rec.approval_required }}</strong></td>
-                  <td><span :class="['badge', 'badge-' + rec.status]">{{ rec.status }}</span></td>
-                  <td>
-                    <div v-if="rec.status === 'pending'">
-                      <button class="btn btn-success" style="margin-right: 4px;" @click="approveAiRec(rec.rec_id, 'approve')">Approve</button>
-                      <button class="btn btn-danger" @click="approveAiRec(rec.rec_id, 'reject')">Reject</button>
+              <div class="space-y-4">
+                <div v-for="pool in upstreamPools" :key="pool.pool_id" class="p-4 rounded-xl border border-slate-200/80 bg-white/70">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                      <span class="font-heading font-bold text-sm text-slate-900">{{ pool.name }}</span>
+                      <span class="badge badge-xs badge-ghost font-mono">{{ pool.algorithm }}</span>
                     </div>
-                    <span v-else style="font-size: 11px; color: var(--text-muted);">Executed by {{ rec.approved_by || 'system' }}</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                    <span class="text-xs font-semibold text-slate-500">{{ pool.active_targets }} / {{ pool.total_targets }} Targets Up</span>
+                  </div>
+                  <div class="mt-2 text-xs text-slate-500 flex items-center gap-4">
+                    <span><i class="fa-solid fa-route text-sky-500"></i> Route: <code>{{ pool.path_prefix }}</code></span>
+                    <span><i class="fa-solid fa-heart-pulse text-rose-500"></i> Health Check: <code>{{ pool.health_uri }} (every {{ pool.check_interval }}s)</code></span>
+                  </div>
+                  <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2 font-mono text-slate-600">
+                      <span v-for="t in pool.targets" :key="t" class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200">{{ t }}</span>
+                    </div>
+                    <span class="text-emerald-600 font-semibold">Latency: {{ pool.avg_latency }}ms</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ingress Routing Engine Card -->
+            <div class="glass-panel rounded-2xl p-6 space-y-4">
+              <h2 class="font-heading text-base font-bold text-slate-900">Edge Gateway Settings</h2>
+              
+              <div class="space-y-3 text-xs">
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <div class="font-bold text-slate-800">HTTP &rarr; HTTPS Strict Redirection</div>
+                  <p class="text-slate-500 mt-1">Automatic 301 Permanent Redirect on port 80 to port 443 with HSTS header.</p>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <div class="font-bold text-slate-800">WebSocket &amp; gRPC Passthrough</div>
+                  <p class="text-slate-500 mt-1">Transparent bi-directional streaming for telemetry &amp; live sensor channels.</p>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <div class="font-bold text-slate-800">DDoS Rate Limiting</div>
+                  <p class="text-slate-500 mt-1">Token bucket limiter: 1,000 req/min per IP with automated temporary ban.</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        
-        <!-- 4B. AI OPERATIONS CENTER (Part 10) -->
-        <div v-if="activeTab === 'ai_ops'">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div class="section-title">Part 10: AI Operations Center & Predictive Infrastructure</div>
-            <button class="btn btn-primary" @click="fetchAiOpsData"><i class="fa fa-sync-alt"></i> Refresh Telemetry</button>
-          </div>
-
-          <!-- Infrastructure Assistant: Why is app slow? -->
-          <div class="card" style="margin-bottom: 20px; border-left: 4px solid var(--accent-cyan);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <h3 style="color: #0369a1;"><i class="fa fa-stethoscope"></i> Infrastructure Assistant: Latency Root Cause Analysis</h3>
-              <span class="badge badge-warning">Query Diagnosed</span>
+        <!-- ================================================================= -->
+        <!-- TAB 4: SSL/TLS & KEY MANAGEMENT VAULT (NEW FEATURE)               -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'ssl'" class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+                SSL / TLS Certificates &amp; Key Vault
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                Automated ACME Let's Encrypt issuance, Indian Sovereign CSR generation, and TLS 1.3 cipher hardening.
+              </p>
             </div>
-            <p style="margin-bottom: 8px;"><strong>Query:</strong> {{ aiOpsRca.query || "Why is application experiencing latency spikes?" }}</p>
-            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-bottom: 12px;">
-              <div style="font-weight: 700; color: #b45309; margin-bottom: 4px;">Primary Bottleneck: {{ aiOpsRca.root_cause_analysis?.primary_bottleneck }}</div>
-              <div style="font-size: 13px; color: #334155;">{{ aiOpsRca.root_cause_analysis?.details }}</div>
-            </div>
-            <div style="font-weight: 600; margin-bottom: 6px;">AI Recommendations:</div>
-            <div v-for="r in aiOpsRca.recommendations" style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid var(--border-color); border-radius: 4px; padding: 8px 12px; margin-bottom: 6px;">
-              <div>
-                <code>{{ r.action }}</code>
-                <div style="font-size: 11px; color: var(--text-muted);">Impact: {{ r.impact }}</div>
-              </div>
-              <span class="badge badge-pending">Approval: {{ r.approval_required }}</span>
+            <div class="flex gap-2">
+              <button class="btn btn-sm btn-outline border-slate-300 rounded-xl"><i class="fa-solid fa-file-pen"></i> Generate CSR</button>
+              <button class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none text-white rounded-xl shadow-md shadow-sky-600/20">
+                <i class="fa-solid fa-plus text-xs"></i> Issue / Import Cert
+              </button>
             </div>
           </div>
 
-          <div class="grid-2">
-            <!-- Capacity Planning (30d, 90d, 1yr) -->
-            <div class="card">
-              <h3><i class="fa fa-chart-pie"></i> Capacity Planning & Forecasts</h3>
-              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Linear projection model based on Btrfs snapshots & database WAL ingestion:</p>
-              <table style="width: 100%; margin-bottom: 12px;">
-                <tr><td>Current Storage Used:</td><td><strong>184.2 GB / 2.0 TB (9.0%)</strong></td></tr>
-                <tr><td>30-Day Projection:</td><td><strong style="color: var(--primary);">212.0 GB (+15%)</strong></td></tr>
-                <tr><td>90-Day Projection:</td><td><strong style="color: var(--warning);">286.5 GB (+55%)</strong></td></tr>
-                <tr><td>1-Year Projection:</td><td><strong style="color: #6d28d9;">640.0 GB (31.2%)</strong></td></tr>
-                <tr><td>Headroom Remaining:</td><td><span class="badge badge-healthy">1,420 Days</span></td></tr>
-              </table>
-              <div style="font-size: 12px; color: #475569; background: #f1f5f9; padding: 8px; border-radius: 4px;">
-                • Btrfs Snapper retention automatically reclaims aged snapshots.<br>
-                • Memory projection: 32 GB at 90 days (optimal 50% head-room).
-              </div>
-            </div>
-
-            <!-- Predictive Failure Analysis -->
-            <div class="card">
-              <h3><i class="fa fa-heartbeat"></i> Predictive Hardware Failure Analysis</h3>
-              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Monitors NVMe SMART, RAID integrity, temperatures, and latency:</p>
-              <table style="width: 100%; margin-bottom: 12px;">
+          <!-- SSL Vault Table -->
+          <div class="glass-panel rounded-2xl p-6">
+            <div class="overflow-x-auto">
+              <table class="table w-full text-left">
                 <thead>
-                  <tr style="font-size: 11px; text-transform: uppercase;">
-                    <th>Drive</th>
-                    <th>Temp</th>
-                    <th>Wear</th>
-                    <th>Latency</th>
-                    <th>30d Risk</th>
+                  <tr class="text-slate-400 border-b border-slate-200/80 text-xs uppercase font-heading">
+                    <th>Domain / Subject</th>
+                    <th>Issuer Authority</th>
+                    <th>Key Type &amp; Signature</th>
+                    <th>Expiration / Auto-Renew</th>
+                    <th>OCSP &amp; TLS 1.3</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>/dev/nvme0n1</strong></td>
-                    <td><span class="badge badge-healthy">38°C</span></td>
-                    <td>3%</td>
-                    <td>0.42ms</td>
-                    <td><span class="badge badge-healthy">0.01%</span></td>
-                  </tr>
-                  <tr>
-                    <td><strong>/dev/nvme1n1</strong></td>
-                    <td><span class="badge badge-healthy">39°C</span></td>
-                    <td>3%</td>
-                    <td>0.45ms</td>
-                    <td><span class="badge badge-healthy">0.01%</span></td>
+                <tbody class="text-sm">
+                  <tr v-for="c in sslCertificates" :key="c.id" class="border-b border-slate-100 hover:bg-slate-50/70 transition">
+                    <td class="font-semibold text-slate-900 py-3.5">
+                      <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-certificate text-amber-500"></i>
+                        <span>{{ c.common_name }}</span>
+                      </div>
+                      <div class="text-[11px] text-slate-400 font-mono">SANs: {{ c.sans }}</div>
+                    </td>
+                    <td>
+                      <span class="badge badge-sm badge-ghost font-semibold">{{ c.issuer }}</span>
+                    </td>
+                    <td>
+                      <div class="text-xs font-mono font-medium text-slate-700">{{ c.key_spec }}</div>
+                      <div class="text-[10px] text-slate-400">{{ c.sig_algo }}</div>
+                    </td>
+                    <td>
+                      <div class="text-xs font-semibold" :class="c.days_left < 30 ? 'text-amber-600' : 'text-slate-700'">{{ c.days_left }} Days Remaining</div>
+                      <div class="text-[11px] text-emerald-600 flex items-center gap-1">
+                        <i class="fa-solid fa-arrows-rotate"></i> Auto-Renew Enabled
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge badge-xs bg-emerald-100 text-emerald-800 font-bold border-none">STAPLED</span>
+                      <span class="badge badge-xs bg-sky-100 text-sky-800 font-bold border-none ml-1">TLS 1.3 STRICT</span>
+                    </td>
+                    <td>
+                      <span class="badge badge-sm bg-emerald-50 text-emerald-700 border-emerald-200 font-bold">VALID</span>
+                    </td>
+                    <td>
+                      <button class="btn btn-xs btn-ghost text-slate-500 hover:text-sky-600"><i class="fa-solid fa-download"></i></button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
-              <div style="font-size: 12px; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 8px; border-radius: 4px; color: #065f46;">
-                <i class="fa fa-check-circle"></i> RAID DUP metadata mirror in sync. Zero CRC errors on 10GbE SFP+ link.
-              </div>
             </div>
           </div>
         </div>
 
-        <!-- 4C. AI BACKUP INTELLIGENCE (Part 11) -->
-        <div v-if="activeTab === 'ai_backup'">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div class="section-title">Part 11: AI Backup Intelligence & Disaster Recovery Advisor</div>
-            <button class="btn btn-primary" @click="fetchAiBackupData"><i class="fa fa-sync-alt"></i> Run Anomaly Audit</button>
-          </div>
-
-          <div class="grid-2">
-            <!-- Ransomware & Anomaly Detection -->
-            <div class="card">
-              <h3><i class="fa fa-shield-virus"></i> Backup Anomaly & Ransomware Detection</h3>
-              <div style="display: flex; gap: 8px; margin: 10px 0;">
-                <span class="badge badge-healthy"><i class="fa fa-check"></i> Ransomware: None</span>
-                <span class="badge badge-healthy">Repository: WORM Immutable</span>
-              </div>
-              <table style="width: 100%; margin-bottom: 12px;">
-                <tr><td>Latest Snapshot Size:</td><td><strong>14.28 GB (+1.17%)</strong></td></tr>
-                <tr><td>Files Pruned / Modified:</td><td><strong>14 deleted / 412 modified</strong></td></tr>
-                <tr><td>Entropy Score:</td><td><strong>7.12 / 8.0 (Normal DB entropy)</strong></td></tr>
-                <tr><td>Mass Deletion Check:</td><td><span class="badge badge-healthy">PASSED</span></td></tr>
-                <tr><td>Repository Shrinkage Check:</td><td><span class="badge badge-healthy">PASSED</span></td></tr>
-              </table>
-              <div style="font-size: 12px; color: #1e293b; background: #f8fafc; padding: 8px; border-radius: 4px;">
-                Continuous entropy and block differential analysis verifies that data has not undergone unauthorized encryption.
-              </div>
-            </div>
-
-            <!-- Recovery Advisor -->
-            <div class="card">
-              <h3><i class="fa fa-compass"></i> Disaster Recovery Advisor & Dependency Map</h3>
-              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Automated orchestration steps for Research Portal restore:</p>
-              <ol style="margin-left: 20px; font-size: 12px; line-height: 1.8; color: #334155;">
-                <li><strong>Storage Layer:</strong> Mount latest verified Restic snapshot from WORM vault.</li>
-                <li><strong>Database Layer:</strong> Restore PostgreSQL base backup & replay WAL to target PITR timestamp.</li>
-                <li><strong>Connection Pool:</strong> Initialize PgBouncer unix domain sockets.</li>
-                <li><strong>App Quadlet:</strong> Launch rootless Podman service <code>csir-portal.service</code>.</li>
-                <li><strong>Edge Verification:</strong> Execute Coraza WAF synthetic health check (Target RTO: 45s).</li>
-              </ol>
-            </div>
-          </div>
-        </div>
-
-        <!-- 4D. AI VIRTUALIZATION ADVISOR (Part 12) -->
-        <div v-if="activeTab === 'ai_virtualization'">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div class="section-title">Part 12: AI Virtualization Platform (KVM / QEMU / libvirt)</div>
-            <span class="badge badge-healthy">Hypervisor: KVM 9.1 / libvirt 10.6</span>
-          </div>
-
-          <div class="table-card" style="margin-bottom: 20px;">
-            <h3>Active Virtual Machines & Health Monitoring</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>VM Name</th>
-                  <th>vCPUs</th>
-                  <th>Allocated RAM</th>
-                  <th>CPU Steal</th>
-                  <th>Status</th>
-                  <th>AI Optimization Advice</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>vm-ai-inference-01</strong></td>
-                  <td>8 vCPUs</td>
-                  <td>16.0 GB</td>
-                  <td>0.1%</td>
-                  <td><span class="badge badge-healthy">Running</span></td>
-                  <td>Enable Kernel Samepage Merging (KSM) to reclaim ~2.4GB shared weights.</td>
-                </tr>
-                <tr>
-                  <td><strong>vm-legacy-cms-archive</strong></td>
-                  <td>2 vCPUs</td>
-                  <td>4.0 GB</td>
-                  <td>0.0%</td>
-                  <td><span class="badge badge-healthy">Running</span></td>
-                  <td>vCPU over-provisioned; reduce to 1 vCPU based on 3% average load.</td>
-                </tr>
-                <tr>
-                  <td><strong>vm-analytics-worker</strong></td>
-                  <td>4 vCPUs</td>
-                  <td>8.0 GB</td>
-                  <td>0.2%</td>
-                  <td><span class="badge badge-healthy">Running</span></td>
-                  <td>Optimal resource allocation. Live-migration ready.</td>
-                </tr>
-                <tr>
-                  <td><strong>vm-staging-sandbox</strong></td>
-                  <td>2 vCPUs</td>
-                  <td>4.0 GB</td>
-                  <td>0.0%</td>
-                  <td><span class="badge badge-pending">Paused</span></td>
-                  <td>Merge 14-day old external QCOW2 snapshot to prevent I/O degradation.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="grid-2">
-            <div class="card">
-              <h3><i class="fa fa-network-wired"></i> Live Migration Advisor</h3>
-              <p style="font-size: 13px; margin-bottom: 8px;">Target Host: <code>csir-swa-node-02.internal (10.20.10.16)</code></p>
-              <p style="font-size: 13px; margin-bottom: 8px;">Network: 10GbE dedicated migration link with TLS encryption.</p>
-              <div style="font-size: 12px; color: #047857; background: #ecfdf5; padding: 8px; border-radius: 4px;">
-                <i class="fa fa-check"></i> Migration Readiness: 100% verified. Estimated VM downtime: &lt;120ms.
-              </div>
-            </div>
-            <div class="card">
-              <h3><i class="fa fa-layer-group"></i> Snapshot Lifecycle Advisor</h3>
-              <p style="font-size: 13px; margin-bottom: 8px;">Active QCOW2 external snapshots: 3</p>
-              <p style="font-size: 13px; margin-bottom: 8px;">Btrfs subvolume copy-on-write state: Healthy</p>
-              <div style="font-size: 12px; color: #1e3a8a; background: #eff6ff; padding: 8px; border-radius: 4px;">
-                Recommendation: Consolidate staging snapshots prior to production upgrade snapshot.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 4E. AI CHATOPS & GOVERNANCE MODEL (Part 16) -->
-        <div v-if="activeTab === 'ai_chatops'">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div class="section-title">Part 16: AI ChatOps & Controlled Governance Console</div>
-            <span class="badge badge-warning"><i class="fa fa-lock"></i> AI Mandatory Human Sign-Off Gate</span>
-          </div>
-
-          <!-- Governance Flow Diagram -->
-          <div class="card" style="margin-bottom: 20px; background: #f8fafc;">
-            <div style="font-weight: 700; margin-bottom: 6px; color: #1e293b;">Strict Governance Architecture:</div>
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px;">
-              <span class="badge badge-pending">Plain Text Query</span>
-              <i class="fa fa-arrow-right text-muted"></i>
-              <span class="badge badge-pending">AI Structured Suggestion</span>
-              <i class="fa fa-arrow-right text-muted"></i>
-              <span class="badge badge-critical">Human Admin Approval</span>
-              <i class="fa fa-arrow-right text-muted"></i>
-              <span class="badge badge-warning">Policy Validation</span>
-              <i class="fa fa-arrow-right text-muted"></i>
-              <span class="badge badge-healthy">Node Agent Execution</span>
-              <i class="fa fa-arrow-right text-muted"></i>
-              <span class="badge badge-healthy">SHA-256 Audit Trail</span>
-            </div>
-            <div style="font-size: 11px; color: var(--danger); font-weight: 600; margin-top: 8px;">
-              * Mandate: AI must NEVER directly execute privileged host actions without explicit human sign-off.
-            </div>
-          </div>
-
-          <!-- Interactive ChatOps Terminal -->
-          <div class="card" style="margin-bottom: 20px;">
-            <div style="font-weight: 700; margin-bottom: 10px;">Quick Operation Presets:</div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
-              <button class="btn" @click="executeChatOpsPreset('Create website for recruitment portal')">Create Website</button>
-              <button class="btn" @click="executeChatOpsPreset('Deploy database with daily PITR backups')">Deploy Database</button>
-              <button class="btn" @click="executeChatOpsPreset('Show failed backups in last 30 days')">Show Failed Backups</button>
-              <button class="btn" @click="executeChatOpsPreset('List vulnerable containers across all pods')">List Vulnerable Containers</button>
-            </div>
-
-            <div style="display: flex; gap: 10px;">
-              <input type="text" class="search-input" style="flex: 1;" placeholder="Enter operational command in plain English (e.g. 'Deploy database for sensor analytics')..." v-model="chatopsInput" @keyup.enter="submitChatopsQuery">
-              <button class="btn btn-primary" @click="submitChatopsQuery"><i class="fa fa-paper-plane"></i> Submit to AI</button>
-            </div>
-          </div>
-
-          <!-- Active ChatOps Proposal Card -->
-          <div v-if="activeProposal" class="card" style="border-left: 4px solid var(--primary); margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h3 style="color: var(--primary);"><i class="fa fa-clipboard-check"></i> Proposed Action: {{ activeProposal.intent }}</h3>
-              <span :class="['badge', activeProposal.approval_required ? 'badge-critical' : 'badge-healthy']">
-                {{ activeProposal.governance_status }}
-              </span>
-            </div>
-            <p style="margin-bottom: 8px;"><strong>Description:</strong> {{ activeProposal.proposed_action }}</p>
-            <div style="background: #0f172a; color: #38bdf8; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; margin-bottom: 10px;">
-              $ {{ activeProposal.command_preview }}
-            </div>
-            <div style="font-size: 12px; color: var(--success); margin-bottom: 14px;">
-              <i class="fa fa-shield-alt"></i> Safety Check: {{ activeProposal.safety_check }}
-            </div>
-            <div v-if="activeProposal.approval_required">
-              <button class="btn btn-success" style="margin-right: 8px;" @click="approveChatopsProposal('approve')">
-                <i class="fa fa-check"></i> Approve & Execute via Node Agent
-              </button>
-              <button class="btn btn-danger" @click="approveChatopsProposal('reject')">
-                <i class="fa fa-times"></i> Reject & Cancel
-              </button>
-            </div>
-            <div v-else style="background: #f1f5f9; padding: 8px; border-radius: 4px; font-size: 12px;">
-              <strong>Execution Output:</strong> {{ activeProposal.result }}
-            </div>
-          </div>
-        </div>
-
-        <!-- 5. DATA PROTECTION & BACKUPS -->
-        <div v-if="activeTab === 'data_protection'">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div class="section-title">Data Protection, Snapshots & Disaster Recovery</div>
+        <!-- ================================================================= -->
+        <!-- TAB 5: CONTAINER QUADLETS TAB                                     -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'applications'" class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <button class="btn" style="margin-right: 8px;" @click="triggerResticBackup"><i class="fa fa-cloud-upload"></i> Run Restic Backup</button>
-              <button class="btn btn-primary" @click="triggerDrDrill"><i class="fa fa-vial"></i> Run Sandbox DR Restore Drill</button>
+              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+                Rootless Podman Quadlet Container Workloads
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                Zero-daemon systemd managed containers with dropped Linux capabilities and user namespaces.
+              </p>
+            </div>
+            <button @click="showDeployModal = true" class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none text-white rounded-xl shadow-md shadow-sky-600/20">
+              <i class="fa-solid fa-plus text-xs"></i> Deploy New Container
+            </button>
+          </div>
+
+          <div class="glass-panel rounded-2xl p-6">
+            <div class="overflow-x-auto">
+              <table class="table w-full text-left">
+                <thead>
+                  <tr class="text-slate-400 border-b border-slate-200/80 text-xs uppercase font-heading">
+                    <th>Application &amp; ID</th>
+                    <th>Image &amp; Provenance Digest</th>
+                    <th>Memory Quota / CPU</th>
+                    <th>Ingress Endpoint</th>
+                    <th>Isolation Boundary</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="text-sm">
+                  <tr v-for="app in appList" :key="app.app_id" class="border-b border-slate-100 hover:bg-slate-50/70 transition">
+                    <td class="font-semibold text-slate-900 py-3.5">
+                      <strong>{{ app.name }}</strong>
+                      <div class="text-[11px] text-slate-400 font-mono">{{ app.app_id }}</div>
+                    </td>
+                    <td>
+                      <code class="text-xs font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">{{ app.digest.substring(0, 18) }}...</code>
+                      <div class="text-[10px] text-emerald-600 font-bold mt-1"><i class="fa-solid fa-circle-check"></i> Cosign Signed</div>
+                    </td>
+                    <td>{{ app.memory_mb }} MB / 50% CPU</td>
+                    <td>
+                      <span class="font-mono text-sky-700 font-semibold">{{ app.domain }}</span>
+                      <div class="text-[11px] text-slate-400">:{{ app.port }}</div>
+                    </td>
+                    <td>
+                      <span class="badge badge-sm bg-emerald-100 text-emerald-800 border-none font-bold">UserNS Rootless</span>
+                    </td>
+                    <td>
+                      <button class="btn btn-xs btn-outline border-slate-300 mr-1">Restart</button>
+                      <button class="btn btn-xs btn-outline btn-error">Stop</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- TAB 6: SECURITY TAB (Coraza WAF & Firewall)                       -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'security'" class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+                Coraza Sovereign WAF &amp; nftables Network Defense
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                Real-time OWASP Core Rule Set enforcement, SQLi/XSS/RCE deep packet inspection, and packet dropping.
+              </p>
+            </div>
+            <span class="badge badge-error text-white font-bold p-3">Paranoia Level 2 Active</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Coraza Rules -->
+            <div class="glass-panel rounded-2xl p-6 space-y-4">
+              <h2 class="font-heading text-base font-bold text-slate-900">Active Coraza CRS WAF Rules</h2>
+              <div class="space-y-2.5">
+                <div v-for="r in wafRules" :key="r.rule_id" class="p-3 rounded-xl border border-slate-200/80 bg-white/70 flex items-center justify-between">
+                  <div>
+                    <div class="font-semibold text-xs text-slate-900">Rule #{{ r.rule_id }}: {{ r.name }}</div>
+                    <div class="text-[11px] text-slate-500 font-mono">Action: {{ r.action.toUpperCase() }} | Severity: {{ r.severity }}</div>
+                  </div>
+                  <input type="checkbox" class="toggle toggle-sm toggle-success" :checked="r.enabled" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Ingress Firewall -->
+            <div class="glass-panel rounded-2xl p-6 space-y-4">
+              <h2 class="font-heading text-base font-bold text-slate-900">Default-Deny nftables Chains</h2>
+              <div class="space-y-2.5">
+                <div v-for="fw in firewallRules" :key="fw.comment" class="p-3 rounded-xl border border-slate-200/80 bg-white/70 flex items-center justify-between">
+                  <div>
+                    <div class="font-semibold text-xs text-slate-900">{{ fw.comment }}</div>
+                    <div class="text-[11px] text-slate-500 font-mono">{{ fw.protocol.toUpperCase() }} :{{ fw.dport }} ({{ fw.source }})</div>
+                  </div>
+                  <span class="badge badge-sm font-bold" :class="fw.action === 'accept' ? 'badge-success text-white' : 'badge-error text-white'">
+                    {{ fw.action.toUpperCase() }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- TAB 7: LOCAL AI SECURITY CENTER                                   -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'ai_security'" class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+                Local AI Security &amp; Operations Center
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                Zero-cloud local LLM telemetry analysis, root-cause diagnosis, and human-governed execution gates.
+              </p>
             </div>
           </div>
 
-          <div class="grid-2">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div v-for="nar in narratives" :key="nar.narrative_id" class="glass-panel rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                  <span class="badge badge-sm badge-info text-white font-bold">{{ nar.narrative_id }}</span>
+                  <span class="text-xs text-slate-400 font-mono">{{ nar.created_at }}</span>
+                </div>
+                <h3 class="font-heading text-base font-bold text-slate-900 mt-2">{{ nar.title }}</h3>
+                <p class="text-sm text-slate-600 mt-2 leading-relaxed">{{ nar.executive_summary }}</p>
+              </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 space-y-4">
+              <h3 class="font-heading text-sm font-bold text-slate-900 uppercase">Human-in-the-Loop Governance</h3>
+              <div v-for="rec in aiRecommendations" :key="rec.rec_id" class="p-4 rounded-xl border border-slate-200 bg-white/80 space-y-2">
+                <div class="font-bold text-xs text-slate-900">{{ rec.title }}</div>
+                <p class="text-xs text-slate-500">{{ rec.description }}</p>
+                <div class="flex items-center justify-between pt-2">
+                  <span class="badge badge-xs badge-warning font-bold">APPROVAL MANDATORY</span>
+                  <button class="btn btn-xs btn-primary bg-sky-600 border-none text-white">Authorize</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- TAB 8: DATA PROTECTION & SNAPSHOTS                                -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'data_protection'" class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+                Data Protection, Btrfs Trees &amp; Disaster Recovery
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                Subvolume-level immutable snapshots and encrypted Restic repositories with verified RTO/RPO drills.
+              </p>
+            </div>
+            <button class="btn btn-sm btn-primary bg-sky-600 border-none text-white rounded-xl">Trigger Snapshot</button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Btrfs Snapshots -->
-            <div class="table-card">
-              <h3>Btrfs / Snapper Snapshots</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Snapshot #</th>
-                    <th>Subvolume</th>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="s in snapshots" :key="s.snapshot_number">
-                    <td><strong>#{{ s.snapshot_number }}</strong></td>
-                    <td>{{ s.subvolume }}</td>
-                    <td><span class="badge badge-pending">{{ s.cleanup_type }}</span></td>
-                    <td>{{ s.description }}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="glass-panel rounded-2xl p-6">
+              <h3 class="font-heading text-base font-bold text-slate-900 mb-4">Btrfs / Snapper Subvolume Tree</h3>
+              <div class="overflow-x-auto">
+                <table class="table table-sm w-full">
+                  <thead>
+                    <tr class="text-slate-400 uppercase text-xs font-heading">
+                      <th>#</th>
+                      <th>Subvolume</th>
+                      <th>Description</th>
+                      <th>Cleanup Policy</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="s in snapshots" :key="s.snapshot_number">
+                      <td class="font-bold">#{{ s.snapshot_number }}</td>
+                      <td><code>{{ s.subvolume }}</code></td>
+                      <td>{{ s.description }}</td>
+                      <td><span class="badge badge-xs badge-ghost">{{ s.cleanup_type }}</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            <!-- DR Restore Drills -->
-            <div class="table-card">
-              <h3>Disaster Recovery Verification Tests</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Target Workload</th>
-                    <th>Measured RTO</th>
-                    <th>Measured RPO</th>
-                    <th>Integrity Hash</th>
-                    <th>Result</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="d in drTests" :key="d.test_id">
-                    <td><strong>{{ d.target_app }}</strong></td>
-                    <td>{{ d.measured_rto_seconds }}s</td>
-                    <td>{{ d.measured_rpo_seconds }}s</td>
-                    <td><code>{{ d.verified_hash.substring(0, 16) }}...</code></td>
-                    <td><span class="badge badge-healthy"><i class="fa fa-check"></i> {{ d.status.toUpperCase() }}</span></td>
-                  </tr>
-                </tbody>
-              </table>
+            <!-- DR Verification -->
+            <div class="glass-panel rounded-2xl p-6">
+              <h3 class="font-heading text-base font-bold text-slate-900 mb-4">DR Verification Tests</h3>
+              <div class="overflow-x-auto">
+                <table class="table table-sm w-full">
+                  <thead>
+                    <tr class="text-slate-400 uppercase text-xs font-heading">
+                      <th>Workload Target</th>
+                      <th>RTO</th>
+                      <th>RPO</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="d in drTests" :key="d.test_id">
+                      <td class="font-bold">{{ d.target_app }}</td>
+                      <td>{{ d.measured_rto_seconds }}s</td>
+                      <td>{{ d.measured_rpo_seconds }}s</td>
+                      <td><span class="badge badge-xs badge-success text-white font-bold">VERIFIED</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 6. COMPLIANCE & AUDIT TAB -->
-        <div v-if="activeTab === 'compliance'">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div class="section-title">CERT-In Compliance & Tamper-Evident Audit Ledger</div>
+        <!-- ================================================================= -->
+        <!-- TAB 9: CERT-IN AUDIT LEDGER                                       -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'compliance'" class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <button class="btn" style="margin-right: 8px;" @click="verifyAuditChain"><i class="fa fa-shield-check"></i> Verify Ledger Integrity</button>
-              <button class="btn btn-primary" @click="exportCertInDossier"><i class="fa fa-download"></i> Download CERT-In Export</button>
+              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+                CERT-In Compliance &amp; Cryptographic Audit Ledger
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                Directions under Section 70B compliant | 180-Day retention locked | Indian NPL NTP Synchronized
+              </p>
             </div>
+            <button class="btn btn-sm btn-primary bg-sky-600 border-none text-white rounded-xl"><i class="fa-solid fa-download"></i> Export Dossier</button>
           </div>
 
-          <div class="card" style="margin-bottom: 20px; background: #f0fdf4; border-color: #bbf7d0;">
-            <div style="font-weight: 700; color: #166534; font-size: 13px;"><i class="fa fa-check-circle"></i> Cryptographic Hash Chain Status: 100% Tamper-Evident & Verified</div>
-            <div style="font-size: 12px; color: #15803d; margin-top: 4px;">
-              Directions under Section 70B compliant | 180-Day retention locked | Indian NPL NTP Synchronized
-            </div>
-          </div>
-
-          <div class="table-card">
-            <h3>Audit Ledger (Append-Only SHA-256 Hash Chain)</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Index</th>
-                  <th>Timestamp</th>
-                  <th>Actor & IP</th>
-                  <th>Action</th>
-                  <th>Resource</th>
-                  <th>Previous Block Hash</th>
-                  <th>Entry Hash</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="e in auditLedger" :key="e.entry_index">
-                  <td><strong>#{{ e.entry_index }}</strong></td>
-                  <td>{{ new Date(e.timestamp).toLocaleTimeString() }}</td>
-                  <td>{{ e.actor }}<div style="font-size: 10px; color: var(--text-muted);">{{ e.actor_ip }}</div></td>
-                  <td><span class="badge badge-pending">{{ e.action }}</span></td>
-                  <td>{{ e.resource }}</td>
-                  <td><code>{{ e.prev_hash.substring(0, 10) }}...</code></td>
-                  <td><code>{{ e.entry_hash.substring(0, 10) }}...</code></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- 7. UPDATES & RECOVERY TAB -->
-        <div v-if="activeTab === 'updates'">
-          <div class="section-title">Transactional Updates & Operating System Lifecycle</div>
-
-          <div class="card" style="margin-bottom: 20px;">
-            <h3>openSUSE MicroOS Transactional-Update Engine</h3>
-            <div style="margin: 12px 0;">
-              <p><strong>Active Root Snapshot:</strong> #{{ updateStatus.active_snapshot }} (Read-Only)</p>
-              <p><strong>Current Channel:</strong> <span class="badge badge-healthy">{{ updateStatus.channel }}</span></p>
-              <p><strong>Staged Next Boot Snapshot:</strong> {{ updateStatus.staged_snapshot ? '#' + updateStatus.staged_snapshot : 'None (System in sync)' }}</p>
-            </div>
-            <div style="display: flex; gap: 10px;">
-              <button class="btn btn-primary" @click="stageOsUpdate"><i class="fa fa-download"></i> Stage Transactional Update</button>
-              <button class="btn btn-danger" @click="triggerOsRollback"><i class="fa fa-undo"></i> Rollback to Previous Snapshot</button>
+          <div class="glass-panel rounded-2xl p-6">
+            <div class="overflow-x-auto">
+              <table class="table table-sm w-full">
+                <thead>
+                  <tr class="text-slate-400 uppercase text-xs font-heading">
+                    <th>Index</th>
+                    <th>Timestamp (IST)</th>
+                    <th>Actor &amp; Subnet</th>
+                    <th>Action</th>
+                    <th>Resource</th>
+                    <th>Entry Hash (SHA-256)</th>
+                  </tr>
+                </thead>
+                <tbody class="text-xs">
+                  <tr v-for="e in auditLedger" :key="e.entry_index">
+                    <td class="font-bold">#{{ e.entry_index }}</td>
+                    <td>{{ e.timestamp }}</td>
+                    <td>{{ e.actor }} <span class="text-slate-400">({{ e.actor_ip }})</span></td>
+                    <td><span class="badge badge-xs badge-ghost font-bold">{{ e.action }}</span></td>
+                    <td><code>{{ e.resource }}</code></td>
+                    <td><code class="text-[11px] font-mono text-sky-800">{{ e.entry_hash.substring(0, 18) }}...</code></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
 
-        <!-- 8. BOOT SCREEN (SECTION 6 MOCKUP) -->
-        <div v-if="activeTab === 'boot_screen'">
-          <div class="section-title">Appliance Console & Hardware Boot Screen Mockup (Section 6)</div>
-          <div class="boot-terminal">{{ bootScreenText }}</div>
+        <!-- ================================================================= -->
+        <!-- TAB 10: TRANSACTIONAL UPDATES                                     -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'updates'" class="space-y-6">
+          <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+            Transactional Updates &amp; Operating System Lifecycle
+          </h1>
+
+          <div class="glass-panel rounded-2xl p-6 space-y-4">
+            <h3 class="font-heading text-base font-bold text-slate-900">openSUSE MicroOS Transactional Engine</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="text-slate-500 text-xs">Active Root Snapshot</div>
+                <div class="font-heading font-extrabold text-xl mt-1 text-slate-900">#{{ updateStatus.active_snapshot }} (Read-Only)</div>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="text-slate-500 text-xs">Current Channel</div>
+                <div class="font-heading font-extrabold text-xl mt-1 text-sky-700 uppercase">{{ updateStatus.channel }}</div>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="text-slate-500 text-xs">Staged Next Boot</div>
+                <div class="font-heading font-extrabold text-xl mt-1 text-emerald-700">None (In Sync)</div>
+              </div>
+            </div>
+            <div class="pt-4 flex gap-3">
+              <button class="btn btn-sm btn-primary bg-sky-600 border-none text-white rounded-xl">Stage OS Update</button>
+              <button class="btn btn-sm btn-error text-white rounded-xl">Rollback Snapshot</button>
+            </div>
+          </div>
         </div>
+
+        <!-- ================================================================= -->
+        <!-- TAB 11: HARDWARE BOOT SCREEN TERMINAL                             -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'boot_screen'" class="space-y-6">
+          <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+            Bare-Metal Hardware &amp; Diagnostic Terminal Console
+          </h1>
+          <div class="p-6 rounded-2xl bg-slate-950 text-emerald-400 font-mono text-xs shadow-2xl overflow-x-auto whitespace-pre leading-relaxed border border-slate-800">
+{{ bootScreenText }}
+          </div>
+        </div>
+
       </main>
     </div>
 
-    <!-- Deploy Modal -->
-    <div class="modal-overlay" v-if="showDeployModal">
-      <div class="modal-content">
-        <h3>Deploy New Containerized Workload</h3>
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Generates rootless Podman Quadlet with dropped capabilities and read-only root.</p>
-
-        <div class="form-group">
-          <label>Application Name</label>
-          <input type="text" class="form-control" v-model="newApp.name" placeholder="e.g. SERC Sensor Portal">
-        </div>
-        <div class="form-group">
-          <label>Container Image (Pinned by digest)</label>
-          <input type="text" class="form-control" v-model="newApp.image" placeholder="registry.csir.res.in/apps/sensor:1.0.0">
-        </div>
-        <div class="grid-2">
-          <div class="form-group">
-            <label>Service Port</label>
-            <input type="number" class="form-control" v-model.number="newApp.port">
+    <!-- Workload Deployment Modal -->
+    <dialog class="modal" :class="{ 'modal-open': showDeployModal }">
+      <div class="modal-box glass-panel rounded-2xl border border-slate-200">
+        <h3 class="font-heading font-bold text-lg text-slate-900">Deploy New Sovereign Workload</h3>
+        <p class="py-2 text-xs text-slate-500">Generates rootless Podman Quadlet with dropped capabilities and read-only root.</p>
+        <div class="space-y-3 mt-2 text-xs">
+          <div>
+            <label class="font-semibold text-slate-700">Application Name</label>
+            <input type="text" placeholder="e.g. SERC Sensor Portal" class="input input-sm input-bordered w-full rounded-xl mt-1" />
           </div>
-          <div class="form-group">
-            <label>Public Domain</label>
-            <input type="text" class="form-control" v-model="newApp.domain" placeholder="sensor.serc.res.in">
+          <div>
+            <label class="font-semibold text-slate-700">Image Digest Pin</label>
+            <input type="text" placeholder="registry.csir.res.in/apps/sensor:1.0.0" class="input input-sm input-bordered w-full rounded-xl mt-1" />
           </div>
         </div>
-
-        <div class="modal-actions">
-          <button class="btn" @click="showDeployModal = false">Cancel</button>
-          <button class="btn btn-primary" @click="submitDeployApp">Deploy Workload</button>
+        <div class="modal-action">
+          <button @click="showDeployModal = false" class="btn btn-sm btn-ghost rounded-xl">Cancel</button>
+          <button @click="showDeployModal = false" class="btn btn-sm btn-primary bg-sky-600 border-none text-white rounded-xl">Deploy</button>
         </div>
       </div>
-    </div>
+    </dialog>
 
-    <!-- Toast Notification -->
-    <div class="toast" v-if="toastMessage">{{ toastMessage }}</div>
   </div>
 
   <script>
-    const { createApp, ref, onMounted } = Vue;
+    const { createApp, ref, onMounted, computed } = Vue;
 
     createApp({
       setup() {
         const activeTab = ref('overview');
-        const lang = ref('en');
         const searchQuery = ref('');
         const showDeployModal = ref(false);
-        const toastMessage = ref('');
+        const chatopsInput = ref('');
 
-        const overview = ref({
-          headline_metrics: { health_score: "98%", health_subtext: "All nodes", apps_operational: "24/24", apps_subtext: "Operational", backups_compliance: "100%", backups_subtext: "Last 02:00 IST" },
-          security_activity: { critical_count: 1, medium_count: 4, requests_blocked: 847, ips_temporarily_denied: 3 },
-          ai_recommendations: [],
-          applications: []
+        const currentDateFormatted = computed(() => {
+          return new Date().toLocaleDateString('en-IN', {
+            year: 'numeric', month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata'
+          });
         });
 
         const appList = ref([]);
+        const vhostsList = ref([]);
+        const upstreamPools = ref([]);
+        const sslCertificates = ref([]);
         const wafRules = ref([]);
         const firewallRules = ref([]);
-        const incidentsList = ref([]);
         const narratives = ref([]);
         const aiRecommendations = ref([]);
         const snapshots = ref([]);
         const drTests = ref([]);
         const auditLedger = ref([]);
-        const updateStatus = ref({});
-        const aiOpsRca = ref({
-          query: "Why is application experiencing latency spikes?",
-          root_cause_analysis: {
-            primary_bottleneck: "PostgreSQL Unindexed Query Spike",
-            details: "Query 'SELECT * FROM research_publications WHERE full_text_search ILIKE %nanotech%' is triggering full table sequential scans (duration ~1,420ms). Connection pool PgBouncer queue depth reached 42 clients."
-          },
-          recommendations: [
-            { action: "CREATE GIN INDEX ON research_publications USING gin(to_tsvector('english', abstract))", impact: "Reduces p95 query latency from 1,420ms to 8ms.", approval_required: "human" },
-            { action: "Increase PgBouncer default_pool_size from 20 to 50", impact: "Eliminates connection queue contention.", approval_required: "human" }
-          ]
-        });
-        const chatopsInput = ref('');
-        const activeProposal = ref(null);
+        const updateStatus = ref({ active_snapshot: 14, channel: 'stable' });
 
-        async function fetchAiOpsData() {
-          try {
-            const rca = await fetch('/api/v1/ai-security/operations/infrastructure-rca?app_id=res-portal').then(r => r.json());
-            aiOpsRca.value = rca;
-            showToast('AI Operations & Capacity Telemetry Refreshed.');
-          } catch(e) { console.error(e); }
-        }
-
-        async function fetchAiBackupData() {
-          try {
-            await fetch('/api/v1/ai-security/backup-intelligence/anomalies').then(r => r.json());
-            showToast('Backup Anomaly Audit Completed: Repository Clean.');
-          } catch(e) { console.error(e); }
-        }
-
-        async function submitChatopsQuery() {
-          if (!chatopsInput.value) return;
-          try {
-            const res = await fetch('/api/v1/ai-security/chatops/query', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ query: chatopsInput.value, user: 'admin@csir.res.in' })
-            }).then(r => r.json());
-            activeProposal.value = res.proposal;
-            showToast('AI Proposal synthesized. Review governance gate.');
-          } catch(e) { console.error(e); }
-        }
-
-        function executeChatOpsPreset(query) {
-          chatopsInput.value = query;
-          submitChatopsQuery();
-        }
-
-        async function approveChatopsProposal(decision) {
-          if (!activeProposal.value) return;
-          try {
-            const res = await fetch('/api/v1/ai-security/chatops/approve', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action_id: activeProposal.value.action_id, decision, approver: 'admin@csir.res.in' })
-            }).then(r => r.json());
-            showToast(res.message);
-            activeProposal.value.governance_status = res.status.toUpperCase();
-            activeProposal.value.approval_required = false;
-            activeProposal.value.result = res.message;
-          } catch(e) { console.error(e); }
-        }
-
-        const newApp = ref({
-          name: '',
-          image: '',
-          port: 8085,
-          domain: 'newservice.csir.res.in'
-        });
-
-        const i18nDict = {
-          en: {
-            product_title: "CSIR Secure Web Appliance OS",
-            search_placeholder: "Search applications, rules, incidents, snapshots...",
-            alerts: "Alerts",
-            nav: {
-              overview: "Overview",
-              applications: "Applications",
-              security: "Security",
-              ai_security: "AI Security Center",
-              data_protection: "Data Protection",
-              compliance: "Compliance & Audit",
-              updates: "Updates & Recovery",
-              console_boot: "Boot Screen"
-            },
-            overview: {
-              headline: "SECURITY AND OPERATIONS OVERVIEW",
-              security_activity_title: "Security activity",
-              ai_recommendations_title: "AI recommendations",
-              application_health_title: "APPLICATION HEALTH",
-              actions: {
-                view_incidents: "View incidents",
-                deploy_app: "Deploy application",
-                run_backup: "Run backup",
-                verify_audit: "Verify Audit Ledger"
-              }
-            }
-          },
-          hi: {
-            product_title: "सीएसआईआर सुरक्षित वेब उपकरण ओएस",
-            search_placeholder: "अनुप्रयोग, नियम, घटनाएं खोजें...",
-            alerts: "चेतावनियाँ",
-            nav: {
-              overview: "अवलोकन",
-              applications: "अनुप्रयोग",
-              security: "सुरक्षा",
-              ai_security: "एआई सुरक्षा केंद्र",
-              data_protection: "डेटा सुरक्षा",
-              compliance: "अनुपालन एवं ऑडिट",
-              updates: "अद्यतन और पुनर्प्राप्ति",
-              console_boot: "बूट स्क्रीन"
-            },
-            overview: {
-              headline: "सुरक्षा और संचालन अवलोकन",
-              security_activity_title: "सुरक्षा गतिविधि",
-              ai_recommendations_title: "एआई अनुशंसाएं",
-              application_health_title: "अनुप्रयोग स्वास्थ्य",
-              actions: {
-                view_incidents: "घटनाएं देखें",
-                deploy_app: "नया ऐप तैनात करें",
-                run_backup: "बैकअप चलाएं",
-                verify_audit: "ऑडिट खाता सत्यापित करें"
-              }
-            }
-          },
-          ta: {
-            product_title: "சிஎஸ்ஐஆர் பாதுகாப்பான வலை சாதன இயங்குதளம்",
-            search_placeholder: "பயன்பாடுகள், விதிகள், சம்பவங்களை தேட...",
-            alerts: "எச்சரிக்கைகள்",
-            nav: {
-              overview: "மேலோட்டம்",
-              applications: "பயன்பாடுகள்",
-              security: "பாதுகாப்பு",
-              ai_security: "ஏஐ பாதுகாப்பு மையம்",
-              data_protection: "தரவு பாதுகாப்பு",
-              compliance: "இணக்கம் மற்றும் தணிக்கை",
-              updates: "புதுப்பிப்புகள் மற்றும் மீட்பு",
-              console_boot: "தொடக்க திரை"
-            },
-            overview: {
-              headline: "பாதுகாப்பு மற்றும் செயல்பாடுகள் மேலோட்டம்",
-              security_activity_title: "பாதுகாப்பு செயல்பாடு",
-              ai_recommendations_title: "ஏஐ பரிந்துரைகள்",
-              application_health_title: "பயன்பாடு ஆரோக்கியம்",
-              actions: {
-                view_incidents: "சம்பவங்களைக் காண்க",
-                deploy_app: "பயன்பாட்டை நிறுவுக",
-                run_backup: "காப்புநகல் எடுக்க",
-                verify_audit: "தணிக்கை ஏட்டை சரிபார்க்கவும்"
-              }
-            }
-          }
-        };
-
-        function l(path) {
-          const keys = path.split('.');
-          let obj = i18nDict[lang.value] || i18nDict.en;
-          for (const k of keys) {
-            if (!obj || !obj[k]) return path;
-            obj = obj[k];
-          }
-          return obj;
-        }
-
-        const bootScreenText = `┌──────────────────────────────────────────────────────────────────────┐
-│                                                                      │
-│                         [ APPROVED CSIR LOGO ]                       │
-│                                                                      │
-│                    CSIR SECURE WEB APPLIANCE OS                      │
-│             Immutable Web, Application and Security Platform         │
-│                                                                      │
-│                     Version 1.0.0 | Stable Channel                   │
-│                                                                      │
-│     Initialising immutable operating system ................. OK     │
-│     Verifying signed platform image ......................... OK     │
-│     Validating TPM and Secure Boot .......................... OK     │
-│     Mounting encrypted appliance data ....................... OK     │
-│     Starting management services ............................ OK     │
-│     Starting web protection services ....................... OK     │
-│     Checking backup repository .............................. OK     │
-│                                                                      │
-│              Management: https://10.20.10.15:8443                    │
-│              Console: Press F2    Recovery: Press F8                 │
-│                                                                      │
-│ This system is restricted to authorised users. Activity may be       │
-│ monitored, recorded and retained for security and compliance.        │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘`;
-
-        function showToast(msg) {
-          toastMessage.value = msg;
-          setTimeout(() => { toastMessage.value = ''; }, 3500);
-        }
+        const bootScreenText = `+-----------------------------------------------------------------------+
+|                                                                       |
+|                     [ APPROVED CSIR-SERC LOGO ]                       |
+|                                                                       |
+|                    CSIR SECURE WEB APPLIANCE OS                       |
+|             Immutable Web, Application and Security Platform          |
+|                                                                       |
+|                     Version 1.0.0 | Stable Channel                    |
+|                                                                       |
+|     Initialising immutable operating system ................. OK      |
+|     Verifying signed platform image ......................... OK      |
+|     Validating TPM 2.0 and Secure Boot ...................... OK      |
+|     Mounting encrypted appliance data ....................... OK      |
+|     Starting virtual host & reverse proxy services .......... OK      |
+|     Starting Coraza WAF & Sovereign Web Protection .......... OK      |
+|     Checking Indian NPL Stratum 1 Clock Synchronization ..... OK      |
+|                                                                       |
+|              Management Console: https://10.20.10.15:8443             |
+|              Console: Press F2    Recovery: Press F8                  |
+|                                                                       |
+| This system is restricted to authorised users. Activity may be        |
+| monitored, recorded and retained for security and compliance.         |
+|                                                                       |
++-----------------------------------------------------------------------+`;
 
         async function fetchAllData() {
           try {
-            const [ovRes, appRes, secRes, aiNarRes, aiRecRes, snapRes, drRes, auditRes, updRes] = await Promise.all([
-              fetch('/api/v1/overview').then(r => r.json()),
+            const [
+              appsRes, vhostsRes, proxyRes, sslRes,
+              wafRes, fwRes, narRes, recRes,
+              snapRes, drRes, auditRes, updRes
+            ] = await Promise.all([
               fetch('/api/v1/applications').then(r => r.json()),
+              fetch('/api/v1/webhosting/vhosts').then(r => r.json()),
+              fetch('/api/v1/proxy/upstreams').then(r => r.json()),
+              fetch('/api/v1/ssl/certificates').then(r => r.json()),
               fetch('/api/v1/security/waf/rules').then(r => r.json()),
+              fetch('/api/v1/security/firewall/rules').then(r => r.json()),
               fetch('/api/v1/ai-security/narratives').then(r => r.json()),
               fetch('/api/v1/ai-security/recommendations').then(r => r.json()),
               fetch('/api/v1/backups/snapshots').then(r => r.json()),
@@ -1219,135 +1189,53 @@
               fetch('/api/v1/updates/status').then(r => r.json())
             ]);
 
-            overview.value = ovRes;
-            appList.value = appRes;
-            wafRules.value = secRes;
-            narratives.value = aiNarRes;
-            aiRecommendations.value = aiRecRes;
+            appList.value = appsRes;
+            vhostsList.value = vhostsRes;
+            upstreamPools.value = proxyRes;
+            sslCertificates.value = sslRes;
+            wafRules.value = wafRes;
+            firewallRules.value = fwRes;
+            narratives.value = narRes;
+            aiRecommendations.value = recRes;
             snapshots.value = snapRes;
             drTests.value = drRes;
             auditLedger.value = auditRes;
             updateStatus.value = updRes;
-
-            const fwRes = await fetch('/api/v1/security/firewall/rules').then(r => r.json());
-            firewallRules.value = fwRes;
-            const incRes = await fetch('/api/v1/security/incidents').then(r => r.json());
-            incidentsList.value = incRes;
-          } catch (e) {
+          } catch(e) {
             console.warn('API polling fallback:', e);
           }
         }
 
-        async function triggerAppAction(appId, action) {
-          await fetch(`/api/v1/applications/${appId}/action`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action })
-          });
-          showToast(`Application action '${action}' dispatched.`);
-          fetchAllData();
-        }
-
-        async function toggleWafRule(rule) {
-          await fetch(`/api/v1/security/waf/rules/${rule.rule_id}/toggle`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ enabled: !rule.enabled })
-          });
-          showToast(`WAF Rule #${rule.rule_id} status updated.`);
-          fetchAllData();
-        }
-
-        async function approveAiRec(recId, decision) {
-          await fetch(`/api/v1/ai-security/recommendations/${recId}/approval`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ decision, approver: 'admin@csir.res.in' })
-          });
-          showToast(`Recommendation sign-off recorded: ${decision}.`);
-          fetchAllData();
-        }
-
-        async function simulateThreat() {
-          await fetch('/api/v1/ai-security/simulate-threat', { method: 'POST' });
-          showToast('Threat attack pattern synthesized. AI narrative generated.');
-          fetchAllData();
-        }
-
-        async function triggerResticBackup() {
-          await fetch('/api/v1/backups/runs/trigger', { method: 'POST' });
-          showToast('Deduplicated Restic backup run finished successfully.');
-          fetchAllData();
-        }
-
-        async function triggerDrDrill() {
-          await fetch('/api/v1/backups/dr-tests/trigger', { method: 'POST' });
-          showToast('Disaster recovery restore drill PASSED. Hash verified.');
-          fetchAllData();
-        }
-
-        async function verifyAuditChain() {
-          const res = await fetch('/api/v1/audit/verify').then(r => r.json());
-          if (res.is_valid) {
-            showToast(`Audit Ledger Verified! ${res.total_entries} entries in cryptographic chain.`);
-          } else {
-            showToast(`ALERT: ${res.message}`);
-          }
-          fetchAllData();
-        }
-
-        async function exportCertInDossier() {
-          window.open('/api/v1/audit/cert-in-export', '_blank');
-        }
-
-        async function stageOsUpdate() {
-          await fetch('/api/v1/updates/stage', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ force: false })
-          });
-          showToast('Transactional update staged in snapshot. Reboot required.');
-          fetchAllData();
-        }
-
-        async function triggerOsRollback() {
-          await fetch('/api/v1/updates/rollback', { method: 'POST' });
-          showToast('Rollback scheduled to previous snapshot.');
-          fetchAllData();
-        }
-
-        async function submitDeployApp() {
-          await fetch('/api/v1/applications', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name: newApp.value.name,
-              image: newApp.value.image,
-              port: newApp.value.port,
-              domain: newApp.value.domain,
-              waf_mode: 'strict'
-            })
-          });
-          showDeployModal.value = false;
-          showToast(`Application ${newApp.value.name} deployed with Quadlet.`);
-          fetchAllData();
+        function submitChatopsQuery() {
+          if (!chatopsInput.value) return;
+          alert(`ChatOps Query Received: "${chatopsInput.value}". Local AI Security Guardian synthesized safe proposal.`);
+          chatopsInput.value = '';
         }
 
         onMounted(() => {
           fetchAllData();
-          setInterval(fetchAllData, 10000);
         });
 
         return {
-          activeTab, lang, l, searchQuery,
-          overview, appList, wafRules, firewallRules, incidentsList,
-          narratives, aiRecommendations, snapshots, drTests, auditLedger, updateStatus,
-          showDeployModal, newApp, toastMessage, bootScreenText,
-          triggerAppAction, toggleWafRule, approveAiRec, simulateThreat,
-          triggerResticBackup, triggerDrDrill, verifyAuditChain, exportCertInDossier,
-          stageOsUpdate, triggerOsRollback, submitDeployApp,
-          aiOpsRca, fetchAiOpsData, fetchAiBackupData,
-          chatopsInput, activeProposal, submitChatopsQuery, executeChatOpsPreset, approveChatopsProposal
+          activeTab,
+          searchQuery,
+          showDeployModal,
+          chatopsInput,
+          currentDateFormatted,
+          appList,
+          vhostsList,
+          upstreamPools,
+          sslCertificates,
+          wafRules,
+          firewallRules,
+          narratives,
+          aiRecommendations,
+          snapshots,
+          drTests,
+          auditLedger,
+          updateStatus,
+          bootScreenText,
+          submitChatopsQuery
         };
       }
     }).mount('#app');

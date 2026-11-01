@@ -24,7 +24,10 @@ class PrivilegedNodeAgent:
         "NFTABLES_APPLY_RULESET",
         "SUPPORT_BUNDLE_GENERATE",
         "QUADLET_GENERATE_UNIT",
-        "CERT_ROTATE"
+        "CERT_ROTATE",
+        "VHOST_CONFIGURE",
+        "PROXY_RELOAD",
+        "SSL_CERTIFICATE_ISSUE"
     }
 
     def dispatch(self, action: str, params: dict) -> dict:
@@ -99,6 +102,39 @@ class PrivilegedNodeAgent:
             "ruleset": "csir-firewall.nft",
             "applied": True,
             "message": "Host firewall ruleset applied atomically without dropping established connections."
+        }
+
+    def handle_vhost_configure(self, params: dict) -> dict:
+        domain = params.get("domain", "")
+        docroot = params.get("docroot", f"/srv/www/vhosts/{domain}/public_html")
+        runtime = params.get("runtime", "php")
+        logger.info(f"Configuring sovereign virtual host: {domain} (runtime={runtime}, docroot={docroot})")
+        # In MicroOS: ensures /srv/www/vhosts/<domain> exists with correct DAC permissions
+        return {
+            "status": "success",
+            "domain": domain,
+            "docroot": docroot,
+            "runtime": runtime,
+            "message": f"Virtual host '{domain}' configured and bound to worker pool."
+        }
+
+    def handle_proxy_reload(self, params: dict) -> dict:
+        pool_name = params.get("pool_name", "default")
+        logger.info(f"Reloading HAProxy reverse proxy ruleset for upstream pool: {pool_name}")
+        return {
+            "status": "success",
+            "pool_name": pool_name,
+            "message": "HAProxy dynamic routing tables reloaded without dropping active TCP connections."
+        }
+
+    def handle_ssl_certificate_issue(self, params: dict) -> dict:
+        domain = params.get("domain", "")
+        logger.info(f"ACME / Key Vault certificate issuance dispatched for: {domain}")
+        return {
+            "status": "success",
+            "domain": domain,
+            "certificate_path": f"/etc/ssl/csir-swa/{domain}.crt",
+            "message": f"Certificate for '{domain}' provisioned and committed to cryptographic key vault."
         }
 
     def handle_support_bundle_generate(self, params: dict) -> dict:

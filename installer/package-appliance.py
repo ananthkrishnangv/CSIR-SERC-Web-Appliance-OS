@@ -32,8 +32,10 @@ def package():
     # Required directories to bundle
     include_paths = [
         ("installer/setup-appliance.sh", "setup-appliance.sh"),
+        ("installer/convert-microos.sh", "convert-microos.sh"),
         ("installer/install.sh", "install.sh"),
         ("installer/modules", "modules"),
+        ("installer/post-install", "post-install"),
         ("installer/assets", "assets"),
         ("installer/README.md", "README.md"),
         ("backend/app", "backend/app"),

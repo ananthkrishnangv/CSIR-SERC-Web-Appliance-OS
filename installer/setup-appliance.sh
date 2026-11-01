@@ -167,6 +167,15 @@ apply_profile() {
 print_banner
 detect_operating_system
 
+# Route openSUSE MicroOS directly to the specialized transactional converter
+if [ "${IS_TRANSACTIONAL:-false}" = true ] && [ -f "${SCRIPT_DIR}/convert-microos.sh" ]; then
+    echo ""
+    echo -e "${YELLOW}[i] openSUSE MicroOS detected (Transactional Update & Immutable Root).${NC}"
+    echo -e "${CYAN}[*] Engaging dedicated openSUSE MicroOS Transactional Appliance Converter...${NC}"
+    echo ""
+    exec "${SCRIPT_DIR}/convert-microos.sh" "$@"
+fi
+
 # Wizard Menu Selection
 if [ "$UNATTENDED" = false ] && [ "$INSTALL_ALL" = false ] && [ -z "$SELECTED_PROFILE" ] && [ -z "$CUSTOM_SERVICES" ]; then
     echo ""

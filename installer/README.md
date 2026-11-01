@@ -8,8 +8,20 @@ This package allows converting an already deployed physical server or virtual ma
 ## 1. Quick Start
 
 ### Method A: One-Line Remote Bootstrap (Online)
+No pre-installed `git` or development tools required. The bootstrap script automatically downloads and unpacks the appliance payload via `curl`/`wget` and `tar`, detects whether the system is openSUSE MicroOS or standard Linux, and invokes the appropriate engine:
 ```bash
+# 1. Interactive Wizard (Terminal-aware):
 curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | sudo bash
+
+# 2. Automated Unattended Conversion with Automatic Reboot:
+curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | sudo bash -s -- --unattended --all --reboot
+
+# 3. Dedicated Profile (e.g., Edge WAF & Reverse Proxy only):
+curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | sudo bash -s -- --profile edge-waf --reboot
+
+# 4. Using Environment Variables (Clean for CI/CD and Cloud-Init):
+export CSIR_PROFILE="full" CSIR_UNATTENDED="true" CSIR_REBOOT="true"
+curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | sudo -E bash
 ```
 
 ### Method B: Standalone Package (Offline / Air-Gapped)
@@ -19,10 +31,27 @@ curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appli
    tar -xzf csir-appliance-installer-v1.0.0.tar.gz
    cd csir-appliance-installer
    ```
-3. Run the interactive wizard:
+3. Run the installer:
    ```bash
+   # For openSUSE MicroOS / Leap Micro (Atomic & Transactional):
+   sudo ./convert-microos.sh
+
+   # For standard Linux servers (openSUSE Leap/Tumbleweed, Rocky, AlmaLinux, Fedora):
    sudo ./setup-appliance.sh
    ```
+
+### Method C: Dedicated openSUSE MicroOS Transactional Converter
+For servers running vanilla **openSUSE MicroOS**, **Leap Micro**, or **SUSE Linux Micro**, `convert-microos.sh` leverages `transactional-update` to stage the complete CSIR appliance stack into a new Btrfs root snapshot without mutating the running read-only system:
+```bash
+# Interactive MicroOS conversion wizard:
+sudo ./convert-microos.sh
+
+# Unattended automated conversion with automatic reboot into the new CSIR appliance:
+sudo ./convert-microos.sh --unattended --all --reboot
+
+# Convert MicroOS to an Edge WAF & Reverse Proxy:
+sudo ./convert-microos.sh --profile edge-waf --reboot
+```
 
 ---
 
@@ -92,3 +121,18 @@ sudo ./setup-appliance.sh --unattended --profile edge-waf
 - **Default Password:** `CsirWebOS@2026!`
 - **Default MFA TOTP Token:** `123456`
 - **Unified Appliance CLI:** `csir-ctl status`
+
+---
+
+## 5. Post-Installation Automation (After OS Installation Over)
+
+Ready-to-use hooks and templates in `installer/post-install/` automate appliance provisioning immediately after initial OS installation completes:
+
+| Mechanism | Configuration File | Ideal Use Case |
+|---|---|---|
+| **Combustion Hook** | `installer/post-install/combustion/script` | Bare-metal & virtual openSUSE MicroOS first-boot configuration drive |
+| **Systemd First-Boot Unit** | `installer/post-install/csir-firstboot.service` | Custom OS images, golden VM templates, and general first-boot triggers |
+| **Cloud-Init (User-Data)** | `installer/post-install/cloud-init/user-data.yaml` | Cloud instances (AWS, Azure, Proxmox, OpenStack, KVM NoCloud) |
+| **AutoYaST Post-Script** | `installer/post-install/autoyast-snippet.xml` | Automated openSUSE YaST unattended DVD / PXE installations |
+| **Interactive / SSH Post-Boot** | One-line remote bootstrap command | Manual administration after OS installer finishes and reboots |
+

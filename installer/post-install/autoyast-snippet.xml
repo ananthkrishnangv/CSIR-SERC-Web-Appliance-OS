@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AutoYaST Post-Scripts Snippet for CSIR-SWA OS
+  Integrate this <scripts> block into your existing openSUSE autoinst.xml profile
+  to automatically execute the remote bootstrap right after YaST finishes disk installation.
+-->
+<scripts xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+  <post-scripts config:type="list">
+    <script>
+      <filename>csir-post-install-bootstrap.sh</filename>
+      <interpreter>shell</interpreter>
+      <notification>Provisioning CSIR Secure Web Appliance OS Stack...</notification>
+      <source><![CDATA[
+#!/bin/bash
+set -euxo pipefail
+echo "=== AutoYaST: Invoking CSIR Appliance Online Remote Bootstrap ==="
+
+# AutoYaST mounts the newly installed target system at /mnt
+TARGET="/mnt"
+
+# Fetch and execute the online bootstrap directly onto the mounted target
+BOOTSTRAP_URL="https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh"
+curl -sSL --retry 3 "$BOOTSTRAP_URL" | chroot "$TARGET" bash -s -- --unattended --all || true
+      ]]></source>
+    </script>
+  </post-scripts>
+</scripts>

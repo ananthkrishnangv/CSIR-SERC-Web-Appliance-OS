@@ -1,0 +1,22 @@
+#cloud-config
+#=============================================================================
+# CSIR-SERC Secure Web Appliance OS - Cloud-Init Post-Install Automation
+# Target: Any Cloud VM, Proxmox NoCloud, VMware Guest Customization, OpenStack
+# Description: Automatically bootstraps CSIR-SWA OS on first boot.
+#=============================================================================
+
+package_update: true
+
+write_files:
+  - path: /etc/csir-swa/provision-intent.json
+    permissions: '0600'
+    content: |
+      {
+        "trigger": "cloud-init",
+        "requested_profile": "full",
+        "timestamp": "auto"
+      }
+
+runcmd:
+  - echo "=== Commencing CSIR-SWA OS Cloud-Init Remote Bootstrap ==="
+  - curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | bash -s -- --unattended --all --reboot

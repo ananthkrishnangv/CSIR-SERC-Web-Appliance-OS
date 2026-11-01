@@ -1,0 +1,21 @@
+[Unit]
+Description=CSIR-SERC Secure Web Appliance OS Post-Install Firstboot Provisioner
+Documentation=https://github.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=!/etc/csir-swa/provisioned
+ConditionPathExists=!/etc/csir-swa/installation-receipt.json
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TimeoutStartSec=1800
+StandardOutput=journal+console
+StandardError=journal+console
+Environment="CSIR_UNATTENDED=true"
+Environment="CSIR_PROFILE=full"
+Environment="CSIR_REBOOT=true"
+ExecStart=/usr/bin/bash -c "curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | bash -s -- --unattended --all --reboot"
+
+[Install]
+WantedBy=multi-user.target

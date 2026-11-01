@@ -462,18 +462,51 @@ Upon booting the DVD ISO, the bootloader offers three distinct deployment modes:
 ### 7.3 Alternative Universal Script-based Appliance Converter
 For systems already deployed on **openSUSE MicroOS**, **openSUSE Leap / Tumbleweed**, **Rocky Linux 8/9/10**, **AlmaLinux 8/9/10**, or **Fedora Linux**, convert the OS in-place into a hardened CSIR-SERC appliance:
 
-#### Method A: One-Line Remote Bootstrap (Online)
+#### Method A: Dedicated openSUSE MicroOS Transactional Converter (Recommended for MicroOS)
+MicroOS uses an immutable read-only root and atomic Btrfs snapshots. The specialized `convert-microos.sh` stages the full appliance stack via `transactional-update` without breaking immutability:
 ```bash
-curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | sudo bash
+cd installer
+# Interactive MicroOS conversion:
+sudo ./convert-microos.sh
+
+# Unattended automated full-stack conversion with reboot:
+sudo ./convert-microos.sh --unattended --all --reboot
+
+# Convert to Edge WAF appliance profile:
+sudo ./convert-microos.sh --profile edge-waf --reboot
 ```
 
-#### Method B: Interactive Wizard (Local / Offline Package)
+#### Method B: Universal Online Remote Bootstrap
+No git installation or repository cloning required. The bootstrap script automatically streams and unpacks the appliance payload via `curl`/`wget` and `tar`, automatically detects openSUSE MicroOS vs standard Linux, and executes the appropriate transactional or modular engine:
+```bash
+# Interactive conversion (Terminal-aware):
+curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | sudo bash
+
+# Unattended full-stack conversion with automated reboot:
+curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | sudo bash -s -- --unattended --all --reboot
+
+# Specific deployment profile (e.g. Edge WAF):
+curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | sudo bash -s -- --profile edge-waf --reboot
+
+# Using environment variables (Ideal for cloud-init / post-install hooks):
+export CSIR_PROFILE="full" CSIR_UNATTENDED="true" CSIR_REBOOT="true"
+curl -sSL https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh | sudo -E bash
+```
+
+#### Method C: Post-Installation Automation (After OS Installation Over)
+Pre-configured templates in `installer/post-install/` allow zero-touch provisioning immediately after OS installation finishes:
+- **Combustion Hook (`installer/post-install/combustion/script`):** openSUSE MicroOS / SUSE Linux Micro initramfs first-boot drive hook.
+- **Systemd First-Boot Unit (`installer/post-install/csir-firstboot.service`):** Generic systemd unit for pre-baked VM templates and images.
+- **Cloud-Init (`installer/post-install/cloud-init/user-data.yaml`):** Automated bootstrap in Proxmox, VMware, OpenStack, and cloud providers.
+- **AutoYaST Snippet (`installer/post-install/autoyast-snippet.xml`):** Chroot post-install hook for openSUSE YaST answer files.
+
+#### Method C: Universal Interactive Wizard (Standard Linux Systems)
 ```bash
 cd installer
 sudo ./setup-appliance.sh
 ```
 
-#### Method C: Unattended Automated Installation
+#### Method D: Unattended Automated Installation
 ```bash
 # Automated Full-Stack Installation:
 sudo ./installer/setup-appliance.sh --unattended --all

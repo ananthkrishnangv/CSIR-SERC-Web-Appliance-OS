@@ -21,9 +21,11 @@ install_web_delivery_and_waf() {
             ;;
     esac
 
-    # 2. Generate Initial Self-Signed TLS 1.3 Appliance Certificate
+    # 2. Generate Initial Self-Signed TLS 1.3 Appliance Certificate & Directory Structure
     local CERT_DIR="/etc/ssl/csir-swa"
     mkdir -p "$CERT_DIR"
+    mkdir -p /srv/www/vhosts/default/public_html
+    mkdir -p /etc/haproxy/conf.d
     if [ ! -f "$CERT_DIR/appliance.pem" ]; then
         echo -e "    • Generating self-signed TLS 1.3 appliance certificates..."
         openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \

@@ -1,0 +1,27 @@
+#!/bin/bash
+# combustion: network
+#=============================================================================
+# CSIR-SERC Secure Web Appliance OS - Combustion Post-Install Automation Hook
+# Target: openSUSE MicroOS / SUSE Linux Micro
+# Description: Executes during first boot initramfs. Configures network, mounts
+#              persistent storage, downloads and runs the remote bootstrap.
+# Usage: Place on a USB drive with filesystem label 'combustion' or via QEMU fw_cfg.
+#=============================================================================
+set -euxo pipefail
+
+echo "=========================================================="
+echo " Combustion: CSIR-SWA OS Post-Installation Bootstrap"
+echo " Timestamp: $(date -u +%FT%TZ)"
+echo "=========================================================="
+
+# 1. Ensure basic appliance directory anchors exist
+mkdir -p /etc/csir-swa /var/lib/csir-swa /srv/apps /srv/backups
+
+# 2. Invoke remote bootstrap launcher
+BOOTSTRAP_URL="https://raw.githubusercontent.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS/main/installer/install.sh"
+
+echo "[*] Downloading CSIR-SWA OS Remote Bootstrap..."
+curl -sSL --retry 5 --retry-connrefused "$BOOTSTRAP_URL" | bash -s -- --unattended --all
+
+echo "[✓] Combustion post-installation bootstrap complete."
+exit 0

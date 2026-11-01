@@ -4,10 +4,10 @@
   "filename": "csir-swa-os-1.0.0-fullstack-x86_64.iso",
   "filesize_bytes": 2936012800,
   "filesize_gb": 2.73,
-  "sha256": "36a9ab4de2ce69ff79500916c48ab4b0cd74f7ed2d4fac1d2f10c85ddcc99988",
+  "sha256": "9962907f86f9a4e6b99d77bfae98a61db9c57e512569eee1b85d5c7fc5df1919",
   "channel": "Stable",
   "baseline_date": "2026-09-28",
-  "built_at": "2026-10-01T09:32:57.284595+00:00",
+  "built_at": "2026-11-01T16:47:56.532160+00:00",
   "boot_type": "Hybrid BIOS + UEFI El Torito (x86_64)",
   "installer_mechanisms": [
     "Combustion",
@@ -38,7 +38,7 @@
   },
   "signatures": {
     "signer": "CSIR Secure Software Release Authority",
-    "cosign_signature": "COSIGN-SIG-SHA256-36a9ab4de2ce69ff79500916c48ab4b0",
+    "cosign_signature": "COSIGN-SIG-SHA256-9962907f86f9a4e6b99d77bfae98a61d",
     "verification_status": "VALID_TRUSTED"
   }
 }

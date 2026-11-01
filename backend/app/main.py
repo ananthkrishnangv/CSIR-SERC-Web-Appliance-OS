@@ -6,6 +6,9 @@ from app.database import Base, engine, SessionLocal
 from app.api import (
     overview_router,
     applications_router,
+    webhosting_router,
+    proxy_router,
+    ssl_router,
     security_router,
     ai_security_router,
     backups_router,
@@ -46,6 +49,9 @@ from pathlib import Path
 # Register API Routers
 app.include_router(overview_router, prefix=settings.API_V1_STR)
 app.include_router(applications_router, prefix=settings.API_V1_STR)
+app.include_router(webhosting_router, prefix=settings.API_V1_STR)
+app.include_router(proxy_router, prefix=settings.API_V1_STR)
+app.include_router(ssl_router, prefix=settings.API_V1_STR)
 app.include_router(security_router, prefix=settings.API_V1_STR)
 app.include_router(ai_security_router, prefix=settings.API_V1_STR)
 app.include_router(backups_router, prefix=settings.API_V1_STR)
