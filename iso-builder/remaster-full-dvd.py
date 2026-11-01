@@ -147,7 +147,10 @@ def step2_inject_csir_features():
         "features": [
             "FastAPI Control Plane (Python 3.14.7)",
             "Privileged Node Agent RPC (Strict Allowlist)",
-            "Nuxt 4 / Vue 3 Management Portal",
+            "Vue 3 / daisyUI / Tailwind Prompt Indigo SaaS Console",
+            "Multi-Tenant Web Hosting & Virtual Host Management (/srv/www/vhosts)",
+            "Dynamic HAProxy Reverse Proxy & Upstream Server Pools",
+            "ACME Automated Let's Encrypt & Sovereign SSL/TLS Vault",
             "Rootless Podman 6.1.2 Quadlets",
             "Coraza WAF with OWASP CRS v4",
             "nftables Default-Deny Host Firewall",

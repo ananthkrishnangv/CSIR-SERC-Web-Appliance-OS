@@ -125,7 +125,7 @@ def generate_html() -> str:
     .cover-title {{
         font-size: 24pt;
         font-weight: 800;
-        color: #0b1d33;
+        color: #312e81;
         margin: 0 0 8px 0;
         line-height: 1.15;
         text-transform: uppercase;
@@ -135,19 +135,19 @@ def generate_html() -> str:
     .cover-subtitle {{
         font-size: 12pt;
         font-weight: 500;
-        color: #007799;
+        color: #6366f1;
         margin: 0 0 12px 0;
     }}
 
     .cover-badge {{
         display: inline-block;
         padding: 5px 12px;
-        background: #e0f2fe;
-        color: #0369a1;
+        background: #f5f3ff;
+        color: #312e81;
         font-weight: 700;
         font-size: 8.5pt;
         border-radius: 4px;
-        border: 1px solid #bae6fd;
+        border: 1px solid #ddd6fe;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }}
@@ -156,9 +156,9 @@ def generate_html() -> str:
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-left: 4px solid #007799;
+        background: #f5f3ff;
+        border: 1px solid #ddd6fe;
+        border-left: 4px solid #6366f1;
         padding: 16px;
         border-radius: 6px;
         margin: 20px 0;
@@ -195,34 +195,34 @@ def generate_html() -> str:
     }}
 
     h1, h2, h3, h4 {{
-        color: #0b1d33;
+        color: #1e1b4b;
         font-weight: 700;
         page-break-after: avoid;
     }}
 
     h1 {{
         font-size: 16pt;
-        border-bottom: 2px solid #003366;
+        border-bottom: 2px solid #312e81;
         padding-bottom: 5px;
         margin-top: 20px;
         margin-bottom: 12px;
-        color: #003366;
+        color: #312e81;
     }}
 
     h2 {{
         font-size: 12.5pt;
-        border-bottom: 1px solid #cbd5e1;
+        border-bottom: 1px solid #ddd6fe;
         padding-bottom: 4px;
         margin-top: 16px;
         margin-bottom: 8px;
-        color: #0f172a;
+        color: #1e1b4b;
     }}
 
     h3 {{
         font-size: 10.5pt;
         margin-top: 12px;
         margin-bottom: 5px;
-        color: #1e3a8a;
+        color: #4338ca;
     }}
 
     p {{
@@ -240,14 +240,14 @@ def generate_html() -> str:
     }}
 
     th, td {{
-        border: 1px solid #cbd5e1;
+        border: 1px solid #ddd6fe;
         padding: 5px 8px;
         text-align: left;
         vertical-align: top;
     }}
 
     th {{
-        background-color: #0f172a;
+        background-color: #312e81;
         color: #ffffff;
         font-weight: 600;
         text-transform: uppercase;
@@ -256,7 +256,7 @@ def generate_html() -> str:
     }}
 
     tr:nth-child(even) td {{
-        background-color: #f8fafc;
+        background-color: #f5f3ff;
     }}
 
     .callout {{
@@ -270,8 +270,8 @@ def generate_html() -> str:
     }}
 
     .callout-info {{
-        background: #f0f9ff;
-        border-left: 4px solid #0284c7;
+        background: #f5f3ff;
+        border-left: 4px solid #6366f1;
     }}
 
     .callout-warn {{
@@ -351,21 +351,22 @@ def generate_html() -> str:
     .screenshot-figure img {{
         max-width: 95%;
         height: auto;
-        border-radius: 4px;
-        border: 1px solid #94a3b8;
+        border-radius: 6px;
+        border: 1px solid #ddd6fe;
+        box-shadow: 0 4px 12px rgba(49, 46, 129, 0.08);
     }}
 
     .caption {{
         font-size: 8pt;
         font-weight: 600;
-        color: #334155;
+        color: #312e81;
         margin-top: 6px;
         text-align: center;
     }}
 
     .arch-diagram {{
-        background: #0b1526;
-        color: #38bdf8;
+        background: #1e1b4b;
+        color: #a78bfa;
         font-family: monospace;
         padding: 10px;
         border-radius: 4px;
@@ -374,6 +375,7 @@ def generate_html() -> str:
         margin: 8px 0;
         white-space: pre;
         page-break-inside: avoid;
+        border: 1px solid #312e81;
     }}
 
     .grid-2 {{

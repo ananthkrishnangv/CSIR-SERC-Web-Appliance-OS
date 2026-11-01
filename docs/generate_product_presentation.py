@@ -99,9 +99,9 @@ class PPTXBuilder:
 
         # Header Title and Category if present
         if title:
-            is_dark = (bg in ["071321", "0B132B", "0F172A"])
-            cat_color = "38BDF8" if is_dark else "0284C7"
-            title_color = "F8FAFC" if is_dark else "0F172A"
+            is_dark = (bg in ["312E81", "1E1B4B", "071321", "0B132B", "0F172A"])
+            cat_color = "A78BFA" if is_dark else "6366F1"
+            title_color = "F5F3FF" if is_dark else "312E81"
 
             shapes_xml.append(f"""
             <p:sp>
@@ -420,7 +420,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "title",
-        "bg": "071321",
+        "bg": "312E81",
         "category": "SOVEREIGN GOVERNMENT CLOUD",
         "title": "CSIR Secure Web Appliance OS (CSIR-SWA OS)",
         "subtitle": "Next-Generation Hardened, Immutable, and Containerized Web Hosting Appliance",
@@ -436,7 +436,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Strategic Imperatives",
         "title": "Institutional Objectives & Sovereign Control",
         "card1": {
@@ -462,7 +462,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Core Architecture",
         "title": "Layered Sovereign Defense Architecture",
         "card1": {
@@ -490,7 +490,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Native Web Hosting",
         "title": "Multi-Tenant Virtual Host & Web Serving Subsystem",
         "card1": {
@@ -518,7 +518,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Traffic Orchestration",
         "title": "Dynamic Reverse Proxy & Layer 7 Load Balancer",
         "card1": {
@@ -546,7 +546,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Cryptographic Protection",
         "title": "Sovereign SSL/TLS Certificate Vault & Key Management",
         "card1": {
@@ -574,7 +574,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Workload Isolation",
         "title": "Rootless Podman Quadlets & Systemd Integration",
         "card1": {
@@ -602,7 +602,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Perimeter Defense",
         "title": "Coraza Sovereign WAF & nftables Network Shield",
         "card1": {
@@ -630,7 +630,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Autonomous Operations",
         "title": "Local AI Security & Operations Center (Zero Cloud)",
         "card1": {
@@ -658,7 +658,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Business Continuity",
         "title": "Data Protection, Btrfs Snapshots & DR Drills",
         "card1": {
@@ -686,7 +686,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Regulatory Compliance",
         "title": "CERT-In Section 70B Cryptographic Audit Ledger",
         "card1": {
@@ -714,7 +714,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Platform Lifecycle",
         "title": "openSUSE MicroOS Transactional Updates",
         "card1": {
@@ -742,7 +742,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Deployment Modalities",
         "title": "Turn-Key Sovereign Deployment Modalities",
         "card1": {
@@ -772,7 +772,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 14: Figure 1 - GRUB2 Boot Menu
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Installation",
         "title": "Figure 1: Official CSIR-SERC High-Resolution GRUB2 Boot Menu",
         "image_file": img_boot,
@@ -788,7 +788,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 15: Figure 2 - YaST Initialization
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Installation",
         "title": "Figure 2: Graphical YaST Installer Engine Initialization",
         "image_file": img_yast,
@@ -804,7 +804,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 16: Figure 3 - Network Discovery
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Installation",
         "title": "Figure 3: Automated Network Discovery & Addressing",
         "image_file": img_net,
@@ -820,7 +820,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 17: Figure 4 - Btrfs Partitioning
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Installation",
         "title": "Figure 4: Immutable Btrfs Subvolume Layout (@, @/var, @/srv)",
         "image_file": img_part,
@@ -836,7 +836,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 18: Figure 5 - Installation Confirmation
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Installation",
         "title": "Figure 5: Automated Installation Confirmation & Payload Verification",
         "image_file": img_conf,
@@ -852,7 +852,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 19: Figure 6 - TTY3 Diagnostic Console
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Installation",
         "title": "Figure 6: Diagnostic Linuxrc Installation Console & TTY3 Shell",
         "image_file": img_tty3,
@@ -868,7 +868,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 20: Figure 7 - Web Console Overview
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console",
         "title": "Figure 7: UX4G Central Health & Operations Overview Dashboard",
         "image_file": img_c_ov,
@@ -884,7 +884,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 21: Figure 8 - Web Hosting & Virtual Hosts
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console",
         "title": "Figure 8: Native Web Hosting & Multi-Tenant Virtual Host Management",
         "image_file": img_c_vh,
@@ -900,7 +900,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 22: Figure 9 - Reverse Proxy & Upstreams
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console",
         "title": "Figure 9: Dynamic Reverse Proxy & Upstream Load Balancer",
         "image_file": img_c_px,
@@ -916,7 +916,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 23: Figure 10 - SSL / TLS Key Vault
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console",
         "title": "Figure 10: SSL / TLS Certificate Vault & ACME Key Management",
         "image_file": img_c_ssl,
@@ -932,7 +932,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 24: Figure 11 - Container Quadlets
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console",
         "title": "Figure 11: Rootless Podman Quadlet Container Workloads",
         "image_file": img_c_app,
@@ -948,7 +948,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 25: Figure 12 - Coraza Sovereign WAF
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console",
         "title": "Figure 12: Coraza Sovereign WAF & nftables Network Defense",
         "image_file": img_c_waf,
@@ -964,7 +964,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 26: Figure 13 - Local AI Security Center
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console",
         "title": "Figure 13: Local AI Security Center & ChatOps Telemetry",
         "image_file": img_c_ai,
@@ -980,7 +980,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 27: Figure 14 - Data Protection & Backups
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console",
         "title": "Figure 14: Data Protection, Btrfs Snapshots & Sandbox DR Restore Drills",
         "image_file": img_c_dr,
@@ -996,7 +996,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 28: Figure 15 - CERT-In Audit Ledger
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console",
         "title": "Figure 15: CERT-In Section 70B Cryptographic SHA-256 Audit Ledger",
         "image_file": img_c_comp,
@@ -1012,7 +1012,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 29: Figure 16 - Transactional Updates
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console",
         "title": "Figure 16: Transactional Updates & Operating System Lifecycle",
         "image_file": img_c_upd,
@@ -1028,7 +1028,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # SLIDE 30: Figure 17 - Boot Screen Console
     slides.append({
         "type": "screenshot_page",
-        "bg": "F8FAFC",
+        "bg": "F5F3FF",
         "category": "Visual Qualification: Hardware Console",
         "title": "Figure 17: Bare-Metal Hardware & Diagnostic Terminal Console",
         "image_file": img_c_term,
@@ -1046,7 +1046,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     # --------------------------------------------------------------------------
     slides.append({
         "type": "content_2col",
-        "bg": "071321",
+        "bg": "312E81",
         "category": "Executive Conclusion",
         "title": "Institutional Impact & Production Deliverables",
         "card1": {
@@ -1084,44 +1084,44 @@ def generate_interactive_html(slides: list) -> str:
     for i, s in enumerate(slides):
         slide_num = i + 1
         s_type = s.get("type", "content_2col")
-        bg = s.get("bg", "F8FAFC")
+        bg = s.get("bg", "F5F3FF")
         category = s.get("category", "")
         title = s.get("title", "")
-        is_dark = (bg in ["071321", "0B132B", "0F172A"])
+        is_dark = (bg in ["312E81", "1E1B4B", "071321", "0B132B", "0F172A"])
 
         dark_class = "slide-dark" if is_dark else ""
-        title_color = "#38bdf8" if is_dark else "#0f172a"
-        cat_color = "#38bdf8" if is_dark else "#0284c7"
+        title_color = "#f5f3ff" if is_dark else "#312e81"
+        cat_color = "#a78bfa" if is_dark else "#6366f1"
 
         content_html = ""
 
         if s_type == "title":
             subtitle = s.get("subtitle", "")
             bullets = s.get("bullets", [])
-            bullets_li = "".join([f"<li class='flex items-start gap-3 text-slate-300 text-base'><span class='w-2 h-2 rounded-full bg-sky-400 mt-2 shrink-0'></span><span>{b}</span></li>" for b in bullets])
+            bullets_li = "".join([f"<li class='flex items-start gap-3 text-violet-100 text-base'><span class='w-2 h-2 rounded-full bg-violet-400 mt-2 shrink-0'></span><span>{b}</span></li>" for b in bullets])
 
             content_html = f"""
             <div class="h-full flex flex-col justify-between p-12">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-950/80 border border-sky-500/40 text-sky-400 font-heading font-extrabold text-xs uppercase tracking-widest mb-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-950/80 border border-violet-400/40 text-violet-300 font-heading font-extrabold text-xs uppercase tracking-widest mb-6">
                         <i class="fa-solid fa-shield-halved"></i> {category}
                     </div>
                     <h1 class="font-heading font-extrabold text-4xl sm:text-5xl text-white tracking-tight leading-tight max-w-4xl">
                         {title}
                     </h1>
-                    <p class="font-heading font-medium text-xl text-sky-300/90 mt-4 max-w-3xl leading-relaxed">
+                    <p class="font-heading font-medium text-xl text-violet-200/90 mt-4 max-w-3xl leading-relaxed">
                         {subtitle}
                     </p>
                 </div>
 
-                <div class="glass-card-dark rounded-2xl p-8 border border-sky-500/30 max-w-4xl my-6">
-                    <div class="text-xs font-heading font-bold text-sky-400 uppercase tracking-wider mb-4">Core Architectural Mandate</div>
+                <div class="glass-card-dark rounded-2xl p-8 border border-violet-400/30 max-w-4xl my-6">
+                    <div class="text-xs font-heading font-bold text-violet-300 uppercase tracking-wider mb-4">Core Architectural Mandate</div>
                     <ul class="space-y-3">
                         {bullets_li}
                     </ul>
                 </div>
 
-                <div class="flex items-center justify-between text-xs font-mono text-slate-400 border-t border-slate-800 pt-4">
+                <div class="flex items-center justify-between text-xs font-mono text-violet-300/70 border-t border-indigo-800/80 pt-4">
                     <span>Council of Scientific &amp; Industrial Research (CSIR-SERC)</span>
                     <span>Version 1.0.0 Stable Channel</span>
                 </div>
@@ -1132,32 +1132,32 @@ def generate_interactive_html(slides: list) -> str:
             c1 = s.get("card1", {})
             c2 = s.get("card2", {})
 
-            b1_li = "".join([f"<li class='text-sm text-slate-600 leading-relaxed'><strong class='text-slate-900'>{b.split(':')[0]}:</strong>{b.split(':', 1)[1] if ':' in b else ''}</li>" for b in c1.get("bullets", [])])
-            b2_li = "".join([f"<li class='text-sm text-slate-600 leading-relaxed'><strong class='text-slate-900'>{b.split(':')[0]}:</strong>{b.split(':', 1)[1] if ':' in b else ''}</li>" for b in c2.get("bullets", [])])
+            b1_li = "".join([f"<li class='text-sm text-slate-700 leading-relaxed'><strong class='text-indigo-950'>{b.split(':')[0]}:</strong>{b.split(':', 1)[1] if ':' in b else ''}</li>" for b in c1.get("bullets", [])])
+            b2_li = "".join([f"<li class='text-sm text-slate-700 leading-relaxed'><strong class='text-indigo-950'>{b.split(':')[0]}:</strong>{b.split(':', 1)[1] if ':' in b else ''}</li>" for b in c2.get("bullets", [])])
 
             content_html = f"""
             <div class="h-full flex flex-col justify-between p-10">
                 <div class="slide-header">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200 text-xs font-heading font-extrabold uppercase tracking-wider mb-2">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-100 text-indigo-900 border border-violet-200 text-xs font-heading font-extrabold uppercase tracking-wider mb-2">
                         {category}
                     </div>
-                    <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+                    <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-indigo-950 tracking-tight">
                         {title}
                     </h2>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-auto">
-                    <div class="glass-card rounded-2xl p-7 border-l-4 border-l-sky-600 flex flex-col justify-between">
+                    <div class="glass-card rounded-2xl p-7 border-l-4 border-l-indigo-600 flex flex-col justify-between">
                         <div>
-                            <h3 class="font-heading font-bold text-lg text-slate-900 mb-4">{c1.get('title', '')}</h3>
+                            <h3 class="font-heading font-bold text-lg text-indigo-950 mb-4">{c1.get('title', '')}</h3>
                             <ul class="space-y-3.5 list-disc list-inside">
                                 {b1_li}
                             </ul>
                         </div>
                     </div>
-                    <div class="glass-card rounded-2xl p-7 border-l-4 border-l-emerald-600 flex flex-col justify-between">
+                    <div class="glass-card rounded-2xl p-7 border-l-4 border-l-violet-500 flex flex-col justify-between">
                         <div>
-                            <h3 class="font-heading font-bold text-lg text-slate-900 mb-4">{c2.get('title', '')}</h3>
+                            <h3 class="font-heading font-bold text-lg text-indigo-950 mb-4">{c2.get('title', '')}</h3>
                             <ul class="space-y-3.5 list-disc list-inside">
                                 {b2_li}
                             </ul>
@@ -1165,9 +1165,9 @@ def generate_interactive_html(slides: list) -> str:
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-200 pt-3">
+                <div class="flex items-center justify-between text-xs text-slate-500 border-t border-violet-200/70 pt-3">
                     <span>CSIR Secure Web Appliance OS (CSIR-SWA OS) v1.0.0</span>
-                    <span class="font-mono">Slide {slide_num} of {total_slides}</span>
+                    <span class="font-mono font-semibold text-indigo-900">Slide {slide_num} of {total_slides}</span>
                 </div>
             </div>
             """
@@ -1176,7 +1176,7 @@ def generate_interactive_html(slides: list) -> str:
             img_file = s.get("image_file", "")
             caption = s.get("caption", "")
             specs = s.get("specs", [])
-            specs_li = "".join([f"<li class='text-xs text-slate-600 leading-relaxed'><i class='fa-solid fa-check text-emerald-500 mr-2'></i>{sp}</li>" for sp in specs])
+            specs_li = "".join([f"<li class='text-xs text-slate-700 leading-relaxed'><i class='fa-solid fa-check text-indigo-600 mr-2'></i>{sp}</li>" for sp in specs])
 
             # Relative path from docs/
             if "screenshots" in str(img_file) or "web_console" in str(img_file):
@@ -1189,39 +1189,39 @@ def generate_interactive_html(slides: list) -> str:
                 <!-- Header -->
                 <div class="slide-header flex items-center justify-between">
                     <div>
-                        <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 text-[11px] font-heading font-extrabold uppercase tracking-wider">
-                            <i class="fa-solid fa-camera"></i> {category}
+                        <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-violet-100 text-indigo-900 border border-violet-200 text-[11px] font-heading font-extrabold uppercase tracking-wider">
+                            <i class="fa-solid fa-camera text-indigo-600"></i> {category}
                         </div>
-                        <h2 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 tracking-tight mt-1">
+                        <h2 class="font-heading font-extrabold text-xl sm:text-2xl text-indigo-950 tracking-tight mt-1">
                             {title}
                         </h2>
                     </div>
-                    <span class="badge badge-sm badge-outline border-slate-300 font-mono text-slate-500">Dedicated Verification Slide</span>
+                    <span class="badge badge-sm bg-violet-100 border-violet-300 font-mono text-indigo-900 font-semibold">Dedicated Verification Slide</span>
                 </div>
 
                 <!-- 2-Column Showcase Layout (Left 32% Specs, Right 68% Full-Size Screenshot) -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
                     
                     <!-- Left Spec Card (4 columns) -->
-                    <div class="lg:col-span-4 glass-card rounded-2xl p-6 border-l-4 border-l-sky-600 space-y-4">
-                        <div class="flex items-center gap-2 font-heading font-bold text-slate-900 text-sm">
-                            <i class="fa-solid fa-list-check text-sky-600"></i>
+                    <div class="lg:col-span-4 glass-card rounded-2xl p-6 border-l-4 border-l-indigo-600 space-y-4">
+                        <div class="flex items-center gap-2 font-heading font-bold text-indigo-950 text-sm">
+                            <i class="fa-solid fa-list-check text-indigo-600"></i>
                             <span>Technical Verification Specifications</span>
                         </div>
                         <ul class="space-y-3">
                             {specs_li}
                         </ul>
-                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-500">
+                        <div class="p-3 rounded-xl bg-violet-50/70 border border-violet-200 text-[11px] text-slate-600">
                             <strong>Qualification Protocol:</strong> Certified on bare-metal HP Pro Tower &amp; VirtualBox 7.x testbed.
                         </div>
                     </div>
 
                     <!-- Right Screenshot View (8 columns) -->
                     <div class="lg:col-span-8 flex flex-col items-center">
-                        <div class="w-full glass-card p-2 rounded-2xl border border-sky-200/60 shadow-xl overflow-hidden bg-slate-900/5">
+                        <div class="w-full glass-card p-2 rounded-2xl border border-violet-200 shadow-xl overflow-hidden bg-white/70">
                             <img src="{rel_img_src}" alt="{title}" class="w-full rounded-xl object-contain max-h-[64vh] shadow-sm">
                         </div>
-                        <div class="text-[11px] text-slate-500 font-medium text-center mt-2">
+                        <div class="text-[11px] text-slate-600 font-medium text-center mt-2">
                             {caption}
                         </div>
                     </div>
@@ -1229,9 +1229,9 @@ def generate_interactive_html(slides: list) -> str:
                 </div>
 
                 <!-- Footer -->
-                <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-200 pt-2.5">
+                <div class="flex items-center justify-between text-xs text-slate-500 border-t border-violet-200/70 pt-2.5">
                     <span>CSIR Secure Web Appliance OS (CSIR-SWA OS) v1.0.0 | Proof of Verification</span>
-                    <span class="font-mono font-semibold text-slate-600">Slide {slide_num} of {total_slides}</span>
+                    <span class="font-mono font-semibold text-indigo-900">Slide {slide_num} of {total_slides}</span>
                 </div>
             </div>
             """
@@ -1352,9 +1352,9 @@ def generate_interactive_html(slides: list) -> str:
 <!-- Floating Presentation Controls for Screen View -->
 <div class="deck-controls hidden sm:flex">
     <button onclick="prevSlide()" class="btn btn-circle btn-xs btn-ghost text-white"><i class="fa-solid fa-chevron-left"></i></button>
-    <span id="slideCounter" class="text-xs font-mono font-bold text-sky-400">1 / {total_slides}</span>
+    <span id="slideCounter" class="text-xs font-mono font-bold text-violet-300 font-bold">1 / {total_slides}</span>
     <button onclick="nextSlide()" class="btn btn-circle btn-xs btn-ghost text-white"><i class="fa-solid fa-chevron-right"></i></button>
-    <button onclick="window.print()" class="btn btn-xs btn-primary bg-sky-600 border-none rounded-full text-white ml-2"><i class="fa-solid fa-print"></i> PDF Export</button>
+    <button onclick="window.print()" class="btn btn-xs btn-primary bg-indigo-600 hover:bg-indigo-700 border-none rounded-full text-white ml-2"><i class="fa-solid fa-print"></i> PDF Export</button>
 </div>
 
 <script>
@@ -1426,9 +1426,9 @@ def main():
             elements.append({
                 "type": "card",
                 "x": 731520, "y": 1400000, "cx": 10725120, "cy": 4500000,
-                "bg": "0F172A", "border": "0284C7",
+                "bg": "312E81", "border": "6366F1",
                 "title": s.get("title", ""),
-                "title_color": "38BDF8",
+                "title_color": "A78BFA",
                 "bullets": [s.get("subtitle", "")] + s.get("bullets", [])
             })
         elif s_type == "content_2col":
@@ -1437,17 +1437,17 @@ def main():
             elements.append({
                 "type": "card",
                 "x": 731520, "y": 1828800, "cx": 5166360, "cy": 4389120,
-                "bg": "FFFFFF", "border": "0284C7",
+                "bg": "FFFFFF", "border": "6366F1",
                 "title": c1.get("title", ""),
-                "title_color": "0284C7",
+                "title_color": "312E81",
                 "bullets": c1.get("bullets", [])
             })
             elements.append({
                 "type": "card",
                 "x": 6294120, "y": 1828800, "cx": 5166360, "cy": 4389120,
-                "bg": "FFFFFF", "border": "10B981",
+                "bg": "FFFFFF", "border": "A78BFA",
                 "title": c2.get("title", ""),
-                "title_color": "10B981",
+                "title_color": "6366F1",
                 "bullets": c2.get("bullets", [])
             })
         elif s_type == "screenshot_page":
@@ -1457,9 +1457,9 @@ def main():
             elements.append({
                 "type": "card",
                 "x": 731520, "y": 1828800, "cx": 3800000, "cy": 4389120,
-                "bg": "FFFFFF", "border": "0284C7",
+                "bg": "FFFFFF", "border": "6366F1",
                 "title": "Technical Specifications",
-                "title_color": "0284C7",
+                "title_color": "312E81",
                 "bullets": specs
             })
             # Right Full Screenshot

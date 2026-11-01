@@ -13,7 +13,7 @@
 # ==============================================================================
 
 param(
-    [ValidateSet("gui", "headless", "screenshot", "stop", "status")]
+    [ValidateSet("gui", "headless", "screenshot", "stop", "status", "delete", "redeploy")]
     [string]$Mode = "gui",
 
     [int]$MemoryMB = 4096,
@@ -105,6 +105,33 @@ if ($Mode -eq "screenshot") {
     & "$VBoxManage" controlvm "$VmName" screenshotpng "$ScreenshotPath"
     Write-Host "[+] Screenshot saved successfully." -ForegroundColor Green
     exit 0
+}
+
+if ($Mode -eq "delete" -or $Mode -eq "redeploy") {
+    Write-Host "[*] Initiating VM teardown: $VmName..." -ForegroundColor Yellow
+    try {
+        & "$VBoxManage" controlvm "$VmName" poweroff 2>$null
+        Start-Sleep -Seconds 2
+    } catch {}
+    
+    try {
+        & "$VBoxManage" unregistervm "$VmName" --delete 2>$null
+        Write-Host "[+] Virtual machine unregistered and removed from VirtualBox." -ForegroundColor Green
+    } catch {
+        Write-Host "[!] VM was not active in VirtualBox registry." -ForegroundColor DarkYellow
+    }
+
+    if (Test-Path $DiskPath) {
+        Write-Host "    -> Removing virtual hard disk: $DiskPath" -ForegroundColor Yellow
+        Remove-Item -Path $DiskPath -Force -ErrorAction SilentlyContinue
+    }
+    
+    if ($Mode -eq "delete") {
+        Write-Host "[SUCCESS] VM '$VmName' and storage completely deleted." -ForegroundColor Green
+        exit 0
+    }
+    Write-Host "[*] Teardown complete. Proceeding with clean 30GB redeployment..." -ForegroundColor Cyan
+    $Mode = "gui"
 }
 
 # 5. Check if VM Already Exists

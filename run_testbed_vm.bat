@@ -19,12 +19,14 @@ if %errorlevel% neq 0 (
 echo Select deployment mode:
 echo   [1] GUI Mode      (Interactive Graphical Window - Recommended)
 echo   [2] Headless Mode (Background Service)
-echo   [3] Capture Screenshot of Running Console
-echo   [4] Stop / Poweroff Testbed VM
-echo   [5] Launch Mock Web Management Console Testbed (Local http://localhost:8443)
+echo   [3] Delete VM     (Power off and cleanly remove VM and 30GB disk)
+echo   [4] Redeploy VM   (Delete, recreate 30GB disk, and clean boot from ISO)
+echo   [5] Capture Screenshot of Running Console
+echo   [6] Stop / Poweroff Testbed VM
+echo   [7] Launch Web Management Console Testbed & Re-capture All Screenshots
 echo.
 
-set /p choice="Enter choice [1-5] (default=1): "
+set /p choice="Enter choice [1-7] (default=1): "
 if "%choice%"=="" set choice=1
 
 if "%choice%"=="1" (
@@ -32,10 +34,14 @@ if "%choice%"=="1" (
 ) else if "%choice%"=="2" (
     powershell -ExecutionPolicy Bypass -File "%~dp0deploy_testbed_vm.ps1" -Mode headless
 ) else if "%choice%"=="3" (
-    powershell -ExecutionPolicy Bypass -File "%~dp0deploy_testbed_vm.ps1" -Mode screenshot
+    powershell -ExecutionPolicy Bypass -File "%~dp0deploy_testbed_vm.ps1" -Mode delete
 ) else if "%choice%"=="4" (
-    powershell -ExecutionPolicy Bypass -File "%~dp0deploy_testbed_vm.ps1" -Mode stop
+    powershell -ExecutionPolicy Bypass -File "%~dp0deploy_testbed_vm.ps1" -Mode redeploy
 ) else if "%choice%"=="5" (
+    powershell -ExecutionPolicy Bypass -File "%~dp0deploy_testbed_vm.ps1" -Mode screenshot
+) else if "%choice%"=="6" (
+    powershell -ExecutionPolicy Bypass -File "%~dp0deploy_testbed_vm.ps1" -Mode stop
+) else if "%choice%"=="7" (
     python "%~dp0scripts\generate_web_console_screenshots.py"
 ) else (
     echo Invalid choice.

@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSIR Secure Web Appliance OS - Enterprise Management Console</title>
+  <title>CSIR Secure Web Appliance OS - Prompt Indigo Console</title>
   
   <!-- Google Fonts: Montserrat for Headings, Noto Sans for UI Body -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,700&family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,6 +20,7 @@
   <!-- Vue 3 -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
+  <!-- Tailwind Configuration with Prompt Indigo AI SaaS UI Palette -->
   <script>
     tailwind.config = {
       theme: {
@@ -29,14 +30,19 @@
             body: ['Noto Sans', 'sans-serif'],
           },
           colors: {
-            csir: {
-              50: '#f0f7ff',
-              100: '#e0effe',
-              500: '#0284c7',
-              600: '#0369a1',
-              700: '#075985',
-              800: '#0c4a6e',
-              900: '#0f172a',
+            // Prompt Indigo AI SaaS UI Palette (#F5F3FF, #DDD6FE, #A78BFA, #6366F1, #312E81)
+            indigoPalette: {
+              50: '#F5F3FF',   // Lightest Canvas
+              100: '#EDE9FE',
+              200: '#DDD6FE',  // Soft Border / Pill Tag
+              300: '#C4B5FD',
+              400: '#A78BFA',  // Medium Accent / Icons
+              500: '#6366F1',  // Vibrant Primary Action
+              600: '#4F46E5',  // Hover State
+              700: '#4338CA',
+              800: '#3730A3',
+              900: '#312E81',  // Deep Dark Indigo (Sidebar / Hero)
+              950: '#1E1B4B',  // Deepest Text
             }
           }
         }
@@ -45,10 +51,18 @@
   </script>
 
   <style>
+    :root {
+      --palette-bg: #F5F3FF;
+      --palette-border: #DDD6FE;
+      --palette-accent: #A78BFA;
+      --palette-primary: #6366F1;
+      --palette-dark: #312E81;
+    }
+
     body {
       font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: radial-gradient(circle at 10% 20%, rgba(224, 239, 254, 0.45) 0%, rgba(248, 250, 252, 0.95) 90%);
-      color: #0f172a;
+      background: radial-gradient(circle at 10% 15%, rgba(221, 214, 254, 0.45) 0%, rgba(245, 243, 255, 0.95) 100%);
+      color: #1E1B4B;
       min-height: 100vh;
     }
 
@@ -57,20 +71,20 @@
       letter-spacing: -0.02em;
     }
 
-    /* Glassmorphism Classes inspired by reference designs */
+    /* Glassmorphic Panel Styles based on Prompt Indigo Swatch */
     .glass-panel {
-      background: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(226, 232, 240, 0.85);
-      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+      border: 1px solid rgba(221, 214, 254, 0.8);
+      box-shadow: 0 4px 20px -2px rgba(49, 46, 129, 0.05), 0 2px 6px -1px rgba(49, 46, 129, 0.02);
     }
 
     .glass-panel-subtle {
       background: rgba(255, 255, 255, 0.65);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(226, 232, 240, 0.7);
+      border: 1px solid rgba(221, 214, 254, 0.6);
     }
 
     .glass-card-hover {
@@ -78,161 +92,169 @@
     }
     .glass-card-hover:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 28px -6px rgba(2, 132, 199, 0.12);
-      border-color: rgba(2, 132, 199, 0.35);
+      box-shadow: 0 12px 28px -6px rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.4);
     }
 
+    /* Deep Indigo Sidebar (Palette #312E81) */
+    .sidebar-indigo {
+      background: linear-gradient(180deg, #312E81 0%, #1E1B4B 100%);
+      color: #F5F3FF;
+    }
+
+    /* Active Navigation Pill using #6366F1 & #A78BFA glow */
     .nav-pill-active {
-      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-      color: #ffffff !important;
-      box-shadow: 0 4px 14px 0 rgba(2, 132, 199, 0.35);
+      background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+      color: #FFFFFF !important;
+      box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.45);
+      border: 1px solid rgba(221, 214, 254, 0.3);
     }
 
     /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    ::-webkit-scrollbar-track { background: #F5F3FF; }
+    ::-webkit-scrollbar-thumb { background: #DDD6FE; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #A78BFA; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased selection:bg-sky-500 selection:text-white">
+<body class="bg-indigoPalette-50 text-indigoPalette-950 antialiased selection:bg-indigoPalette-500 selection:text-white">
 
   <div id="app" class="flex h-screen overflow-hidden">
 
     <!-- ===================================================================== -->
-    <!-- LEFT SIDEBAR (OpsFlow & MediCore reference layout)                     -->
+    <!-- LEFT SIDEBAR: Deep Indigo (#312E81) from Prompt Indigo UI Palette     -->
     <!-- ===================================================================== -->
-    <aside class="w-72 glass-panel border-r border-slate-200/80 flex flex-col z-20 transition-all duration-300">
+    <aside class="w-72 sidebar-indigo border-r border-indigoPalette-800 flex flex-col z-20 transition-all duration-300 shadow-2xl">
       
       <!-- Brand Header -->
-      <div class="h-20 flex items-center px-6 border-b border-slate-200/60 gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-blue-800 flex items-center justify-center text-white shadow-md shadow-sky-600/30">
+      <div class="h-20 flex items-center px-6 border-b border-indigoPalette-800/80 gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigoPalette-500 to-indigoPalette-300 flex items-center justify-center text-white shadow-lg shadow-indigoPalette-500/30">
           <i class="fa-solid fa-shield-halved text-xl"></i>
         </div>
         <div>
-          <div class="font-heading font-extrabold text-base tracking-tight text-slate-900 leading-none">
-            CSIR <span class="text-sky-600">SWA-OS</span>
+          <div class="font-heading font-extrabold text-base tracking-tight text-white leading-none">
+            CSIR <span class="text-indigoPalette-300">SWA-OS</span>
           </div>
-          <div class="text-[11px] font-medium text-slate-500 mt-1 uppercase tracking-wider">
-            Sovereign Cloud Node
+          <div class="text-[11px] font-medium text-indigoPalette-200/80 mt-1 uppercase tracking-wider">
+            Prompt Indigo Edition
           </div>
         </div>
       </div>
 
       <!-- Navigation Menu -->
-      <div class="flex-1 overflow-y-auto px-4 py-4 space-y-1 text-sm font-medium">
+      <div class="flex-1 overflow-y-auto px-4 py-4 space-y-1.5 text-sm font-medium">
         
-        <div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-          Operations & Traffic
+        <div class="px-3 py-1 text-[10px] font-bold text-indigoPalette-300 uppercase tracking-widest font-heading">
+          Operations &amp; Ingress
         </div>
 
         <button @click="activeTab = 'overview'" 
-                :class="activeTab === 'overview' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'overview' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-chart-pie w-5 text-center text-base"></i>
+          <i class="fa-solid fa-chart-pie w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">Overview Dashboard</span>
-          <span v-if="activeTab !== 'overview'" class="badge badge-sm badge-ghost border-slate-300">Live</span>
+          <span v-if="activeTab !== 'overview'" class="badge badge-sm bg-indigoPalette-800 text-indigoPalette-200 border-none">Live</span>
         </button>
 
         <button @click="activeTab = 'vhosts'" 
-                :class="activeTab === 'vhosts' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'vhosts' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-globe w-5 text-center text-base"></i>
+          <i class="fa-solid fa-globe w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">Web Hosting &amp; VHosts</span>
-          <span class="badge badge-sm badge-info text-white">4 Hosts</span>
+          <span class="badge badge-sm bg-indigoPalette-500 text-white border-none">4 Hosts</span>
         </button>
 
         <button @click="activeTab = 'proxy'" 
-                :class="activeTab === 'proxy' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'proxy' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-network-wired w-5 text-center text-base"></i>
+          <i class="fa-solid fa-network-wired w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">Reverse Proxy &amp; Upstreams</span>
-          <span class="badge badge-sm bg-emerald-500 text-white border-none">Active</span>
+          <span class="badge badge-sm bg-emerald-500 text-white border-none">HAProxy</span>
         </button>
 
         <button @click="activeTab = 'ssl'" 
-                :class="activeTab === 'ssl' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'ssl' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-lock w-5 text-center text-base"></i>
+          <i class="fa-solid fa-lock w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">SSL / TLS Key Vault</span>
-          <span class="badge badge-sm badge-success text-white">ACME</span>
+          <span class="badge badge-sm bg-indigoPalette-400 text-indigoPalette-950 font-bold border-none">ACME</span>
         </button>
 
         <button @click="activeTab = 'applications'" 
-                :class="activeTab === 'applications' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'applications' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-box-archive w-5 text-center text-base"></i>
+          <i class="fa-solid fa-box-archive w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">Container Quadlets</span>
-          <span class="badge badge-sm badge-ghost border-slate-300">Rootless</span>
+          <span class="badge badge-sm bg-indigoPalette-800 text-indigoPalette-200 border-none">UserNS</span>
         </button>
 
-        <div class="pt-4 px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+        <div class="pt-3 px-3 py-1 text-[10px] font-bold text-indigoPalette-300 uppercase tracking-widest font-heading">
           Security &amp; Intelligence
         </div>
 
         <button @click="activeTab = 'security'" 
-                :class="activeTab === 'security' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'security' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-shield-virus w-5 text-center text-base"></i>
+          <i class="fa-solid fa-shield-virus w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">Coraza WAF &amp; Defense</span>
-          <span class="badge badge-sm badge-error text-white">OWASP CRS</span>
+          <span class="badge badge-sm bg-rose-500 text-white border-none">OWASP CRS</span>
         </button>
 
         <button @click="activeTab = 'ai_security'" 
-                :class="activeTab === 'ai_security' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'ai_security' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-brain w-5 text-center text-base"></i>
+          <i class="fa-solid fa-brain w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">Local AI Center &amp; RCA</span>
-          <span class="badge badge-sm badge-primary text-white">ChatOps</span>
+          <span class="badge badge-sm bg-indigoPalette-400 text-indigoPalette-950 font-bold border-none">ChatOps</span>
         </button>
 
-        <div class="pt-4 px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-          Integrity &amp; Platform
+        <div class="pt-3 px-3 py-1 text-[10px] font-bold text-indigoPalette-300 uppercase tracking-widest font-heading">
+          Continuity &amp; Platform
         </div>
 
         <button @click="activeTab = 'data_protection'" 
-                :class="activeTab === 'data_protection' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'data_protection' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-hard-drive w-5 text-center text-base"></i>
+          <i class="fa-solid fa-hard-drive w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">Btrfs &amp; Restic Backups</span>
         </button>
 
         <button @click="activeTab = 'compliance'" 
-                :class="activeTab === 'compliance' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'compliance' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-stamp w-5 text-center text-base"></i>
+          <i class="fa-solid fa-stamp w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">CERT-In Audit Ledger</span>
         </button>
 
         <button @click="activeTab = 'updates'" 
-                :class="activeTab === 'updates' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'updates' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-arrows-rotate w-5 text-center text-base"></i>
+          <i class="fa-solid fa-arrows-rotate w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">MicroOS Updates</span>
         </button>
 
         <button @click="activeTab = 'boot_screen'" 
-                :class="activeTab === 'boot_screen' ? 'nav-pill-active' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'"
+                :class="activeTab === 'boot_screen' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
                 class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
-          <i class="fa-solid fa-terminal w-5 text-center text-base"></i>
+          <i class="fa-solid fa-terminal w-5 text-center text-base text-indigoPalette-300"></i>
           <span class="flex-1 text-left font-semibold">Hardware Boot Terminal</span>
         </button>
       </div>
 
-      <!-- Bottom Platform Card (OpsFlow style) -->
-      <div class="p-4 border-t border-slate-200/60">
-        <div class="p-3.5 rounded-2xl bg-gradient-to-br from-sky-50 to-blue-100/80 border border-sky-200/70 text-xs">
-          <div class="flex items-center gap-2 font-heading font-bold text-sky-950">
-            <i class="fa-solid fa-shield-heart text-sky-600"></i>
-            <span>Sovereign Security Gate</span>
+      <!-- Bottom Platform Card (Prompt Indigo Swatch Style) -->
+      <div class="p-4 border-t border-indigoPalette-800/80">
+        <div class="p-3.5 rounded-2xl bg-indigoPalette-800/70 border border-indigoPalette-400/30 text-xs">
+          <div class="flex items-center gap-2 font-heading font-bold text-white">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigoPalette-400 animate-pulse"></span>
+            <span>Prompt Indigo Node</span>
           </div>
-          <p class="text-slate-600 mt-1 text-[11px] leading-relaxed">
-            Immutable MicroOS Kernel 6.12 | CERT-In 180-Day SHA-256 Ledger Enforced.
+          <p class="text-indigoPalette-200 mt-1 text-[11px] leading-relaxed">
+            Immutable MicroOS 6.12 | CERT-In 180-Day SHA-256 Ledger Locked.
           </p>
-          <div class="mt-2.5 pt-2 border-t border-sky-200/60 flex items-center justify-between text-[11px]">
-            <span class="text-slate-500 font-mono">Appliance v1.0.0</span>
-            <span class="text-emerald-700 font-semibold flex items-center gap-1">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Locked
+          <div class="mt-2.5 pt-2 border-t border-indigoPalette-700 flex items-center justify-between text-[11px]">
+            <span class="text-indigoPalette-300 font-mono">Kernel 6.12.0</span>
+            <span class="text-emerald-400 font-bold flex items-center gap-1">
+              <i class="fa-solid fa-check"></i> Enforcing
             </span>
           </div>
         </div>
@@ -244,17 +266,17 @@
     <!-- ===================================================================== -->
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
       
-      <!-- Top Navigation Header (Reference 1 & 2 Style) -->
-      <header class="h-20 glass-panel border-b border-slate-200/80 px-8 flex items-center justify-between z-10 shrink-0">
+      <!-- Top Navigation Header -->
+      <header class="h-20 glass-panel border-b border-indigoPalette-200 px-8 flex items-center justify-between z-10 shrink-0">
         
         <!-- Search bar with Cmd+K badge -->
         <div class="relative w-96">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-indigoPalette-400 text-sm"></i>
           <input type="text" 
                  v-model="searchQuery" 
                  placeholder="Search vhosts, reverse proxies, certificates, incidents..." 
-                 class="w-full pl-10 pr-12 py-2 rounded-xl text-sm bg-slate-100/70 border border-slate-200/80 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition duration-150">
-          <kbd class="kbd kbd-sm absolute right-3 top-1/2 -translate-y-1/2 bg-white text-slate-400 border-slate-200 text-[10px]">Ctrl K</kbd>
+                 class="w-full pl-10 pr-12 py-2.5 rounded-xl text-sm bg-white/80 border border-indigoPalette-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigoPalette-500/20 focus:border-indigoPalette-500 transition duration-150">
+          <kbd class="kbd kbd-sm absolute right-3 top-1/2 -translate-y-1/2 bg-indigoPalette-50 text-indigoPalette-500 border-indigoPalette-200 text-[10px]">Ctrl K</kbd>
         </div>
 
         <!-- Top Right Actions & Admin Profile -->
@@ -262,30 +284,30 @@
           
           <!-- Sovereign Status Indicators -->
           <div class="hidden xl:flex items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <i class="fa-solid fa-clock-rotate-left text-[11px]"></i> Indian NPL NTP Sync
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigoPalette-100 text-indigoPalette-900 border border-indigoPalette-200">
+              <i class="fa-solid fa-clock-rotate-left text-[11px] text-indigoPalette-600"></i> Indian NPL NTP Sync
             </span>
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200">
-              <i class="fa-solid fa-shield text-[11px]"></i> Coraza WAF Enforcing
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+              <i class="fa-solid fa-shield text-[11px] text-emerald-600"></i> Coraza WAF Enforcing
             </span>
           </div>
 
           <!-- Notification Bell with red badge -->
           <div class="relative">
-            <button class="w-10 h-10 rounded-xl glass-panel-subtle flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+            <button class="w-10 h-10 rounded-xl glass-panel-subtle flex items-center justify-center text-indigoPalette-900 hover:text-indigoPalette-600 hover:bg-white transition border border-indigoPalette-200">
               <i class="fa-regular fa-bell text-base"></i>
               <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
             </button>
           </div>
 
-          <!-- User Profile Dropdown (MediCore style) -->
-          <div class="flex items-center gap-3 pl-3 border-l border-slate-200">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-700 to-indigo-800 text-white font-bold flex items-center justify-center text-sm shadow-sm">
+          <!-- User Profile Dropdown -->
+          <div class="flex items-center gap-3 pl-3 border-l border-indigoPalette-200">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigoPalette-900 to-indigoPalette-500 text-white font-heading font-bold flex items-center justify-center text-sm shadow-md shadow-indigoPalette-500/20">
               AS
             </div>
             <div class="hidden sm:block text-left leading-tight">
-              <div class="font-heading font-bold text-sm text-slate-900">Dr. A. Sharma</div>
-              <div class="text-[11px] text-slate-500">Chief Security Officer / Admin</div>
+              <div class="font-heading font-bold text-sm text-indigoPalette-950">Dr. A. Sharma</div>
+              <div class="text-[11px] text-indigoPalette-500 font-medium">Chief Security Officer / Admin</div>
             </div>
           </div>
         </div>
@@ -299,44 +321,44 @@
         <!-- ================================================================= -->
         <div v-if="activeTab === 'overview'" class="space-y-6">
           
-          <!-- Welcome Banner with Date Range (OpsFlow Style) -->
+          <!-- Welcome Banner with Date Range -->
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
                 Operations &amp; Security Health Dashboard
               </h1>
-              <p class="text-sm text-slate-500 mt-1">
+              <p class="text-sm text-indigoPalette-600 mt-1">
                 Real-time telemetry across Sovereign Web Appliance, virtual hosts, and AI security perimeter.
               </p>
             </div>
             <div class="flex items-center gap-3">
-              <div class="glass-panel-subtle px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 flex items-center gap-2 border border-slate-200">
-                <i class="fa-regular fa-calendar text-sky-600"></i>
+              <div class="glass-panel-subtle px-3.5 py-1.5 rounded-xl text-xs font-semibold text-indigoPalette-900 flex items-center gap-2 border border-indigoPalette-200">
+                <i class="fa-regular fa-calendar text-indigoPalette-500"></i>
                 <span>{{ currentDateFormatted }}</span>
               </div>
-              <button @click="showDeployModal = true" class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none text-white rounded-xl shadow-md shadow-sky-600/20">
+              <button @click="showDeployModal = true" class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl shadow-md shadow-indigoPalette-500/25">
                 <i class="fa-solid fa-plus text-xs"></i> Deploy Workload
               </button>
             </div>
           </div>
 
-          <!-- 4 KPI Metrics Cards with Trends (OpsFlow Style) -->
+          <!-- 4 KPI Metrics Cards with Trends (Prompt Indigo Swatch Colors) -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             
             <!-- Metric 1: System Health -->
             <div class="glass-panel rounded-2xl p-5 glass-card-hover flex flex-col justify-between">
               <div class="flex items-start justify-between">
                 <div>
-                  <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Health Score</div>
-                  <div class="font-heading text-3xl font-extrabold text-slate-900 mt-1">98.4%</div>
+                  <div class="text-xs font-semibold text-indigoPalette-500 uppercase tracking-wider font-heading">Health Score</div>
+                  <div class="font-heading text-3xl font-extrabold text-indigoPalette-950 mt-1">98.4%</div>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl">
+                <div class="w-12 h-12 rounded-2xl bg-indigoPalette-100 text-indigoPalette-600 flex items-center justify-center text-xl border border-indigoPalette-200">
                   <i class="fa-solid fa-heart-pulse"></i>
                 </div>
               </div>
               <div class="mt-4 flex items-center text-xs font-semibold text-emerald-600 gap-1.5">
                 <span class="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200"><i class="fa-solid fa-arrow-up"></i> +1.8%</span>
-                <span class="text-slate-400 font-normal">All 24 microservices operational</span>
+                <span class="text-indigoPalette-400 font-normal">All 24 microservices operational</span>
               </div>
             </div>
 
@@ -344,16 +366,16 @@
             <div class="glass-panel rounded-2xl p-5 glass-card-hover flex flex-col justify-between">
               <div class="flex items-start justify-between">
                 <div>
-                  <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Web VHosts</div>
-                  <div class="font-heading text-3xl font-extrabold text-slate-900 mt-1">4 / 4</div>
+                  <div class="text-xs font-semibold text-indigoPalette-500 uppercase tracking-wider font-heading">Active Web VHosts</div>
+                  <div class="font-heading text-3xl font-extrabold text-indigoPalette-950 mt-1">4 / 4</div>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl">
+                <div class="w-12 h-12 rounded-2xl bg-indigoPalette-200/60 text-indigoPalette-700 flex items-center justify-center text-xl border border-indigoPalette-300">
                   <i class="fa-solid fa-globe"></i>
                 </div>
               </div>
               <div class="mt-4 flex items-center text-xs font-semibold text-emerald-600 gap-1.5">
                 <span class="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200"><i class="fa-solid fa-arrow-up"></i> 100%</span>
-                <span class="text-slate-400 font-normal">HTTP/2 &amp; TLS 1.3 enforced</span>
+                <span class="text-indigoPalette-400 font-normal">HTTP/2 &amp; TLS 1.3 enforced</span>
               </div>
             </div>
 
@@ -361,16 +383,16 @@
             <div class="glass-panel rounded-2xl p-5 glass-card-hover flex flex-col justify-between">
               <div class="flex items-start justify-between">
                 <div>
-                  <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Proxy Ingress Rate</div>
-                  <div class="font-heading text-3xl font-extrabold text-slate-900 mt-1">1,842 req/s</div>
+                  <div class="text-xs font-semibold text-indigoPalette-500 uppercase tracking-wider font-heading">Proxy Ingress Rate</div>
+                  <div class="font-heading text-3xl font-extrabold text-indigoPalette-950 mt-1">1,842 req/s</div>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+                <div class="w-12 h-12 rounded-2xl bg-indigoPalette-100 text-indigoPalette-600 flex items-center justify-center text-xl border border-indigoPalette-200">
                   <i class="fa-solid fa-bolt"></i>
                 </div>
               </div>
               <div class="mt-4 flex items-center text-xs font-semibold text-emerald-600 gap-1.5">
                 <span class="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200"><i class="fa-solid fa-arrow-up"></i> +14.2%</span>
-                <span class="text-slate-400 font-normal">Avg p95 latency 8.2 ms</span>
+                <span class="text-indigoPalette-400 font-normal">Avg p95 latency 8.2 ms</span>
               </div>
             </div>
 
@@ -378,40 +400,40 @@
             <div class="glass-panel rounded-2xl p-5 glass-card-hover flex flex-col justify-between">
               <div class="flex items-start justify-between">
                 <div>
-                  <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Coraza Blocked Attacks</div>
+                  <div class="text-xs font-semibold text-rose-500 uppercase tracking-wider font-heading">Coraza Blocked Attacks</div>
                   <div class="font-heading text-3xl font-extrabold text-rose-600 mt-1">1,429</div>
                 </div>
-                <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl">
+                <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl border border-rose-200">
                   <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
               </div>
               <div class="mt-4 flex items-center text-xs font-semibold text-rose-600 gap-1.5">
                 <span class="px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200"><i class="fa-solid fa-shield"></i> 100% Dropped</span>
-                <span class="text-slate-400 font-normal">Zero bypasses detected</span>
+                <span class="text-indigoPalette-400 font-normal">Zero bypasses detected</span>
               </div>
             </div>
           </div>
 
-          <!-- Middle Split: Left Data Cards, Right Smart Alerts (Reference 1 & 2) -->
+          <!-- Middle Split: Left Data Cards, Right Smart Alerts -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <!-- 2-Column Left: Web Traffic & Workload Health -->
             <div class="lg:col-span-2 space-y-6">
               
-              <!-- Managed Workloads Table (Glassmorphism & Clean Pill Design) -->
+              <!-- Managed Workloads Table -->
               <div class="glass-panel rounded-2xl p-6">
                 <div class="flex items-center justify-between mb-4">
                   <div>
-                    <h2 class="font-heading text-base font-bold text-slate-900">Mission-Critical Research Portals &amp; VHosts</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Automated health probing &amp; reverse proxy ingress routing.</p>
+                    <h2 class="font-heading text-base font-bold text-indigoPalette-950">Mission-Critical Research Portals &amp; VHosts</h2>
+                    <p class="text-xs text-indigoPalette-500 mt-0.5">Automated health probing &amp; reverse proxy ingress routing.</p>
                   </div>
-                  <button @click="activeTab = 'vhosts'" class="text-xs font-bold text-sky-600 hover:text-sky-700">View All VHosts &rarr;</button>
+                  <button @click="activeTab = 'vhosts'" class="text-xs font-bold text-indigoPalette-500 hover:text-indigoPalette-600">View All VHosts &rarr;</button>
                 </div>
 
                 <div class="overflow-x-auto">
                   <table class="table table-sm w-full text-left">
                     <thead>
-                      <tr class="text-slate-400 border-b border-slate-200/80 text-xs uppercase font-heading">
+                      <tr class="text-indigoPalette-400 border-b border-indigoPalette-200 text-xs uppercase font-heading">
                         <th>Application / VHost</th>
                         <th>Type / Runtime</th>
                         <th>Domain &amp; Port</th>
@@ -421,27 +443,27 @@
                       </tr>
                     </thead>
                     <tbody class="text-sm">
-                      <tr v-for="app in appList" :key="app.app_id" class="border-b border-slate-100 hover:bg-slate-50/70 transition">
-                        <td class="font-semibold text-slate-900 py-3">
+                      <tr v-for="app in appList" :key="app.app_id" class="border-b border-indigoPalette-100 hover:bg-white/60 transition">
+                        <td class="font-semibold text-indigoPalette-950 py-3">
                           <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 font-bold flex items-center justify-center text-xs">
+                            <div class="w-8 h-8 rounded-lg bg-indigoPalette-100 text-indigoPalette-700 font-bold flex items-center justify-center text-xs border border-indigoPalette-200">
                               <i class="fa-solid fa-server"></i>
                             </div>
                             <div>
                               <div>{{ app.name }}</div>
-                              <div class="text-[11px] font-mono text-slate-400">{{ app.app_id }}</div>
+                              <div class="text-[11px] font-mono text-indigoPalette-400">{{ app.app_id }}</div>
                             </div>
                           </div>
                         </td>
                         <td>
-                          <span class="badge badge-sm badge-ghost font-medium border-slate-200">Podman / Quadlet</span>
+                          <span class="badge badge-sm bg-indigoPalette-50 text-indigoPalette-700 border-indigoPalette-200 font-medium">Podman / Quadlet</span>
                         </td>
                         <td>
-                          <div class="font-mono text-xs text-sky-700 font-semibold">{{ app.domain }}</div>
-                          <div class="text-[11px] text-slate-400">:{{ app.port }} (TLS 1.3)</div>
+                          <div class="font-mono text-xs text-indigoPalette-700 font-semibold">{{ app.domain }}</div>
+                          <div class="text-[11px] text-indigoPalette-400">:{{ app.port }} (TLS 1.3)</div>
                         </td>
                         <td>
-                          <span class="badge badge-sm bg-emerald-100 text-emerald-800 border-none font-semibold">Enforcing</span>
+                          <span class="badge badge-sm bg-emerald-50 text-emerald-800 border-emerald-200 font-semibold">Enforcing</span>
                         </td>
                         <td>
                           <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -449,7 +471,7 @@
                           </span>
                         </td>
                         <td>
-                          <button class="btn btn-ghost btn-xs text-slate-500 hover:text-sky-600"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                          <button class="btn btn-ghost btn-xs text-indigoPalette-400 hover:text-indigoPalette-600"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
                         </td>
                       </tr>
                     </tbody>
@@ -457,33 +479,33 @@
                 </div>
               </div>
 
-              <!-- AI Root Cause Analysis Card (MediCore AI Style) -->
-              <div class="glass-panel rounded-2xl p-6 border-l-4 border-l-sky-500">
+              <!-- AI Root Cause Analysis Card -->
+              <div class="glass-panel rounded-2xl p-6 border-l-4 border-l-indigoPalette-500">
                 <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-2 font-heading font-bold text-slate-900">
-                    <span class="px-2 py-0.5 rounded-md bg-sky-100 text-sky-700 text-xs uppercase font-extrabold">Autonomous AI</span>
+                  <div class="flex items-center gap-2 font-heading font-bold text-indigoPalette-950">
+                    <span class="px-2 py-0.5 rounded-md bg-indigoPalette-100 text-indigoPalette-700 text-xs uppercase font-extrabold border border-indigoPalette-200">Prompt Indigo AI</span>
                     <span>Infrastructure Root Cause Analysis</span>
                   </div>
-                  <span class="text-xs text-slate-400 font-mono">Telemetry Hook: res-portal</span>
+                  <span class="text-xs text-indigoPalette-400 font-mono">Hook: res-portal</span>
                 </div>
-                <p class="text-sm text-slate-700 leading-relaxed">
+                <p class="text-sm text-indigoPalette-800 leading-relaxed">
                   Query <code>SELECT * FROM research_publications WHERE full_text_search ILIKE '%nanotech%'</code> is triggering full table scans (~1,420ms).
                 </p>
-                <div class="mt-4 p-3 rounded-xl bg-slate-900 text-slate-200 font-mono text-xs flex items-center justify-between">
+                <div class="mt-4 p-3 rounded-xl bg-indigoPalette-900 text-indigoPalette-100 font-mono text-xs flex items-center justify-between shadow-lg shadow-indigoPalette-900/20">
                   <span>CREATE GIN INDEX ON research_publications USING gin(to_tsvector('english', abstract));</span>
-                  <button class="btn btn-xs btn-primary bg-sky-600 hover:bg-sky-500 border-none text-white ml-2">Approve Execution</button>
+                  <button class="btn btn-xs bg-indigoPalette-500 hover:bg-indigoPalette-400 border-none text-white ml-2">Approve Execution</button>
                 </div>
               </div>
             </div>
 
-            <!-- 1-Column Right: Smart Alerts & Interactive AI ChatOps (Reference 2) -->
+            <!-- 1-Column Right: Smart Alerts & Interactive AI ChatOps -->
             <div class="space-y-6">
               
               <!-- Smart Alerts Box -->
               <div class="glass-panel rounded-2xl p-6">
                 <div class="flex items-center justify-between mb-4">
-                  <h3 class="font-heading text-sm font-bold text-slate-900 uppercase tracking-wider">Smart Alerts</h3>
-                  <span class="badge badge-sm badge-error text-white font-bold">2 Live</span>
+                  <h3 class="font-heading text-sm font-bold text-indigoPalette-950 uppercase tracking-wider">Smart Alerts</h3>
+                  <span class="badge badge-sm bg-rose-500 text-white font-bold border-none">2 Live</span>
                 </div>
 
                 <div class="space-y-3">
@@ -495,12 +517,12 @@
                     <p class="text-rose-700 mt-1">Rule 942100 triggered by 198.51.100.47 against /api/sensor-data.</p>
                   </div>
 
-                  <div class="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200/80 text-xs">
-                    <div class="flex items-center justify-between font-bold text-amber-800">
-                      <span><i class="fa-solid fa-certificate mr-1"></i> SSL Expiry Notice</span>
-                      <span class="text-[10px] text-amber-600 font-mono">42 Days</span>
+                  <div class="p-3.5 rounded-xl bg-indigoPalette-50 border border-indigoPalette-200 text-xs">
+                    <div class="flex items-center justify-between font-bold text-indigoPalette-900">
+                      <span><i class="fa-solid fa-certificate mr-1 text-indigoPalette-500"></i> SSL Expiry Notice</span>
+                      <span class="text-[10px] text-indigoPalette-600 font-mono">42 Days</span>
                     </div>
-                    <p class="text-amber-700 mt-1">Wildcard *.serc.res.in scheduled for automated ACME renewal.</p>
+                    <p class="text-indigoPalette-700 mt-1">Wildcard *.serc.res.in scheduled for automated ACME renewal.</p>
                   </div>
 
                   <div class="p-3.5 rounded-xl bg-emerald-50/80 border border-emerald-200/80 text-xs">
@@ -513,19 +535,19 @@
                 </div>
               </div>
 
-              <!-- AI Security Assistant ChatWidget (MediCore Bottom-Right Style) -->
+              <!-- AI Security Assistant ChatWidget -->
               <div class="glass-panel rounded-2xl p-6">
                 <div class="flex items-center gap-2 mb-3">
-                  <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></div>
-                  <h3 class="font-heading text-sm font-bold text-slate-900">Sovereign ChatOps Assistant</h3>
+                  <div class="w-2.5 h-2.5 rounded-full bg-indigoPalette-500 animate-ping"></div>
+                  <h3 class="font-heading text-sm font-bold text-indigoPalette-950">Prompt Indigo ChatOps</h3>
                 </div>
-                <div class="p-3 rounded-xl bg-slate-100/70 border border-slate-200 text-xs text-slate-600 mb-3">
-                  <p class="font-semibold text-slate-800">Local AI Guardian Online:</p>
-                  "I monitor ingress routes, WAF block counters, and Btrfs snapshot trees. Ask me to tune reverse proxies, stage updates, or verify CERT-In hashes."
+                <div class="p-3 rounded-xl bg-indigoPalette-50 border border-indigoPalette-200 text-xs text-indigoPalette-800 mb-3">
+                  <p class="font-semibold text-indigoPalette-900">Local AI Guardian Online:</p>
+                  "I monitor virtual hosts, reverse proxy pools, and Btrfs snapshot trees. Ask me to route traffic, renew SSL, or stage MicroOS updates."
                 </div>
                 <div class="flex gap-2">
-                  <input type="text" v-model="chatopsInput" placeholder="e.g. Stage MicroOS update" class="input input-sm input-bordered flex-1 rounded-xl text-xs">
-                  <button @click="submitChatopsQuery" class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none rounded-xl text-white">
+                  <input type="text" v-model="chatopsInput" placeholder="e.g. Stage MicroOS update" class="input input-sm input-bordered flex-1 rounded-xl text-xs bg-white border-indigoPalette-200">
+                  <button @click="submitChatopsQuery" class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none rounded-xl text-white">
                     <i class="fa-solid fa-paper-plane text-xs"></i>
                   </button>
                 </div>
@@ -536,19 +558,19 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- TAB 2: WEB HOSTING & VIRTUAL HOST MANAGEMENT (NEW FEATURE)        -->
+        <!-- TAB 2: WEB HOSTING & VIRTUAL HOST MANAGEMENT                      -->
         <!-- ================================================================= -->
         <div v-if="activeTab === 'vhosts'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
                 Web Hosting &amp; Virtual Host Management
               </h1>
-              <p class="text-sm text-slate-500 mt-1">
+              <p class="text-sm text-indigoPalette-600 mt-1">
                 Configure sovereign multi-tenant virtual hosts, document roots, PHP/Node runtimes, and HTTP/3 QUIC.
               </p>
             </div>
-            <button class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none text-white rounded-xl shadow-md shadow-sky-600/20">
+            <button class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl shadow-md shadow-indigoPalette-500/25">
               <i class="fa-solid fa-plus text-xs"></i> Add Virtual Host
             </button>
           </div>
@@ -556,19 +578,19 @@
           <!-- VHost Stats -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div class="glass-panel rounded-2xl p-5">
-              <div class="text-xs font-semibold text-slate-500 uppercase">Hosted Domains</div>
-              <div class="font-heading text-2xl font-extrabold text-slate-900 mt-1">4 Active Sites</div>
-              <div class="text-xs text-slate-400 mt-2"><i class="fa-solid fa-check-circle text-emerald-500"></i> All roots mapped in /srv/www/vhosts</div>
+              <div class="text-xs font-semibold text-indigoPalette-500 uppercase font-heading">Hosted Domains</div>
+              <div class="font-heading text-2xl font-extrabold text-indigoPalette-950 mt-1">4 Active Sites</div>
+              <div class="text-xs text-indigoPalette-500 mt-2"><i class="fa-solid fa-check-circle text-emerald-500"></i> All roots mapped in /srv/www/vhosts</div>
             </div>
             <div class="glass-panel rounded-2xl p-5">
-              <div class="text-xs font-semibold text-slate-500 uppercase">Supported Runtimes</div>
-              <div class="font-heading text-2xl font-extrabold text-slate-900 mt-1">PHP 8.2 / Node 20 / Static</div>
-              <div class="text-xs text-slate-400 mt-2"><i class="fa-solid fa-bolt text-sky-500"></i> Rootless FastCGI Process Pools</div>
+              <div class="text-xs font-semibold text-indigoPalette-500 uppercase font-heading">Supported Runtimes</div>
+              <div class="font-heading text-2xl font-extrabold text-indigoPalette-950 mt-1">PHP 8.2 / Node 20 / Static</div>
+              <div class="text-xs text-indigoPalette-500 mt-2"><i class="fa-solid fa-bolt text-indigoPalette-500"></i> Rootless FastCGI Process Pools</div>
             </div>
             <div class="glass-panel rounded-2xl p-5">
-              <div class="text-xs font-semibold text-slate-500 uppercase">Protocols Enforced</div>
-              <div class="font-heading text-2xl font-extrabold text-slate-900 mt-1">HTTP/2 &amp; HTTP/3 QUIC</div>
-              <div class="text-xs text-slate-400 mt-2"><i class="fa-solid fa-lock text-emerald-500"></i> Automated ACME SSL Bindings</div>
+              <div class="text-xs font-semibold text-indigoPalette-500 uppercase font-heading">Protocols Enforced</div>
+              <div class="font-heading text-2xl font-extrabold text-indigoPalette-950 mt-1">HTTP/2 &amp; HTTP/3 QUIC</div>
+              <div class="text-xs text-indigoPalette-500 mt-2"><i class="fa-solid fa-lock text-emerald-500"></i> Automated ACME SSL Bindings</div>
             </div>
           </div>
 
@@ -577,7 +599,7 @@
             <div class="overflow-x-auto">
               <table class="table w-full text-left">
                 <thead>
-                  <tr class="text-slate-400 border-b border-slate-200/80 text-xs uppercase font-heading">
+                  <tr class="text-indigoPalette-400 border-b border-indigoPalette-200 text-xs uppercase font-heading">
                     <th>Virtual Host Domain</th>
                     <th>Document Root Path</th>
                     <th>Engine / Runtime</th>
@@ -588,19 +610,19 @@
                   </tr>
                 </thead>
                 <tbody class="text-sm">
-                  <tr v-for="vh in vhostsList" :key="vh.id" class="border-b border-slate-100 hover:bg-slate-50/70 transition">
-                    <td class="font-semibold text-slate-900 py-3.5">
+                  <tr v-for="vh in vhostsList" :key="vh.id" class="border-b border-indigoPalette-100 hover:bg-white/60 transition">
+                    <td class="font-semibold text-indigoPalette-950 py-3.5">
                       <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-globe text-sky-600"></i>
+                        <i class="fa-solid fa-globe text-indigoPalette-500"></i>
                         <span>{{ vh.domain }}</span>
                       </div>
-                      <div class="text-[11px] text-slate-400 font-mono">{{ vh.aliases }}</div>
+                      <div class="text-[11px] text-indigoPalette-400 font-mono">{{ vh.aliases }}</div>
                     </td>
                     <td>
-                      <code class="text-xs font-mono text-slate-600 bg-slate-100 px-2 py-1 rounded-md">{{ vh.docroot }}</code>
+                      <code class="text-xs font-mono text-indigoPalette-700 bg-indigoPalette-100 px-2 py-1 rounded-md border border-indigoPalette-200">{{ vh.docroot }}</code>
                     </td>
                     <td>
-                      <span class="badge badge-sm font-semibold" :class="vh.runtime_badge">{{ vh.runtime }}</span>
+                      <span class="badge badge-sm font-semibold bg-indigoPalette-100 text-indigoPalette-900 border-indigoPalette-200">{{ vh.runtime }}</span>
                     </td>
                     <td>
                       <span class="inline-flex items-center gap-1 text-xs text-emerald-700 font-semibold">
@@ -609,8 +631,8 @@
                     </td>
                     <td>
                       <div class="text-xs font-medium">{{ vh.storage_used }} / {{ vh.storage_quota }}</div>
-                      <div class="w-24 bg-slate-200 rounded-full h-1.5 mt-1 overflow-hidden">
-                        <div class="bg-sky-600 h-1.5 rounded-full" :style="{ width: vh.quota_percent + '%' }"></div>
+                      <div class="w-24 bg-indigoPalette-200 rounded-full h-1.5 mt-1 overflow-hidden">
+                        <div class="bg-indigoPalette-500 h-1.5 rounded-full" :style="{ width: vh.quota_percent + '%' }"></div>
                       </div>
                     </td>
                     <td>
@@ -618,8 +640,8 @@
                     </td>
                     <td>
                       <div class="flex items-center gap-1">
-                        <button class="btn btn-xs btn-ghost text-slate-600 hover:text-sky-600">Edit</button>
-                        <button class="btn btn-xs btn-ghost text-slate-600 hover:text-sky-600">Logs</button>
+                        <button class="btn btn-xs btn-ghost text-indigoPalette-500 hover:text-indigoPalette-700">Edit</button>
+                        <button class="btn btn-xs btn-ghost text-indigoPalette-500 hover:text-indigoPalette-700">Logs</button>
                       </div>
                     </td>
                   </tr>
@@ -630,19 +652,19 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- TAB 3: REVERSE PROXY & UPSTREAM LOAD BALANCER (NEW FEATURE)       -->
+        <!-- TAB 3: REVERSE PROXY & UPSTREAM LOAD BALANCER                     -->
         <!-- ================================================================= -->
         <div v-if="activeTab === 'proxy'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
                 Dynamic Reverse Proxy &amp; Upstream Load Balancer
               </h1>
-              <p class="text-sm text-slate-500 mt-1">
+              <p class="text-sm text-indigoPalette-600 mt-1">
                 HAProxy sovereign edge router with layer 7 path routing, backend health probes, and circuit breakers.
               </p>
             </div>
-            <button class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none text-white rounded-xl shadow-md shadow-sky-600/20">
+            <button class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl shadow-md shadow-indigoPalette-500/25">
               <i class="fa-solid fa-plus text-xs"></i> New Proxy Rule
             </button>
           </div>
@@ -653,27 +675,27 @@
             <!-- Upstream Pools Card (2 columns) -->
             <div class="lg:col-span-2 glass-panel rounded-2xl p-6 space-y-4">
               <div class="flex items-center justify-between">
-                <h2 class="font-heading text-base font-bold text-slate-900">Upstream Backend Pools</h2>
-                <span class="badge badge-sm badge-success text-white">All Pools Healthy</span>
+                <h2 class="font-heading text-base font-bold text-indigoPalette-950">Upstream Backend Pools</h2>
+                <span class="badge badge-sm bg-emerald-500 text-white border-none font-bold">All Pools Healthy</span>
               </div>
 
               <div class="space-y-4">
-                <div v-for="pool in upstreamPools" :key="pool.pool_id" class="p-4 rounded-xl border border-slate-200/80 bg-white/70">
+                <div v-for="pool in upstreamPools" :key="pool.pool_id" class="p-4 rounded-xl border border-indigoPalette-200 bg-white/80">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                       <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-                      <span class="font-heading font-bold text-sm text-slate-900">{{ pool.name }}</span>
-                      <span class="badge badge-xs badge-ghost font-mono">{{ pool.algorithm }}</span>
+                      <span class="font-heading font-bold text-sm text-indigoPalette-950">{{ pool.name }}</span>
+                      <span class="badge badge-xs bg-indigoPalette-100 text-indigoPalette-800 font-mono border-indigoPalette-200">{{ pool.algorithm }}</span>
                     </div>
-                    <span class="text-xs font-semibold text-slate-500">{{ pool.active_targets }} / {{ pool.total_targets }} Targets Up</span>
+                    <span class="text-xs font-semibold text-indigoPalette-500">{{ pool.active_targets }} / {{ pool.total_targets }} Targets Up</span>
                   </div>
-                  <div class="mt-2 text-xs text-slate-500 flex items-center gap-4">
-                    <span><i class="fa-solid fa-route text-sky-500"></i> Route: <code>{{ pool.path_prefix }}</code></span>
+                  <div class="mt-2 text-xs text-indigoPalette-600 flex items-center gap-4">
+                    <span><i class="fa-solid fa-route text-indigoPalette-500"></i> Route: <code>{{ pool.path_prefix }}</code></span>
                     <span><i class="fa-solid fa-heart-pulse text-rose-500"></i> Health Check: <code>{{ pool.health_uri }} (every {{ pool.check_interval }}s)</code></span>
                   </div>
-                  <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-2 font-mono text-slate-600">
-                      <span v-for="t in pool.targets" :key="t" class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200">{{ t }}</span>
+                  <div class="mt-3 pt-3 border-t border-indigoPalette-100 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2 font-mono text-indigoPalette-700">
+                      <span v-for="t in pool.targets" :key="t" class="px-2 py-0.5 rounded bg-indigoPalette-50 border border-indigoPalette-200">{{ t }}</span>
                     </div>
                     <span class="text-emerald-600 font-semibold">Latency: {{ pool.avg_latency }}ms</span>
                   </div>
@@ -683,22 +705,22 @@
 
             <!-- Ingress Routing Engine Card -->
             <div class="glass-panel rounded-2xl p-6 space-y-4">
-              <h2 class="font-heading text-base font-bold text-slate-900">Edge Gateway Settings</h2>
+              <h2 class="font-heading text-base font-bold text-indigoPalette-950">Edge Gateway Policy</h2>
               
               <div class="space-y-3 text-xs">
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                  <div class="font-bold text-slate-800">HTTP &rarr; HTTPS Strict Redirection</div>
-                  <p class="text-slate-500 mt-1">Automatic 301 Permanent Redirect on port 80 to port 443 with HSTS header.</p>
+                <div class="p-3.5 rounded-xl bg-indigoPalette-50 border border-indigoPalette-200">
+                  <div class="font-bold text-indigoPalette-900">HTTP &rarr; HTTPS Strict Redirection</div>
+                  <p class="text-indigoPalette-600 mt-1">Automatic 301 Permanent Redirect on port 80 to port 443 with HSTS header.</p>
                 </div>
 
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                  <div class="font-bold text-slate-800">WebSocket &amp; gRPC Passthrough</div>
-                  <p class="text-slate-500 mt-1">Transparent bi-directional streaming for telemetry &amp; live sensor channels.</p>
+                <div class="p-3.5 rounded-xl bg-indigoPalette-50 border border-indigoPalette-200">
+                  <div class="font-bold text-indigoPalette-900">WebSocket &amp; gRPC Passthrough</div>
+                  <p class="text-indigoPalette-600 mt-1">Transparent bi-directional streaming for telemetry &amp; live sensor channels.</p>
                 </div>
 
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                  <div class="font-bold text-slate-800">DDoS Rate Limiting</div>
-                  <p class="text-slate-500 mt-1">Token bucket limiter: 1,000 req/min per IP with automated temporary ban.</p>
+                <div class="p-3.5 rounded-xl bg-indigoPalette-50 border border-indigoPalette-200">
+                  <div class="font-bold text-indigoPalette-900">DDoS Rate Limiting</div>
+                  <p class="text-indigoPalette-600 mt-1">Token bucket limiter: 1,000 req/min per IP with automated temporary ban.</p>
                 </div>
               </div>
             </div>
@@ -707,21 +729,21 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- TAB 4: SSL/TLS & KEY MANAGEMENT VAULT (NEW FEATURE)               -->
+        <!-- TAB 4: SSL/TLS & KEY MANAGEMENT VAULT                             -->
         <!-- ================================================================= -->
         <div v-if="activeTab === 'ssl'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
                 SSL / TLS Certificates &amp; Key Vault
               </h1>
-              <p class="text-sm text-slate-500 mt-1">
+              <p class="text-sm text-indigoPalette-600 mt-1">
                 Automated ACME Let's Encrypt issuance, Indian Sovereign CSR generation, and TLS 1.3 cipher hardening.
               </p>
             </div>
             <div class="flex gap-2">
-              <button class="btn btn-sm btn-outline border-slate-300 rounded-xl"><i class="fa-solid fa-file-pen"></i> Generate CSR</button>
-              <button class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none text-white rounded-xl shadow-md shadow-sky-600/20">
+              <button class="btn btn-sm btn-outline border-indigoPalette-300 text-indigoPalette-800 rounded-xl"><i class="fa-solid fa-file-pen"></i> Generate CSR</button>
+              <button class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl shadow-md shadow-indigoPalette-500/25">
                 <i class="fa-solid fa-plus text-xs"></i> Issue / Import Cert
               </button>
             </div>
@@ -732,7 +754,7 @@
             <div class="overflow-x-auto">
               <table class="table w-full text-left">
                 <thead>
-                  <tr class="text-slate-400 border-b border-slate-200/80 text-xs uppercase font-heading">
+                  <tr class="text-indigoPalette-400 border-b border-indigoPalette-200 text-xs uppercase font-heading">
                     <th>Domain / Subject</th>
                     <th>Issuer Authority</th>
                     <th>Key Type &amp; Signature</th>
@@ -743,36 +765,36 @@
                   </tr>
                 </thead>
                 <tbody class="text-sm">
-                  <tr v-for="c in sslCertificates" :key="c.id" class="border-b border-slate-100 hover:bg-slate-50/70 transition">
-                    <td class="font-semibold text-slate-900 py-3.5">
+                  <tr v-for="c in sslCertificates" :key="c.id" class="border-b border-indigoPalette-100 hover:bg-white/60 transition">
+                    <td class="font-semibold text-indigoPalette-950 py-3.5">
                       <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-certificate text-amber-500"></i>
+                        <i class="fa-solid fa-certificate text-indigoPalette-500"></i>
                         <span>{{ c.common_name }}</span>
                       </div>
-                      <div class="text-[11px] text-slate-400 font-mono">SANs: {{ c.sans }}</div>
+                      <div class="text-[11px] text-indigoPalette-400 font-mono">SANs: {{ c.sans }}</div>
                     </td>
                     <td>
-                      <span class="badge badge-sm badge-ghost font-semibold">{{ c.issuer }}</span>
+                      <span class="badge badge-sm bg-indigoPalette-100 text-indigoPalette-900 border-indigoPalette-200 font-semibold">{{ c.issuer }}</span>
                     </td>
                     <td>
-                      <div class="text-xs font-mono font-medium text-slate-700">{{ c.key_spec }}</div>
-                      <div class="text-[10px] text-slate-400">{{ c.sig_algo }}</div>
+                      <div class="text-xs font-mono font-medium text-indigoPalette-800">{{ c.key_spec }}</div>
+                      <div class="text-[10px] text-indigoPalette-400">{{ c.sig_algo }}</div>
                     </td>
                     <td>
-                      <div class="text-xs font-semibold" :class="c.days_left < 30 ? 'text-amber-600' : 'text-slate-700'">{{ c.days_left }} Days Remaining</div>
-                      <div class="text-[11px] text-emerald-600 flex items-center gap-1">
+                      <div class="text-xs font-semibold" :class="c.days_left < 30 ? 'text-amber-600' : 'text-indigoPalette-800'">{{ c.days_left }} Days Remaining</div>
+                      <div class="text-[11px] text-emerald-600 flex items-center gap-1 font-medium">
                         <i class="fa-solid fa-arrows-rotate"></i> Auto-Renew Enabled
                       </div>
                     </td>
                     <td>
                       <span class="badge badge-xs bg-emerald-100 text-emerald-800 font-bold border-none">STAPLED</span>
-                      <span class="badge badge-xs bg-sky-100 text-sky-800 font-bold border-none ml-1">TLS 1.3 STRICT</span>
+                      <span class="badge badge-xs bg-indigoPalette-100 text-indigoPalette-800 font-bold border-none ml-1">TLS 1.3 STRICT</span>
                     </td>
                     <td>
                       <span class="badge badge-sm bg-emerald-50 text-emerald-700 border-emerald-200 font-bold">VALID</span>
                     </td>
                     <td>
-                      <button class="btn btn-xs btn-ghost text-slate-500 hover:text-sky-600"><i class="fa-solid fa-download"></i></button>
+                      <button class="btn btn-xs btn-ghost text-indigoPalette-500 hover:text-indigoPalette-700"><i class="fa-solid fa-download"></i></button>
                     </td>
                   </tr>
                 </tbody>
@@ -787,14 +809,14 @@
         <div v-if="activeTab === 'applications'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
                 Rootless Podman Quadlet Container Workloads
               </h1>
-              <p class="text-sm text-slate-500 mt-1">
+              <p class="text-sm text-indigoPalette-600 mt-1">
                 Zero-daemon systemd managed containers with dropped Linux capabilities and user namespaces.
               </p>
             </div>
-            <button @click="showDeployModal = true" class="btn btn-sm btn-primary bg-sky-600 hover:bg-sky-700 border-none text-white rounded-xl shadow-md shadow-sky-600/20">
+            <button @click="showDeployModal = true" class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl shadow-md shadow-indigoPalette-500/25">
               <i class="fa-solid fa-plus text-xs"></i> Deploy New Container
             </button>
           </div>
@@ -803,7 +825,7 @@
             <div class="overflow-x-auto">
               <table class="table w-full text-left">
                 <thead>
-                  <tr class="text-slate-400 border-b border-slate-200/80 text-xs uppercase font-heading">
+                  <tr class="text-indigoPalette-400 border-b border-indigoPalette-200 text-xs uppercase font-heading">
                     <th>Application &amp; ID</th>
                     <th>Image &amp; Provenance Digest</th>
                     <th>Memory Quota / CPU</th>
@@ -813,25 +835,25 @@
                   </tr>
                 </thead>
                 <tbody class="text-sm">
-                  <tr v-for="app in appList" :key="app.app_id" class="border-b border-slate-100 hover:bg-slate-50/70 transition">
-                    <td class="font-semibold text-slate-900 py-3.5">
+                  <tr v-for="app in appList" :key="app.app_id" class="border-b border-indigoPalette-100 hover:bg-white/60 transition">
+                    <td class="font-semibold text-indigoPalette-950 py-3.5">
                       <strong>{{ app.name }}</strong>
-                      <div class="text-[11px] text-slate-400 font-mono">{{ app.app_id }}</div>
+                      <div class="text-[11px] text-indigoPalette-400 font-mono">{{ app.app_id }}</div>
                     </td>
                     <td>
-                      <code class="text-xs font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">{{ app.digest.substring(0, 18) }}...</code>
+                      <code class="text-xs font-mono text-indigoPalette-700 bg-indigoPalette-100 px-2 py-0.5 rounded border border-indigoPalette-200">{{ app.digest.substring(0, 18) }}...</code>
                       <div class="text-[10px] text-emerald-600 font-bold mt-1"><i class="fa-solid fa-circle-check"></i> Cosign Signed</div>
                     </td>
                     <td>{{ app.memory_mb }} MB / 50% CPU</td>
                     <td>
-                      <span class="font-mono text-sky-700 font-semibold">{{ app.domain }}</span>
-                      <div class="text-[11px] text-slate-400">:{{ app.port }}</div>
+                      <span class="font-mono text-indigoPalette-700 font-semibold">{{ app.domain }}</span>
+                      <div class="text-[11px] text-indigoPalette-400">:{{ app.port }}</div>
                     </td>
                     <td>
-                      <span class="badge badge-sm bg-emerald-100 text-emerald-800 border-none font-bold">UserNS Rootless</span>
+                      <span class="badge badge-sm bg-indigoPalette-100 text-indigoPalette-800 border-none font-bold">UserNS Rootless</span>
                     </td>
                     <td>
-                      <button class="btn btn-xs btn-outline border-slate-300 mr-1">Restart</button>
+                      <button class="btn btn-xs btn-outline border-indigoPalette-300 text-indigoPalette-700 mr-1">Restart</button>
                       <button class="btn btn-xs btn-outline btn-error">Stop</button>
                     </td>
                   </tr>
@@ -847,10 +869,10 @@
         <div v-if="activeTab === 'security'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
                 Coraza Sovereign WAF &amp; nftables Network Defense
               </h1>
-              <p class="text-sm text-slate-500 mt-1">
+              <p class="text-sm text-indigoPalette-600 mt-1">
                 Real-time OWASP Core Rule Set enforcement, SQLi/XSS/RCE deep packet inspection, and packet dropping.
               </p>
             </div>
@@ -860,26 +882,26 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Coraza Rules -->
             <div class="glass-panel rounded-2xl p-6 space-y-4">
-              <h2 class="font-heading text-base font-bold text-slate-900">Active Coraza CRS WAF Rules</h2>
+              <h2 class="font-heading text-base font-bold text-indigoPalette-950">Active Coraza CRS WAF Rules</h2>
               <div class="space-y-2.5">
-                <div v-for="r in wafRules" :key="r.rule_id" class="p-3 rounded-xl border border-slate-200/80 bg-white/70 flex items-center justify-between">
+                <div v-for="r in wafRules" :key="r.rule_id" class="p-3 rounded-xl border border-indigoPalette-200 bg-white/80 flex items-center justify-between">
                   <div>
-                    <div class="font-semibold text-xs text-slate-900">Rule #{{ r.rule_id }}: {{ r.name }}</div>
-                    <div class="text-[11px] text-slate-500 font-mono">Action: {{ r.action.toUpperCase() }} | Severity: {{ r.severity }}</div>
+                    <div class="font-semibold text-xs text-indigoPalette-950">Rule #{{ r.rule_id }}: {{ r.name }}</div>
+                    <div class="text-[11px] text-indigoPalette-500 font-mono">Action: {{ r.action.toUpperCase() }} | Severity: {{ r.severity }}</div>
                   </div>
-                  <input type="checkbox" class="toggle toggle-sm toggle-success" :checked="r.enabled" />
+                  <input type="checkbox" class="toggle toggle-sm toggle-primary" :checked="r.enabled" />
                 </div>
               </div>
             </div>
 
             <!-- Ingress Firewall -->
             <div class="glass-panel rounded-2xl p-6 space-y-4">
-              <h2 class="font-heading text-base font-bold text-slate-900">Default-Deny nftables Chains</h2>
+              <h2 class="font-heading text-base font-bold text-indigoPalette-950">Default-Deny nftables Chains</h2>
               <div class="space-y-2.5">
-                <div v-for="fw in firewallRules" :key="fw.comment" class="p-3 rounded-xl border border-slate-200/80 bg-white/70 flex items-center justify-between">
+                <div v-for="fw in firewallRules" :key="fw.comment" class="p-3 rounded-xl border border-indigoPalette-200 bg-white/80 flex items-center justify-between">
                   <div>
-                    <div class="font-semibold text-xs text-slate-900">{{ fw.comment }}</div>
-                    <div class="text-[11px] text-slate-500 font-mono">{{ fw.protocol.toUpperCase() }} :{{ fw.dport }} ({{ fw.source }})</div>
+                    <div class="font-semibold text-xs text-indigoPalette-950">{{ fw.comment }}</div>
+                    <div class="text-[11px] text-indigoPalette-500 font-mono">{{ fw.protocol.toUpperCase() }} :{{ fw.dport }} ({{ fw.source }})</div>
                   </div>
                   <span class="badge badge-sm font-bold" :class="fw.action === 'accept' ? 'badge-success text-white' : 'badge-error text-white'">
                     {{ fw.action.toUpperCase() }}
@@ -896,10 +918,10 @@
         <div v-if="activeTab === 'ai_security'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
                 Local AI Security &amp; Operations Center
               </h1>
-              <p class="text-sm text-slate-500 mt-1">
+              <p class="text-sm text-indigoPalette-600 mt-1">
                 Zero-cloud local LLM telemetry analysis, root-cause diagnosis, and human-governed execution gates.
               </p>
             </div>
@@ -909,22 +931,22 @@
             <div class="lg:col-span-2 space-y-6">
               <div v-for="nar in narratives" :key="nar.narrative_id" class="glass-panel rounded-2xl p-6">
                 <div class="flex items-center justify-between">
-                  <span class="badge badge-sm badge-info text-white font-bold">{{ nar.narrative_id }}</span>
-                  <span class="text-xs text-slate-400 font-mono">{{ nar.created_at }}</span>
+                  <span class="badge badge-sm bg-indigoPalette-500 text-white font-bold border-none">{{ nar.narrative_id }}</span>
+                  <span class="text-xs text-indigoPalette-400 font-mono">{{ nar.created_at }}</span>
                 </div>
-                <h3 class="font-heading text-base font-bold text-slate-900 mt-2">{{ nar.title }}</h3>
-                <p class="text-sm text-slate-600 mt-2 leading-relaxed">{{ nar.executive_summary }}</p>
+                <h3 class="font-heading text-base font-bold text-indigoPalette-950 mt-2">{{ nar.title }}</h3>
+                <p class="text-sm text-indigoPalette-700 mt-2 leading-relaxed">{{ nar.executive_summary }}</p>
               </div>
             </div>
 
             <div class="glass-panel rounded-2xl p-6 space-y-4">
-              <h3 class="font-heading text-sm font-bold text-slate-900 uppercase">Human-in-the-Loop Governance</h3>
-              <div v-for="rec in aiRecommendations" :key="rec.rec_id" class="p-4 rounded-xl border border-slate-200 bg-white/80 space-y-2">
-                <div class="font-bold text-xs text-slate-900">{{ rec.title }}</div>
-                <p class="text-xs text-slate-500">{{ rec.description }}</p>
+              <h3 class="font-heading text-sm font-bold text-indigoPalette-950 uppercase">Human-in-the-Loop Governance</h3>
+              <div v-for="rec in aiRecommendations" :key="rec.rec_id" class="p-4 rounded-xl border border-indigoPalette-200 bg-white/90 space-y-2">
+                <div class="font-bold text-xs text-indigoPalette-950">{{ rec.title }}</div>
+                <p class="text-xs text-indigoPalette-500">{{ rec.description }}</p>
                 <div class="flex items-center justify-between pt-2">
                   <span class="badge badge-xs badge-warning font-bold">APPROVAL MANDATORY</span>
-                  <button class="btn btn-xs btn-primary bg-sky-600 border-none text-white">Authorize</button>
+                  <button class="btn btn-xs bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white">Authorize</button>
                 </div>
               </div>
             </div>
@@ -937,24 +959,24 @@
         <div v-if="activeTab === 'data_protection'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
                 Data Protection, Btrfs Trees &amp; Disaster Recovery
               </h1>
-              <p class="text-sm text-slate-500 mt-1">
+              <p class="text-sm text-indigoPalette-600 mt-1">
                 Subvolume-level immutable snapshots and encrypted Restic repositories with verified RTO/RPO drills.
               </p>
             </div>
-            <button class="btn btn-sm btn-primary bg-sky-600 border-none text-white rounded-xl">Trigger Snapshot</button>
+            <button class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl">Trigger Snapshot</button>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Btrfs Snapshots -->
             <div class="glass-panel rounded-2xl p-6">
-              <h3 class="font-heading text-base font-bold text-slate-900 mb-4">Btrfs / Snapper Subvolume Tree</h3>
+              <h3 class="font-heading text-base font-bold text-indigoPalette-950 mb-4">Btrfs / Snapper Subvolume Tree</h3>
               <div class="overflow-x-auto">
                 <table class="table table-sm w-full">
                   <thead>
-                    <tr class="text-slate-400 uppercase text-xs font-heading">
+                    <tr class="text-indigoPalette-400 uppercase text-xs font-heading">
                       <th>#</th>
                       <th>Subvolume</th>
                       <th>Description</th>
@@ -966,7 +988,7 @@
                       <td class="font-bold">#{{ s.snapshot_number }}</td>
                       <td><code>{{ s.subvolume }}</code></td>
                       <td>{{ s.description }}</td>
-                      <td><span class="badge badge-xs badge-ghost">{{ s.cleanup_type }}</span></td>
+                      <td><span class="badge badge-xs bg-indigoPalette-100 text-indigoPalette-800 border-none">{{ s.cleanup_type }}</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -975,11 +997,11 @@
 
             <!-- DR Verification -->
             <div class="glass-panel rounded-2xl p-6">
-              <h3 class="font-heading text-base font-bold text-slate-900 mb-4">DR Verification Tests</h3>
+              <h3 class="font-heading text-base font-bold text-indigoPalette-950 mb-4">DR Verification Tests</h3>
               <div class="overflow-x-auto">
                 <table class="table table-sm w-full">
                   <thead>
-                    <tr class="text-slate-400 uppercase text-xs font-heading">
+                    <tr class="text-indigoPalette-400 uppercase text-xs font-heading">
                       <th>Workload Target</th>
                       <th>RTO</th>
                       <th>RPO</th>
@@ -1006,21 +1028,21 @@
         <div v-if="activeTab === 'compliance'" class="space-y-6">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
                 CERT-In Compliance &amp; Cryptographic Audit Ledger
               </h1>
-              <p class="text-sm text-slate-500 mt-1">
+              <p class="text-sm text-indigoPalette-600 mt-1">
                 Directions under Section 70B compliant | 180-Day retention locked | Indian NPL NTP Synchronized
               </p>
             </div>
-            <button class="btn btn-sm btn-primary bg-sky-600 border-none text-white rounded-xl"><i class="fa-solid fa-download"></i> Export Dossier</button>
+            <button class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl"><i class="fa-solid fa-download"></i> Export Dossier</button>
           </div>
 
           <div class="glass-panel rounded-2xl p-6">
             <div class="overflow-x-auto">
               <table class="table table-sm w-full">
                 <thead>
-                  <tr class="text-slate-400 uppercase text-xs font-heading">
+                  <tr class="text-indigoPalette-400 uppercase text-xs font-heading">
                     <th>Index</th>
                     <th>Timestamp (IST)</th>
                     <th>Actor &amp; Subnet</th>
@@ -1033,10 +1055,10 @@
                   <tr v-for="e in auditLedger" :key="e.entry_index">
                     <td class="font-bold">#{{ e.entry_index }}</td>
                     <td>{{ e.timestamp }}</td>
-                    <td>{{ e.actor }} <span class="text-slate-400">({{ e.actor_ip }})</span></td>
-                    <td><span class="badge badge-xs badge-ghost font-bold">{{ e.action }}</span></td>
+                    <td>{{ e.actor }} <span class="text-indigoPalette-400">({{ e.actor_ip }})</span></td>
+                    <td><span class="badge badge-xs bg-indigoPalette-100 text-indigoPalette-800 font-bold border-none">{{ e.action }}</span></td>
                     <td><code>{{ e.resource }}</code></td>
-                    <td><code class="text-[11px] font-mono text-sky-800">{{ e.entry_hash.substring(0, 18) }}...</code></td>
+                    <td><code class="text-[11px] font-mono text-indigoPalette-700">{{ e.entry_hash.substring(0, 18) }}...</code></td>
                   </tr>
                 </tbody>
               </table>
@@ -1048,28 +1070,28 @@
         <!-- TAB 10: TRANSACTIONAL UPDATES                                     -->
         <!-- ================================================================= -->
         <div v-if="activeTab === 'updates'" class="space-y-6">
-          <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
             Transactional Updates &amp; Operating System Lifecycle
           </h1>
 
           <div class="glass-panel rounded-2xl p-6 space-y-4">
-            <h3 class="font-heading text-base font-bold text-slate-900">openSUSE MicroOS Transactional Engine</h3>
+            <h3 class="font-heading text-base font-bold text-indigoPalette-950">openSUSE MicroOS Transactional Engine</h3>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                <div class="text-slate-500 text-xs">Active Root Snapshot</div>
-                <div class="font-heading font-extrabold text-xl mt-1 text-slate-900">#{{ updateStatus.active_snapshot }} (Read-Only)</div>
+              <div class="p-4 rounded-xl bg-indigoPalette-50 border border-indigoPalette-200">
+                <div class="text-indigoPalette-500 text-xs">Active Root Snapshot</div>
+                <div class="font-heading font-extrabold text-xl mt-1 text-indigoPalette-950">#{{ updateStatus.active_snapshot }} (Read-Only)</div>
               </div>
-              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                <div class="text-slate-500 text-xs">Current Channel</div>
-                <div class="font-heading font-extrabold text-xl mt-1 text-sky-700 uppercase">{{ updateStatus.channel }}</div>
+              <div class="p-4 rounded-xl bg-indigoPalette-50 border border-indigoPalette-200">
+                <div class="text-indigoPalette-500 text-xs">Current Channel</div>
+                <div class="font-heading font-extrabold text-xl mt-1 text-indigoPalette-600 uppercase">{{ updateStatus.channel }}</div>
               </div>
-              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                <div class="text-slate-500 text-xs">Staged Next Boot</div>
+              <div class="p-4 rounded-xl bg-indigoPalette-50 border border-indigoPalette-200">
+                <div class="text-indigoPalette-500 text-xs">Staged Next Boot</div>
                 <div class="font-heading font-extrabold text-xl mt-1 text-emerald-700">None (In Sync)</div>
               </div>
             </div>
             <div class="pt-4 flex gap-3">
-              <button class="btn btn-sm btn-primary bg-sky-600 border-none text-white rounded-xl">Stage OS Update</button>
+              <button class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl">Stage OS Update</button>
               <button class="btn btn-sm btn-error text-white rounded-xl">Rollback Snapshot</button>
             </div>
           </div>
@@ -1079,10 +1101,10 @@
         <!-- TAB 11: HARDWARE BOOT SCREEN TERMINAL                             -->
         <!-- ================================================================= -->
         <div v-if="activeTab === 'boot_screen'" class="space-y-6">
-          <h1 class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
             Bare-Metal Hardware &amp; Diagnostic Terminal Console
           </h1>
-          <div class="p-6 rounded-2xl bg-slate-950 text-emerald-400 font-mono text-xs shadow-2xl overflow-x-auto whitespace-pre leading-relaxed border border-slate-800">
+          <div class="p-6 rounded-2xl bg-indigoPalette-950 text-indigoPalette-200 font-mono text-xs shadow-2xl overflow-x-auto whitespace-pre leading-relaxed border border-indigoPalette-800">
 {{ bootScreenText }}
           </div>
         </div>
@@ -1092,22 +1114,22 @@
 
     <!-- Workload Deployment Modal -->
     <dialog class="modal" :class="{ 'modal-open': showDeployModal }">
-      <div class="modal-box glass-panel rounded-2xl border border-slate-200">
-        <h3 class="font-heading font-bold text-lg text-slate-900">Deploy New Sovereign Workload</h3>
-        <p class="py-2 text-xs text-slate-500">Generates rootless Podman Quadlet with dropped capabilities and read-only root.</p>
+      <div class="modal-box glass-panel rounded-2xl border border-indigoPalette-200">
+        <h3 class="font-heading font-bold text-lg text-indigoPalette-950">Deploy New Sovereign Workload</h3>
+        <p class="py-2 text-xs text-indigoPalette-500">Generates rootless Podman Quadlet with dropped capabilities and read-only root.</p>
         <div class="space-y-3 mt-2 text-xs">
           <div>
-            <label class="font-semibold text-slate-700">Application Name</label>
-            <input type="text" placeholder="e.g. SERC Sensor Portal" class="input input-sm input-bordered w-full rounded-xl mt-1" />
+            <label class="font-semibold text-indigoPalette-800">Application Name</label>
+            <input type="text" placeholder="e.g. SERC Sensor Portal" class="input input-sm input-bordered w-full rounded-xl mt-1 border-indigoPalette-200 bg-white" />
           </div>
           <div>
-            <label class="font-semibold text-slate-700">Image Digest Pin</label>
-            <input type="text" placeholder="registry.csir.res.in/apps/sensor:1.0.0" class="input input-sm input-bordered w-full rounded-xl mt-1" />
+            <label class="font-semibold text-indigoPalette-800">Image Digest Pin</label>
+            <input type="text" placeholder="registry.csir.res.in/apps/sensor:1.0.0" class="input input-sm input-bordered w-full rounded-xl mt-1 border-indigoPalette-200 bg-white" />
           </div>
         </div>
         <div class="modal-action">
-          <button @click="showDeployModal = false" class="btn btn-sm btn-ghost rounded-xl">Cancel</button>
-          <button @click="showDeployModal = false" class="btn btn-sm btn-primary bg-sky-600 border-none text-white rounded-xl">Deploy</button>
+          <button @click="showDeployModal = false" class="btn btn-sm btn-ghost rounded-xl text-indigoPalette-700">Cancel</button>
+          <button @click="showDeployModal = false" class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl">Deploy</button>
         </div>
       </div>
     </dialog>
@@ -1150,7 +1172,7 @@
 |                    CSIR SECURE WEB APPLIANCE OS                       |
 |             Immutable Web, Application and Security Platform          |
 |                                                                       |
-|                     Version 1.0.0 | Stable Channel                    |
+|             Version 1.0.0 | Prompt Indigo AI Edition                  |
 |                                                                       |
 |     Initialising immutable operating system ................. OK      |
 |     Verifying signed platform image ......................... OK      |
@@ -1208,7 +1230,7 @@
 
         function submitChatopsQuery() {
           if (!chatopsInput.value) return;
-          alert(`ChatOps Query Received: "${chatopsInput.value}". Local AI Security Guardian synthesized safe proposal.`);
+          alert(`Prompt Indigo ChatOps: Query "${chatopsInput.value}" received. Safe proposal generated.`);
           chatopsInput.value = '';
         }
 
