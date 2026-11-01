@@ -63,15 +63,18 @@ def generate_html() -> str:
 
     console_ov_src = "screenshots/web_console/web_console_01_overview.png"
     console_vh_src = "screenshots/web_console/web_console_02_vhosts.png"
+    console_vmodal_src = "screenshots/web_console/web_console_02b_vhost_modal.png"
     console_px_src = "screenshots/web_console/web_console_03_proxy.png"
     console_ssl_src = "screenshots/web_console/web_console_04_ssl.png"
     console_app_src = "screenshots/web_console/web_console_05_applications.png"
-    console_waf_src = "screenshots/web_console/web_console_06_security_waf.png"
-    console_ai_src = "screenshots/web_console/web_console_07_ai_security_center.png"
-    console_dr_src = "screenshots/web_console/web_console_08_data_protection_backups.png"
-    console_comp_src = "screenshots/web_console/web_console_09_compliance_audit_ledger.png"
-    console_upd_src = "screenshots/web_console/web_console_10_transactional_updates.png"
-    console_boot_src = "screenshots/web_console/web_console_11_boot_screen_console.png"
+    console_kvm_src = "screenshots/web_console/web_console_06_virtualization_kvm.png"
+    console_kvm_wiz_src = "screenshots/web_console/web_console_06b_kvm_setup_wizard.png"
+    console_waf_src = "screenshots/web_console/web_console_07_security_waf.png"
+    console_ai_src = "screenshots/web_console/web_console_08_ai_security_center.png"
+    console_dr_src = "screenshots/web_console/web_console_09_data_protection_backups.png"
+    console_comp_src = "screenshots/web_console/web_console_10_compliance_audit_ledger.png"
+    console_upd_src = "screenshots/web_console/web_console_11_transactional_updates.png"
+    console_boot_src = "screenshots/web_console/web_console_12_boot_screen_console.png"
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -854,63 +857,79 @@ The following screenshots demonstrate the operational status and user experience
     </div>
     <div class="screenshot-figure">
         <img src="{console_vh_src}" alt="Web Hosting & Virtual Hosts">
-        <div class="caption">Figure 4.10: Native Web Hosting &amp; Multi-Tenant Virtual Host Management (PHP/Node/Static &amp; Quotas)</div>
+        <div class="caption">Figure 4.10: Native Web Hosting &amp; Multi-Tenant Virtual Host Fleet (PHP/Node/Static &amp; Storage Quotas)</div>
     </div>
 </div>
 
 <div class="page-break"></div>
 <div class="grid-2">
+    <div class="screenshot-figure">
+        <img src="{console_vmodal_src}" alt="Add Virtual Host Modal">
+        <div class="caption">Figure 4.11: Virtual Host Configuration Modal - Background Stack (PHP/Node/Python/Static) &amp; Automated SSL Setup</div>
+    </div>
     <div class="screenshot-figure">
         <img src="{console_px_src}" alt="Reverse Proxy & Upstreams">
-        <div class="caption">Figure 4.11: Dynamic Reverse Proxy &amp; Upstream Load Balancer (HAProxy Pools, Routes &amp; Health Probes)</div>
+        <div class="caption">Figure 4.12: Dynamic Reverse Proxy &amp; Upstream Load Balancer (HAProxy Pools, Routes &amp; Health Probes)</div>
     </div>
+</div>
+
+<div class="page-break"></div>
+<div class="grid-2">
     <div class="screenshot-figure">
         <img src="{console_ssl_src}" alt="SSL / TLS Key Vault">
-        <div class="caption">Figure 4.12: Sovereign SSL/TLS Certificate Vault &amp; Key Management (ACME Auto-Renew &amp; TLS 1.3 Strict)</div>
+        <div class="caption">Figure 4.13: Sovereign SSL/TLS Certificate Vault &amp; Key Management (ACME Auto-Renew &amp; TLS 1.3 Strict)</div>
     </div>
-</div>
-
-<div class="page-break"></div>
-<div class="grid-2">
     <div class="screenshot-figure">
         <img src="{console_app_src}" alt="Applications Quadlets">
-        <div class="caption">Figure 4.13: Rootless Podman Quadlet Workloads - Cosign Digest Verification &amp; UserNS Isolation</div>
+        <div class="caption">Figure 4.14: Rootless Podman Quadlet Workloads - Cosign Digest Verification &amp; UserNS Isolation</div>
     </div>
+</div>
+
+<div class="page-break"></div>
+<div class="grid-2">
+    <div class="screenshot-figure">
+        <img src="{console_kvm_src}" alt="KVM Virtual Machine Manager">
+        <div class="caption">Figure 4.15: KVM Virtual Machine Manager - Active Hypervisor, VT-x/AMD-V Acceleration &amp; Guest VM Fleet</div>
+    </div>
+    <div class="screenshot-figure">
+        <img src="{console_kvm_wiz_src}" alt="KVM Setup Wizard">
+        <div class="caption">Figure 4.16: KVM Subsystem Setup &amp; Installation Wizard - One-Click Transactional Virtualization Deployment</div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+<div class="grid-2">
     <div class="screenshot-figure">
         <img src="{console_waf_src}" alt="Coraza WAF">
-        <div class="caption">Figure 4.14: Coraza WAF &amp; nftables Telemetry - OWASP CRS Rules, Active Deny Policies &amp; Blocked Probes</div>
+        <div class="caption">Figure 4.17: Coraza WAF &amp; nftables Telemetry - OWASP CRS Rules, Active Deny Policies &amp; Blocked Probes</div>
     </div>
-</div>
-
-<div class="page-break"></div>
-<div class="grid-2">
     <div class="screenshot-figure">
         <img src="{console_ai_src}" alt="Local AI Security Center">
-        <div class="caption">Figure 4.15: Local AI Security &amp; Operations Center - Autonomous Threat Briefings &amp; Human Governance Gate</div>
+        <div class="caption">Figure 4.18: Local AI Security &amp; Operations Center - Autonomous Threat Briefings &amp; Human Governance Gate</div>
     </div>
+</div>
+
+<div class="page-break"></div>
+<div class="grid-2">
     <div class="screenshot-figure">
         <img src="{console_dr_src}" alt="Data Protection & DR">
-        <div class="caption">Figure 4.16: Data Protection &amp; Snapshots - Snapper Btrfs Trees, Restic Encryption &amp; DR Sandbox Drills</div>
+        <div class="caption">Figure 4.19: Data Protection &amp; Snapshots - Snapper Btrfs Trees, Restic Encryption &amp; DR Sandbox Drills</div>
     </div>
-</div>
-
-<div class="page-break"></div>
-<div class="grid-2">
     <div class="screenshot-figure">
         <img src="{console_comp_src}" alt="CERT-In Audit Ledger">
-        <div class="caption">Figure 4.17: CERT-In Compliance Ledger - Append-Only SHA-256 Hash Chain &amp; 180-Day Retention Lock</div>
-    </div>
-    <div class="screenshot-figure">
-        <img src="{console_upd_src}" alt="Transactional Updates">
-        <div class="caption">Figure 4.18: Transactional Updates Lifecycle - Read-Only Root Snapshots &amp; Health-Gated Auto-Rollback</div>
+        <div class="caption">Figure 4.20: CERT-In Compliance Ledger - Append-Only SHA-256 Hash Chain &amp; 180-Day Retention Lock</div>
     </div>
 </div>
 
 <div class="page-break"></div>
 <div class="grid-2">
     <div class="screenshot-figure">
+        <img src="{console_upd_src}" alt="Transactional Updates">
+        <div class="caption">Figure 4.21: Transactional Updates Lifecycle - Read-Only Root Snapshots &amp; Health-Gated Auto-Rollback</div>
+    </div>
+    <div class="screenshot-figure">
         <img src="{console_boot_src}" alt="Hardware Console Banner">
-        <div class="caption">Figure 4.19: Bare-Metal Hardware &amp; Diagnostic Terminal Console Banner (Section 6 Specification)</div>
+        <div class="caption">Figure 4.22: Bare-Metal Hardware &amp; Diagnostic Terminal Console Banner (Section 6 Specification)</div>
     </div>
 </div>
 

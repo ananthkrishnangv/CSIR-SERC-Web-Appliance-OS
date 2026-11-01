@@ -13,6 +13,7 @@ from app.api import (
     ai_security_router,
     backups_router,
     updates_router,
+    virtualization_router,
     audit_router,
     system_router,
     auth_router
@@ -56,6 +57,7 @@ app.include_router(security_router, prefix=settings.API_V1_STR)
 app.include_router(ai_security_router, prefix=settings.API_V1_STR)
 app.include_router(backups_router, prefix=settings.API_V1_STR)
 app.include_router(updates_router, prefix=settings.API_V1_STR)
+app.include_router(virtualization_router, prefix=settings.API_V1_STR)
 app.include_router(audit_router, prefix=settings.API_V1_STR)
 app.include_router(system_router, prefix=settings.API_V1_STR)
 app.include_router(auth_router, prefix=settings.API_V1_STR)

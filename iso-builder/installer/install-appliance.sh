@@ -13,6 +13,11 @@ PAYLOAD_DIR="${INSTALLER_DIR}/payload"
 echo "====================================================================="
 echo " [CSIR-SWA OS] Executing Automated Feature Installation at OS Install Time"
 echo " Target Root: ${TARGET_ROOT}"
+# Detect Appliance Installation Purpose / Profile
+CMDLINE_PROFILE="$(grep -o 'csir_profile=[^ ]*' /proc/cmdline 2>/dev/null | cut -d= -f2 || true)"
+CSIR_PROFILE="${CMDLINE_PROFILE:-${CSIR_PROFILE:-full}}"
+
+echo " Installation Purpose: ${CSIR_PROFILE^^}"
 echo " Timestamp:   $(date -u +%FT%TZ)"
 echo "====================================================================="
 
@@ -20,6 +25,7 @@ echo "====================================================================="
 mkdir -p "${TARGET_ROOT}/etc/csir-swa"
 mkdir -p "${TARGET_ROOT}/var/lib/csir-swa/node_agent"
 mkdir -p "${TARGET_ROOT}/var/lib/csir-swa/static"
+mkdir -p "${TARGET_ROOT}/var/lib/libvirt/images"
 mkdir -p "${TARGET_ROOT}/var/log/audit"
 mkdir -p "${TARGET_ROOT}/srv/apps"
 mkdir -p "${TARGET_ROOT}/srv/app-data"
@@ -188,20 +194,41 @@ if [ -f "${PAYLOAD_DIR}/issue" ]; then
     cp "${PAYLOAD_DIR}/issue" "${TARGET_ROOT}/etc/issue"
 fi
 
-# 12. Stamping Feature Installation Proof
-echo "[11/11] Finalizing Feature Stamping..."
+# 12. Stamping Feature Installation Proof & Appliance Purpose Profile
+echo "[11/11] Finalizing Feature Stamping & Appliance Profile..."
+cat <<EOF > "${TARGET_ROOT}/etc/csir-swa/appliance-profile.json"
+{
+  "profile_code": "${CSIR_PROFILE}",
+  "profile_name": "$(case "${CSIR_PROFILE}" in
+    full) echo "Full-Stack Sovereign Web & Virtualization Appliance" ;;
+    webhosting) echo "High-Density Web Hosting Gateway" ;;
+    virtualization) echo "Micro-Virtualization & Container Node" ;;
+    edge-waf) echo "Edge Reverse Proxy & Coraza WAF Security Gateway" ;;
+    airgap) echo "Hardened Strategic Air-Gapped Laboratory & Archive Node" ;;
+    *) echo "Custom Institutional Profile" ;;
+  esac)",
+  "virtualization_enabled": $(case "${CSIR_PROFILE}" in full|virtualization) echo "true" ;; *) echo "false" ;; esac),
+  "webhosting_enabled": $(case "${CSIR_PROFILE}" in full|webhosting) echo "true" ;; *) echo "false" ;; esac),
+  "waf_enabled": $(case "${CSIR_PROFILE}" in full|edge-waf) echo "true" ;; *) echo "false" ;; esac),
+  "installed_at": "${INIT_TIMESTAMP}"
+}
+EOF
+
 cat <<EOF > "${TARGET_ROOT}/etc/csir-swa/installation-receipt.json"
 {
   "product": "CSIR Secure Web Appliance OS",
   "version": "1.0.0",
   "channel": "Stable",
   "installed_at_phase": "OS_INSTALLATION",
+  "installation_purpose": "${CSIR_PROFILE}",
   "install_timestamp": "${INIT_TIMESTAMP}",
   "features_installed": [
     "FastAPI Control Plane (Python 3.14)",
     "Privileged Node Agent RPC",
     "Nuxt 4 / Vue 3 Management Portal",
+    "Web Hosting & Multi-Tenant VHost Manager (PHP/Node/Python Runtimes)",
     "Rootless Podman 6.1.2 Quadlets",
+    "KVM Hypervisor & libvirt Virtual Machine Subsystem",
     "Coraza WAF & OWASP CRS v4",
     "nftables Default-Deny Firewall",
     "Suricata IDS/IPS Profile",

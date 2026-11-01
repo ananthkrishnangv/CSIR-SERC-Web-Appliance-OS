@@ -1,6 +1,7 @@
 """
 CSIR Secure Web Appliance OS - Web Management Console Testbed & Screenshot Generator
-Enhanced with Web Hosting, Virtual Hosts, Reverse Proxy, and SSL Key Vault.
+Enhanced with Web Hosting, Virtual Hosts, Background App Stack & SSL Setup Modal,
+and KVM Virtual Machine Manager (both Active Hypervisor and Setup Wizard states).
 Captures high-resolution individual screenshots of each subsystem using headless Edge.
 """
 
@@ -89,114 +90,202 @@ MOCK_APPLICATIONS = [
     }
 ]
 
-# NEW FEATURE: Virtual Hosts & Web Hosting
+# Virtual Hosts & Web Hosting
 MOCK_VHOSTS = [
     {
         "id": "vh-01",
         "domain": "serc.res.in",
         "aliases": "www.serc.res.in, portal.serc.res.in",
         "docroot": "/srv/www/vhosts/serc.res.in/public_html",
-        "runtime": "PHP 8.2-FPM",
+        "runtime": "PHP 8.2-FPM (4w)",
         "runtime_badge": "bg-indigo-100 text-indigo-800",
-        "ssl_status": "Let's Encrypt (Auto-Renew)",
-        "storage_used": "14.2 GB",
-        "storage_quota": "50 GB",
-        "quota_percent": 28
+        "ssl_status": "Let's Encrypt (Auto)",
+        "storage_used": "3.8 GB",
+        "storage_quota": "20 GB",
+        "quota_percent": 19,
+        "http3_quic": True,
+        "waf_protected": True,
+        "status": "online"
     },
     {
         "id": "vh-02",
-        "domain": "wind.serc.res.in",
-        "aliases": "tunnel-data.serc.res.in",
-        "docroot": "/srv/www/vhosts/wind.serc.res.in/dist",
-        "runtime": "Node.js 20 SSR",
+        "domain": "windtunnel.serc.res.in",
+        "aliases": "wt.serc.res.in",
+        "docroot": "/srv/www/vhosts/windtunnel.serc.res.in/public_html",
+        "runtime": "Node.js 20 LTS (SSR)",
         "runtime_badge": "bg-emerald-100 text-emerald-800",
-        "ssl_status": "Wildcard *.serc.res.in",
-        "storage_used": "8.5 GB",
-        "storage_quota": "30 GB",
-        "quota_percent": 28
+        "ssl_status": "Let's Encrypt (Auto)",
+        "storage_used": "1.2 GB",
+        "storage_quota": "15 GB",
+        "quota_percent": 8,
+        "http3_quic": True,
+        "waf_protected": True,
+        "status": "online"
     },
     {
         "id": "vh-03",
-        "domain": "sensors.serc.res.in",
-        "aliases": "telemetry.serc.res.in",
-        "docroot": "/srv/www/vhosts/sensors.serc.res.in/app",
-        "runtime": "Python ASGI / FastHTML",
-        "runtime_badge": "bg-sky-100 text-sky-800",
-        "ssl_status": "Let's Encrypt (Auto-Renew)",
-        "storage_used": "4.1 GB",
-        "storage_quota": "20 GB",
-        "quota_percent": 20
+        "domain": "structural-safety.csir.res.in",
+        "aliases": "safety.csir.res.in",
+        "docroot": "/srv/www/vhosts/structural-safety.csir.res.in/public_html",
+        "runtime": "Python 3.11 ASGI",
+        "runtime_badge": "bg-amber-100 text-amber-800",
+        "ssl_status": "Let's Encrypt (Auto)",
+        "storage_used": "840 MB",
+        "storage_quota": "10 GB",
+        "quota_percent": 8,
+        "http3_quic": True,
+        "waf_protected": True,
+        "status": "online"
     },
     {
         "id": "vh-04",
-        "domain": "archive.serc.res.in",
-        "aliases": "open-access.serc.res.in",
-        "docroot": "/srv/www/vhosts/archive.serc.res.in/htdocs",
-        "runtime": "Static / Nginx Fast-Cache",
+        "domain": "appliance.internal.serc.res.in",
+        "aliases": "admin.serc.res.in",
+        "docroot": "/srv/www/vhosts/appliance.internal/static",
+        "runtime": "Static Fast-Cache",
         "runtime_badge": "bg-slate-100 text-slate-800",
-        "ssl_status": "Wildcard *.serc.res.in",
-        "storage_used": "22.8 GB",
-        "storage_quota": "100 GB",
-        "quota_percent": 23
+        "ssl_status": "TPM Hardware CA",
+        "storage_used": "140 MB",
+        "storage_quota": "5 GB",
+        "quota_percent": 3,
+        "http3_quic": True,
+        "waf_protected": True,
+        "status": "online"
     }
 ]
 
-# NEW FEATURE: Reverse Proxy Upstream Pools
+# KVM Virtual Machines
+MOCK_KVM_STATUS = {
+    "installed": True,
+    "hypervisor": "QEMU/KVM 8.2",
+    "libvirtd_active": True,
+    "vms_active": 3,
+    "vms_total": 4,
+    "vcpus_allocated": 16,
+    "memory_allocated_gb": 32,
+    "storage_pool": "/var/lib/libvirt/images",
+    "storage_free_gb": 184.2
+}
+
+MOCK_KVM_VMS = [
+    {
+        "id": "vm-serc-01",
+        "name": "csir-serc-lab-vm",
+        "os_flavor": "AlmaLinux 9 Enterprise (x86_64)",
+        "vcpus": 4,
+        "memory_mb": 8192,
+        "disk_size": "60 GB",
+        "disk_path": "/var/lib/libvirt/images/csir-serc-lab.qcow2",
+        "ip_address": "10.20.10.101",
+        "mac_address": "52:54:00:1a:2b:3c",
+        "console_type": "VNC",
+        "console_port": 5901,
+        "state": "running"
+    },
+    {
+        "id": "vm-ai-02",
+        "name": "ai-training-ollama",
+        "os_flavor": "Ubuntu 24.04 LTS (Local LLM Inference)",
+        "vcpus": 6,
+        "memory_mb": 12288,
+        "disk_size": "100 GB",
+        "disk_path": "/var/lib/libvirt/images/ollama-node.qcow2",
+        "ip_address": "10.20.10.102",
+        "mac_address": "52:54:00:3d:4e:5f",
+        "console_type": "VNC",
+        "console_port": 5902,
+        "state": "running"
+    },
+    {
+        "id": "vm-win-03",
+        "name": "windows-server-gateway",
+        "os_flavor": "Windows Server 2022 Standard",
+        "vcpus": 4,
+        "memory_mb": 8192,
+        "disk_size": "80 GB",
+        "disk_path": "/var/lib/libvirt/images/win-gw.qcow2",
+        "ip_address": "10.20.10.103",
+        "mac_address": "52:54:00:7a:8b:9c",
+        "console_type": "SPICE",
+        "console_port": 5903,
+        "state": "running"
+    },
+    {
+        "id": "vm-legacy-04",
+        "name": "legacy-centos-db",
+        "os_flavor": "CentOS 7.9 (Historical Archive)",
+        "vcpus": 2,
+        "memory_mb": 4096,
+        "disk_size": "40 GB",
+        "disk_path": "/var/lib/libvirt/images/centos-db.qcow2",
+        "ip_address": "10.20.10.104",
+        "mac_address": "52:54:00:de:ad:01",
+        "console_type": "VNC",
+        "console_port": 5904,
+        "state": "shut_off"
+    }
+]
+
+# HAProxy Reverse Proxy Upstreams
 MOCK_UPSTREAMS = [
     {
-        "pool_id": "pool-01",
-        "name": "Structural Health Telemetry Pool",
-        "algorithm": "Round-Robin",
-        "path_prefix": "/api/v1/shm/*",
-        "health_uri": "/healthz",
-        "check_interval": 5,
-        "active_targets": 3,
-        "total_targets": 3,
-        "avg_latency": 4.2,
-        "targets": ["10.20.10.101:8081", "10.20.10.102:8081", "10.20.10.103:8081"]
+        "id": "pool-01",
+        "name": "serc-portal-upstream",
+        "algorithm": "roundrobin",
+        "frontend_port": 443,
+        "sni_hostname": "serc.res.in",
+        "servers": [
+            {"name": "serc-backend-1", "address": "127.0.0.1:8081", "weight": 100, "status": "UP", "health_check": "HTTP 200 OK (8ms)"},
+            {"name": "serc-backend-2", "address": "127.0.0.1:8085", "weight": 100, "status": "UP", "health_check": "HTTP 200 OK (11ms)"}
+        ],
+        "active_conns": 142,
+        "bytes_in": "1.4 GB",
+        "bytes_out": "8.9 GB"
     },
     {
-        "pool_id": "pool-02",
-        "name": "Wind Tunnel High-Rate Ingestion",
-        "algorithm": "Least-Connections",
-        "path_prefix": "/ingest/aerodynamics/*",
-        "health_uri": "/api/ping",
-        "check_interval": 3,
-        "active_targets": 2,
-        "total_targets": 2,
-        "avg_latency": 2.8,
-        "targets": ["10.20.10.201:8082", "10.20.10.202:8082"]
+        "id": "pool-02",
+        "name": "windtunnel-telemetry-pool",
+        "algorithm": "leastconn",
+        "frontend_port": 443,
+        "sni_hostname": "windtunnel.serc.res.in",
+        "servers": [
+            {"name": "wt-primary", "address": "127.0.0.1:8082", "weight": 100, "status": "UP", "health_check": "HTTP 200 OK (4ms)"}
+        ],
+        "active_conns": 38,
+        "bytes_in": "420 MB",
+        "bytes_out": "2.1 GB"
     },
     {
-        "pool_id": "pool-03",
-        "name": "Sovereign AI Inference & ChatOps",
-        "algorithm": "IP-Hash Session Pinned",
-        "path_prefix": "/api/v1/ai-security/*",
-        "health_uri": "/health",
-        "check_interval": 10,
-        "active_targets": 2,
-        "total_targets": 2,
-        "avg_latency": 12.5,
-        "targets": ["127.0.0.1:8000", "127.0.0.1:8001"]
+        "id": "pool-03",
+        "name": "ai-inference-upstream",
+        "algorithm": "roundrobin",
+        "frontend_port": 443,
+        "sni_hostname": "safety.csir.res.in",
+        "servers": [
+            {"name": "ai-engine-1", "address": "127.0.0.1:8083", "weight": 100, "status": "UP", "health_check": "HTTP 200 OK (14ms)"}
+        ],
+        "active_conns": 12,
+        "bytes_in": "85 MB",
+        "bytes_out": "310 MB"
     }
 ]
 
-# NEW FEATURE: SSL / TLS Key Vault & Certificates
+# SSL / TLS Key Vault Certificates
 MOCK_SSL_CERTIFICATES = [
     {
         "id": "cert-01",
-        "common_name": "*.serc.res.in",
-        "sans": "*.serc.res.in, serc.res.in",
-        "issuer": "CSIR Sovereign Root CA / Let's Encrypt ACME",
-        "key_spec": "ECDSA secp384r1 (High Security)",
+        "common_name": "serc.res.in",
+        "sans": "www.serc.res.in, portal.serc.res.in, shm.serc.res.in",
+        "issuer": "Let's Encrypt E6 Intermediate",
+        "key_spec": "ECDSA secp384r1 (NSA Suite B)",
         "sig_algo": "SHA384withECDSA",
-        "days_left": 84,
+        "days_left": 68,
         "auto_renew": True
     },
     {
         "id": "cert-02",
-        "common_name": "shm.serc.res.in",
-        "sans": "shm.serc.res.in, sensor-edge.serc.res.in",
+        "common_name": "*.windtunnel.serc.res.in",
+        "sans": "windtunnel.serc.res.in, wt.serc.res.in",
         "issuer": "Let's Encrypt E6 Intermediate",
         "key_spec": "RSA 4096-bit (Military Grade)",
         "sig_algo": "SHA256withRSA",
@@ -303,6 +392,8 @@ class TestbedHandler(SimpleHTTPRequestHandler):
         routes = {
             "/api/v1/applications": MOCK_APPLICATIONS,
             "/api/v1/webhosting/vhosts": MOCK_VHOSTS,
+            "/api/v1/virtualization/kvm/status": MOCK_KVM_STATUS,
+            "/api/v1/virtualization/kvm/vms": MOCK_KVM_VMS,
             "/api/v1/proxy/upstreams": MOCK_UPSTREAMS,
             "/api/v1/ssl/certificates": MOCK_SSL_CERTIFICATES,
             "/api/v1/security/waf/rules": MOCK_WAF_RULES,
@@ -340,8 +431,8 @@ class TestbedHandler(SimpleHTTPRequestHandler):
 def run_server(server):
     server.serve_forever()
 
-def capture_tab(edge_path, tab_name, output_png):
-    temp_html = STATIC_DIR / f"_temp_view_{tab_name}.html"
+def capture_view(edge_path, tab_name, output_png, custom_replacements=None):
+    temp_html = STATIC_DIR / f"_temp_view_{output_png.stem}.html"
     with open(STATIC_DIR / "index.html", "r", encoding="utf-8") as f:
         content = f.read()
 
@@ -350,10 +441,14 @@ def capture_tab(edge_path, tab_name, output_png):
         f"const activeTab = ref('{tab_name}');"
     )
 
+    if custom_replacements:
+        for orig, repl in custom_replacements.items():
+            mod_content = mod_content.replace(orig, repl)
+
     with open(temp_html, "w", encoding="utf-8") as f:
         f.write(mod_content)
 
-    temp_url = f"http://{HOST}:{PORT}/_temp_view_{tab_name}.html"
+    temp_url = f"http://{HOST}:{PORT}/_temp_view_{output_png.stem}.html"
 
     cmd = [
         edge_path,
@@ -384,25 +479,32 @@ def main():
     if not Path(edge_path).exists():
         edge_path = r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
 
-    tabs = [
-        ("overview", "web_console_01_overview.png"),
-        ("vhosts", "web_console_02_vhosts.png"),
-        ("proxy", "web_console_03_proxy.png"),
-        ("ssl", "web_console_04_ssl.png"),
-        ("applications", "web_console_05_applications.png"),
-        ("security", "web_console_06_security_waf.png"),
-        ("ai_security", "web_console_07_ai_security_center.png"),
-        ("data_protection", "web_console_08_data_protection_backups.png"),
-        ("compliance", "web_console_09_compliance_audit_ledger.png"),
-        ("updates", "web_console_10_transactional_updates.png"),
-        ("boot_screen", "web_console_11_boot_screen_console.png")
+    views = [
+        ("overview", "web_console_01_overview.png", None),
+        ("vhosts", "web_console_02_vhosts.png", None),
+        ("vhosts", "web_console_02b_vhost_modal.png", {
+            "const showAddVhostModal = ref(false);": "const showAddVhostModal = ref(true);"
+        }),
+        ("proxy", "web_console_03_proxy.png", None),
+        ("ssl", "web_console_04_ssl.png", None),
+        ("applications", "web_console_05_applications.png", None),
+        ("virtualization", "web_console_06_virtualization_kvm.png", None),
+        ("virtualization", "web_console_06b_kvm_setup_wizard.png", {
+            "installed: true,": "installed: false,"
+        }),
+        ("security", "web_console_07_security_waf.png", None),
+        ("ai_security", "web_console_08_ai_security_center.png", None),
+        ("data_protection", "web_console_09_data_protection_backups.png", None),
+        ("compliance", "web_console_10_compliance_audit_ledger.png", None),
+        ("updates", "web_console_11_transactional_updates.png", None),
+        ("boot_screen", "web_console_12_boot_screen_console.png", None)
     ]
 
-    print(f"[*] Capturing {len(tabs)} individual high-resolution screenshots...")
-    for tab, filename in tabs:
+    print(f"[*] Capturing {len(views)} individual high-resolution screenshots...")
+    for tab, filename, custom_repl in views:
         out_path = SCREENSHOTS_DIR / filename
         print(f"    -> Capturing [{tab}] -> {filename}")
-        capture_tab(edge_path, tab, out_path)
+        capture_view(edge_path, tab, out_path, custom_repl)
         if out_path.exists():
             print(f"       [OK] Generated {out_path.name} ({out_path.stat().st_size:,} bytes)")
         else:

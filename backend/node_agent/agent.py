@@ -26,8 +26,14 @@ class PrivilegedNodeAgent:
         "QUADLET_GENERATE_UNIT",
         "CERT_ROTATE",
         "VHOST_CONFIGURE",
+        "VHOST_RUNTIME_INSTALL",
         "PROXY_RELOAD",
-        "SSL_CERTIFICATE_ISSUE"
+        "SSL_CERTIFICATE_ISSUE",
+        "KVM_STATUS_CHECK",
+        "KVM_INSTALL_SUBSYSTEM",
+        "KVM_VM_START",
+        "KVM_VM_STOP",
+        "KVM_VM_CREATE"
     }
 
     def dispatch(self, action: str, params: dict) -> dict:
@@ -135,6 +141,63 @@ class PrivilegedNodeAgent:
             "domain": domain,
             "certificate_path": f"/etc/ssl/csir-swa/{domain}.crt",
             "message": f"Certificate for '{domain}' provisioned and committed to cryptographic key vault."
+        }
+
+    def handle_vhost_runtime_install(self, params: dict) -> dict:
+        vhost_id = params.get("vhost_id")
+        runtime = params.get("runtime", "php82")
+        workers = params.get("workers", 4)
+        logger.info(f"Provisioning isolated application runtime {runtime} (workers={workers}) for vhost {vhost_id}")
+        return {
+            "status": "success",
+            "vhost_id": vhost_id,
+            "runtime": runtime,
+            "workers": workers,
+            "service_unit": f"csir-vhost-{runtime}@{vhost_id}.service",
+            "message": f"Runtime environment '{runtime}' provisioned with {workers} worker processes."
+        }
+
+    def handle_kvm_status_check(self, params: dict) -> dict:
+        logger.info("Checking KVM hypervisor and libvirtd status...")
+        return {
+            "status": "success",
+            "kvm_installed": True,
+            "hypervisor": "QEMU/KVM 8.2",
+            "libvirtd_active": True,
+            "vms_active": 4
+        }
+
+    def handle_kvm_install_subsystem(self, params: dict) -> dict:
+        logger.info("Executing transactional installation of KVM hypervisor packages (qemu-kvm, libvirt, virt-install)...")
+        return {
+            "status": "success",
+            "packages": ["qemu-kvm", "libvirt-daemon-system", "libvirt-clients", "virt-install", "cockpit-machines"],
+            "transactional_snapshot": 17,
+            "message": "KVM Hypervisor subsystem packages installed. Libvirtd activated."
+        }
+
+    def handle_kvm_vm_start(self, params: dict) -> dict:
+        vm_id = params.get("vm_id")
+        logger.info(f"Starting KVM Virtual Machine: {vm_id}")
+        return {"status": "success", "vm_id": vm_id, "state": "running", "message": f"KVM VM {vm_id} started."}
+
+    def handle_kvm_vm_stop(self, params: dict) -> dict:
+        vm_id = params.get("vm_id")
+        logger.info(f"Stopping KVM Virtual Machine: {vm_id}")
+        return {"status": "success", "vm_id": vm_id, "state": "shut_off", "message": f"KVM VM {vm_id} safely shut off."}
+
+    def handle_kvm_vm_create(self, params: dict) -> dict:
+        name = params.get("name", "new-vm")
+        vcpus = params.get("vcpus", 2)
+        memory_mb = params.get("memory_mb", 4096)
+        logger.info(f"Creating KVM Virtual Machine '{name}' with {vcpus} vCPUs and {memory_mb} MB RAM")
+        return {
+            "status": "success",
+            "name": name,
+            "vcpus": vcpus,
+            "memory_mb": memory_mb,
+            "disk_path": f"/var/lib/libvirt/images/{name}.qcow2",
+            "message": f"KVM VM '{name}' provisioned successfully."
         }
 
     def handle_support_bundle_generate(self, params: dict) -> dict:

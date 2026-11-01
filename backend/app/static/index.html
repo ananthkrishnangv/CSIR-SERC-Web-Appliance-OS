@@ -188,6 +188,15 @@
           <span class="badge badge-sm bg-indigoPalette-800 text-indigoPalette-200 border-none">UserNS</span>
         </button>
 
+        <button @click="activeTab = 'virtualization'" 
+                :class="activeTab === 'virtualization' ? 'nav-pill-active' : 'text-indigoPalette-100 hover:bg-indigoPalette-800/60 hover:text-white'"
+                class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition duration-150">
+          <i class="fa-solid fa-server w-5 text-center text-base text-indigoPalette-300"></i>
+          <span class="flex-1 text-left font-semibold">KVM VM Manager</span>
+          <span v-if="kvmStatus.installed" class="badge badge-sm bg-indigoPalette-500 text-white border-none">4 VMs</span>
+          <span v-else class="badge badge-sm bg-amber-400 text-indigoPalette-950 font-bold border-none">Install</span>
+        </button>
+
         <div class="pt-3 px-3 py-1 text-[10px] font-bold text-indigoPalette-300 uppercase tracking-widest font-heading">
           Security &amp; Intelligence
         </div>
@@ -284,6 +293,9 @@
           
           <!-- Sovereign Status Indicators -->
           <div class="hidden xl:flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigoPalette-500 text-white shadow-sm">
+              <i class="fa-solid fa-layer-group text-[11px] text-indigoPalette-200"></i> Profile: {{ appliancePurpose }}
+            </span>
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigoPalette-100 text-indigoPalette-900 border border-indigoPalette-200">
               <i class="fa-solid fa-clock-rotate-left text-[11px] text-indigoPalette-600"></i> Indian NPL NTP Sync
             </span>
@@ -570,7 +582,7 @@
                 Configure sovereign multi-tenant virtual hosts, document roots, PHP/Node runtimes, and HTTP/3 QUIC.
               </p>
             </div>
-            <button class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl shadow-md shadow-indigoPalette-500/25">
+            <button @click="showAddVhostModal = true" class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl shadow-md shadow-indigoPalette-500/25">
               <i class="fa-solid fa-plus text-xs"></i> Add Virtual Host
             </button>
           </div>
@@ -864,6 +876,218 @@
         </div>
 
         <!-- ================================================================= -->
+        <!-- TAB 5B: KVM VIRTUAL MACHINE MANAGER                               -->
+        <!-- ================================================================= -->
+        <div v-if="activeTab === 'virtualization'" class="space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-3">
+                <h1 class="font-heading text-2xl font-extrabold text-indigoPalette-950 tracking-tight">
+                  KVM Hardware Virtualization &amp; VM Manager
+                </h1>
+                <span v-if="kvmStatus.installed" class="badge badge-sm bg-emerald-50 text-emerald-700 border-emerald-200 font-bold">
+                  <i class="fa-solid fa-check-circle mr-1"></i> HYPERVISOR ACTIVE
+                </span>
+                <span v-else class="badge badge-sm bg-amber-50 text-amber-700 border-amber-200 font-bold">
+                  <i class="fa-solid fa-triangle-exclamation mr-1"></i> NOT INSTALLED
+                </span>
+              </div>
+              <p class="text-sm text-indigoPalette-600 mt-1">
+                Enterprise QEMU/KVM hypervisor, libvirt orchestration, hardware VT-x/AMD-V virtualization, and QCOW2 storage pools.
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button @click="toggleKvmMode()" class="btn btn-sm btn-outline border-indigoPalette-300 text-indigoPalette-800 hover:bg-indigoPalette-100 rounded-xl">
+                <i class="fa-solid fa-arrows-rotate text-xs"></i> Mode: {{ kvmStatus.installed ? 'Simulate Uninstalled' : 'Activate Hypervisor' }}
+              </button>
+              <button v-if="kvmStatus.installed" class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl shadow-md shadow-indigoPalette-500/25">
+                <i class="fa-solid fa-plus text-xs"></i> Create Virtual Machine
+              </button>
+            </div>
+          </div>
+
+          <!-- STATE A: KVM IS INSTALLED & RUNNING -->
+          <div v-if="kvmStatus.installed" class="space-y-6">
+            <!-- Hypervisor KPI Stat Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div class="glass-panel rounded-2xl p-5 border border-indigoPalette-200">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold text-indigoPalette-500 uppercase font-heading">Hypervisor Backend</span>
+                  <i class="fa-solid fa-microchip text-indigoPalette-400"></i>
+                </div>
+                <div class="font-heading text-xl font-extrabold text-indigoPalette-950 mt-1">QEMU/KVM 8.2</div>
+                <div class="text-xs text-emerald-600 font-semibold mt-2 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Hardware VT-x / libvirtd Online
+                </div>
+              </div>
+
+              <div class="glass-panel rounded-2xl p-5 border border-indigoPalette-200">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold text-indigoPalette-500 uppercase font-heading">Virtual Machines</span>
+                  <i class="fa-solid fa-server text-indigoPalette-400"></i>
+                </div>
+                <div class="font-heading text-xl font-extrabold text-indigoPalette-950 mt-1">4 Configured</div>
+                <div class="text-xs text-indigoPalette-600 mt-2">
+                  <strong class="text-emerald-600 font-bold">3 Running</strong> • 1 Shut Off
+                </div>
+              </div>
+
+              <div class="glass-panel rounded-2xl p-5 border border-indigoPalette-200">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold text-indigoPalette-500 uppercase font-heading">vCPU / vRAM Commit</span>
+                  <i class="fa-solid fa-memory text-indigoPalette-400"></i>
+                </div>
+                <div class="font-heading text-xl font-extrabold text-indigoPalette-950 mt-1">16 vCPUs / 32 GB</div>
+                <div class="text-xs text-indigoPalette-600 mt-2">
+                  1.75x Commit (Safe Host Limit: 64 GB)
+                </div>
+              </div>
+
+              <div class="glass-panel rounded-2xl p-5 border border-indigoPalette-200">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold text-indigoPalette-500 uppercase font-heading">Storage Pool (QCOW2)</span>
+                  <i class="fa-solid fa-database text-indigoPalette-400"></i>
+                </div>
+                <div class="font-heading text-xl font-extrabold text-indigoPalette-950 mt-1">184.2 GB Free</div>
+                <div class="text-xs text-indigoPalette-600 mt-2">
+                  <code class="text-[11px] font-mono text-indigoPalette-700 bg-indigoPalette-100 px-1 py-0.5 rounded">/var/lib/libvirt/images</code>
+                </div>
+              </div>
+            </div>
+
+            <!-- Virtual Machines Table -->
+            <div class="glass-panel rounded-2xl p-6 border border-indigoPalette-200">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-heading font-bold text-base text-indigoPalette-950">
+                  Provisioned KVM Guest Virtual Machines
+                </h3>
+                <span class="text-xs font-mono text-indigoPalette-500">Bridge Interface: virbr0 (192.168.122.1/24)</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="table w-full text-left">
+                  <thead>
+                    <tr class="text-indigoPalette-400 border-b border-indigoPalette-200 text-xs uppercase font-heading">
+                      <th>VM Identifier &amp; Guest OS</th>
+                      <th>vCPUs / RAM</th>
+                      <th>QCOW2 Disk</th>
+                      <th>Network IP</th>
+                      <th>Remote Console</th>
+                      <th>State</th>
+                      <th>Lifecycle Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-sm">
+                    <tr v-for="vm in kvmVms" :key="vm.id" class="border-b border-indigoPalette-100 hover:bg-white/60 transition">
+                      <td class="font-semibold text-indigoPalette-950 py-3.5">
+                        <div class="flex items-center gap-2">
+                          <i class="fa-solid fa-desktop text-indigoPalette-500"></i>
+                          <span>{{ vm.name }}</span>
+                        </div>
+                        <div class="text-[11px] text-indigoPalette-400 font-mono">{{ vm.os_flavor }}</div>
+                      </td>
+                      <td>
+                        <div class="text-xs font-bold text-indigoPalette-800">{{ vm.vcpus }} vCPUs</div>
+                        <div class="text-[11px] text-indigoPalette-500">{{ vm.memory_mb }} MB RAM</div>
+                      </td>
+                      <td>
+                        <div class="text-xs font-mono text-indigoPalette-700">{{ vm.disk_size }}</div>
+                        <div class="text-[10px] text-indigoPalette-400 font-mono">{{ vm.disk_path }}</div>
+                      </td>
+                      <td>
+                        <span class="font-mono text-xs text-indigoPalette-700 font-semibold">{{ vm.ip_address }}</span>
+                        <div class="text-[10px] text-indigoPalette-400 font-mono">{{ vm.mac_address }}</div>
+                      </td>
+                      <td>
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigoPalette-100 text-indigoPalette-800 text-xs font-mono font-semibold">
+                          <i class="fa-solid fa-display text-indigoPalette-500"></i> {{ vm.console_type }}:{{ vm.console_port }}
+                        </span>
+                      </td>
+                      <td>
+                        <span v-if="vm.state === 'running'" class="badge badge-sm bg-emerald-50 text-emerald-700 border-emerald-200 font-bold">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span> RUNNING
+                        </span>
+                        <span v-else class="badge badge-sm bg-slate-100 text-slate-600 border-slate-300 font-bold">
+                          SHUT OFF
+                        </span>
+                      </td>
+                      <td>
+                        <div class="flex items-center gap-1.5">
+                          <button class="btn btn-xs btn-outline border-indigoPalette-300 text-indigoPalette-700 hover:bg-indigoPalette-50">
+                            <i class="fa-solid fa-terminal text-[10px]"></i> Console
+                          </button>
+                          <button v-if="vm.state === 'running'" class="btn btn-xs btn-outline btn-error">Stop</button>
+                          <button v-else class="btn btn-xs btn-outline btn-success">Start</button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- STATE B: KVM IS NOT INSTALLED (Setup & Installation Wizard) -->
+          <div v-else class="glass-panel rounded-3xl p-10 border border-indigoPalette-200 text-center space-y-6">
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-indigoPalette-600 to-indigoPalette-400 text-white flex items-center justify-center shadow-xl shadow-indigoPalette-500/30">
+              <i class="fa-solid fa-server text-4xl"></i>
+            </div>
+            
+            <div class="max-w-2xl mx-auto space-y-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <i class="fa-solid fa-microchip text-emerald-600"></i> Hardware CPU Virtualization (VT-x / AMD-V) Detected &amp; Ready
+              </div>
+              <h2 class="font-heading text-2xl font-extrabold text-indigoPalette-950">
+                KVM Hypervisor &amp; Virtual Machine Manager Not Installed
+              </h2>
+              <p class="text-sm text-indigoPalette-600 leading-relaxed">
+                The KVM kernel virtualization module, QEMU machine emulator, libvirt daemon, and Web VM Console are currently inactive on this appliance. You can install and initialize the complete virtualization subsystem transactionally with a single click.
+              </p>
+            </div>
+
+            <!-- Hardware & Pre-requisite Verification Strip -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto text-left">
+              <div class="p-4 rounded-2xl bg-white/70 border border-indigoPalette-200">
+                <div class="text-xs font-semibold text-indigoPalette-500 uppercase font-heading">Hardware Virtualization</div>
+                <div class="font-heading font-bold text-sm text-indigoPalette-950 mt-1">Intel VT-x / AMD-V</div>
+                <div class="text-[11px] text-emerald-600 mt-1"><i class="fa-solid fa-check"></i> /dev/kvm available</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/70 border border-indigoPalette-200">
+                <div class="text-xs font-semibold text-indigoPalette-500 uppercase font-heading">Storage Pool Subvolume</div>
+                <div class="font-heading font-bold text-sm text-indigoPalette-950 mt-1">Btrfs Subvolume @libvirt</div>
+                <div class="text-[11px] text-emerald-600 mt-1"><i class="fa-solid fa-check"></i> CoW Snapshots enabled</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-white/70 border border-indigoPalette-200">
+                <div class="text-xs font-semibold text-indigoPalette-500 uppercase font-heading">Installation Method</div>
+                <div class="font-heading font-bold text-sm text-indigoPalette-950 mt-1">Transactional Overlay</div>
+                <div class="text-[11px] text-indigoPalette-600 mt-1"><i class="fa-solid fa-shield-halved"></i> Zero-downtime rollback</div>
+              </div>
+            </div>
+
+            <!-- Package Manifest to be Installed -->
+            <div class="max-w-2xl mx-auto p-4 rounded-2xl bg-indigoPalette-50 border border-indigoPalette-200 text-left text-xs">
+              <div class="font-heading font-bold text-indigoPalette-900 mb-2">Packages to be transactionally deployed:</div>
+              <ul class="grid grid-cols-2 gap-2 text-indigoPalette-700">
+                <li><i class="fa-solid fa-cube text-indigoPalette-500 mr-1.5"></i> <strong>qemu-kvm</strong> (Hardware emulator)</li>
+                <li><i class="fa-solid fa-cube text-indigoPalette-500 mr-1.5"></i> <strong>libvirt-daemon-system</strong> (Hypervisor daemon)</li>
+                <li><i class="fa-solid fa-cube text-indigoPalette-500 mr-1.5"></i> <strong>virt-install</strong> (CLI VM builder)</li>
+                <li><i class="fa-solid fa-cube text-indigoPalette-500 mr-1.5"></i> <strong>cockpit-machines</strong> (Interactive Web VNC)</li>
+              </ul>
+            </div>
+
+            <!-- Big Action Button -->
+            <div class="pt-2">
+              <button @click="installKvm()" class="btn btn-lg bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-2xl shadow-xl shadow-indigoPalette-500/30 px-8 text-base">
+                <i class="fa-solid fa-download mr-2"></i> Install KVM &amp; Virtual Machine Manager
+              </button>
+              <div class="text-xs text-indigoPalette-400 mt-3">
+                Creates an atomic Btrfs transactional snapshot and enables libvirtd.service on completion.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
         <!-- TAB 6: SECURITY TAB (Coraza WAF & Firewall)                       -->
         <!-- ================================================================= -->
         <div v-if="activeTab === 'security'" class="space-y-6">
@@ -1112,6 +1336,142 @@
       </main>
     </div>
 
+    <!-- Add Virtual Host Modal with Background App Stack & SSL Setup -->
+    <dialog class="modal" :class="{ 'modal-open': showAddVhostModal }">
+      <div class="modal-box glass-panel rounded-3xl border border-indigoPalette-200 max-w-2xl shadow-2xl p-7">
+        <div class="flex items-center justify-between border-b border-indigoPalette-100 pb-4">
+          <div>
+            <h3 class="font-heading font-extrabold text-xl text-indigoPalette-950 flex items-center gap-2">
+              <i class="fa-solid fa-globe text-indigoPalette-500"></i> Configure Sovereign Virtual Host
+            </h3>
+            <p class="text-xs text-indigoPalette-500 mt-0.5">Provision multi-tenant host directory, backend runtime stack, and automated SSL certificate.</p>
+          </div>
+          <button @click="showAddVhostModal = false" class="btn btn-xs btn-circle btn-ghost text-indigoPalette-400 hover:text-indigoPalette-900">✕</button>
+        </div>
+
+        <div class="space-y-5 mt-4 text-xs">
+          <!-- Domain & Docroot -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="font-bold text-indigoPalette-900 block mb-1">Domain Name / Hostname</label>
+              <input type="text" v-model="newVhost.domain" placeholder="e.g. analytics.serc.res.in" class="input input-sm input-bordered w-full rounded-xl border-indigoPalette-200 bg-white/90 text-xs font-mono font-medium focus:border-indigoPalette-500" />
+            </div>
+            <div>
+              <label class="font-bold text-indigoPalette-900 block mb-1">Document Root Path</label>
+              <input type="text" v-model="newVhost.docroot" placeholder="/srv/www/vhosts/..." class="input input-sm input-bordered w-full rounded-xl border-indigoPalette-200 bg-white/90 text-xs font-mono text-indigoPalette-600 focus:border-indigoPalette-500" />
+            </div>
+          </div>
+
+          <!-- Section A: Background Application Stack -->
+          <div class="p-4 rounded-2xl bg-indigoPalette-50/70 border border-indigoPalette-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="cursor-pointer flex items-center gap-2 font-heading font-bold text-indigoPalette-950 text-sm">
+                <input type="checkbox" v-model="newVhost.install_backend_app" class="checkbox checkbox-xs checkbox-primary rounded" />
+                <span>Install &amp; Configure Background Application Stack</span>
+              </label>
+              <span class="badge badge-xs bg-indigoPalette-500 text-white font-bold px-2 py-1">Zero-Config Isolation</span>
+            </div>
+            <p class="text-[11px] text-indigoPalette-600">Select the dedicated runtime engine to provision for this virtual host. Runs in a secure rootless socket pool.</p>
+
+            <div v-if="newVhost.install_backend_app" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+              <label class="border rounded-xl p-2.5 cursor-pointer text-center transition flex flex-col items-center justify-center gap-1"
+                     :class="newVhost.backend_app_type === 'php82' ? 'border-indigoPalette-500 bg-white shadow-sm ring-2 ring-indigoPalette-400/40' : 'border-indigoPalette-200 bg-white/60 hover:bg-white'">
+                <input type="radio" v-model="newVhost.backend_app_type" value="php82" class="sr-only" />
+                <i class="fa-brands fa-php text-xl text-indigoPalette-600"></i>
+                <div class="font-bold text-[11px] text-indigoPalette-900">PHP 8.2 FPM</div>
+                <div class="text-[9px] text-indigoPalette-500">OPcache &amp; PDO</div>
+              </label>
+
+              <label class="border rounded-xl p-2.5 cursor-pointer text-center transition flex flex-col items-center justify-center gap-1"
+                     :class="newVhost.backend_app_type === 'nodejs20' ? 'border-indigoPalette-500 bg-white shadow-sm ring-2 ring-indigoPalette-400/40' : 'border-indigoPalette-200 bg-white/60 hover:bg-white'">
+                <input type="radio" v-model="newVhost.backend_app_type" value="nodejs20" class="sr-only" />
+                <i class="fa-brands fa-node-js text-xl text-emerald-600"></i>
+                <div class="font-bold text-[11px] text-indigoPalette-900">Node.js 20 LTS</div>
+                <div class="text-[9px] text-indigoPalette-500">PM2 Process Cluster</div>
+              </label>
+
+              <label class="border rounded-xl p-2.5 cursor-pointer text-center transition flex flex-col items-center justify-center gap-1"
+                     :class="newVhost.backend_app_type === 'python311' ? 'border-indigoPalette-500 bg-white shadow-sm ring-2 ring-indigoPalette-400/40' : 'border-indigoPalette-200 bg-white/60 hover:bg-white'">
+                <input type="radio" v-model="newVhost.backend_app_type" value="python311" class="sr-only" />
+                <i class="fa-brands fa-python text-xl text-amber-600"></i>
+                <div class="font-bold text-[11px] text-indigoPalette-900">Python 3.11</div>
+                <div class="text-[9px] text-indigoPalette-500">ASGI / Uvicorn</div>
+              </label>
+
+              <label class="border rounded-xl p-2.5 cursor-pointer text-center transition flex flex-col items-center justify-center gap-1"
+                     :class="newVhost.backend_app_type === 'static' ? 'border-indigoPalette-500 bg-white shadow-sm ring-2 ring-indigoPalette-400/40' : 'border-indigoPalette-200 bg-white/60 hover:bg-white'">
+                <input type="radio" v-model="newVhost.backend_app_type" value="static" class="sr-only" />
+                <i class="fa-solid fa-bolt text-xl text-indigoPalette-500"></i>
+                <div class="font-bold text-[11px] text-indigoPalette-900">Static / Wasm</div>
+                <div class="text-[9px] text-indigoPalette-500">Nginx Fast-Cache</div>
+              </label>
+            </div>
+
+            <!-- Worker count slider/dropdown -->
+            <div v-if="newVhost.install_backend_app" class="flex items-center justify-between pt-2 border-t border-indigoPalette-200/60 text-[11px]">
+              <span class="font-medium text-indigoPalette-700">Allocated Worker Processes:</span>
+              <div class="flex items-center gap-2">
+                <select v-model="newVhost.backend_app_workers" class="select select-xs select-bordered rounded-lg bg-white border-indigoPalette-300">
+                  <option :value="2">2 Worker Daemons</option>
+                  <option :value="4">4 Worker Daemons (Recommended)</option>
+                  <option :value="8">8 Worker Daemons (High-Load)</option>
+                  <option :value="16">16 Worker Daemons (Extreme)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section B: SSL / TLS Certificate Configuration -->
+          <div class="p-4 rounded-2xl bg-white/80 border border-indigoPalette-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="cursor-pointer flex items-center gap-2 font-heading font-bold text-indigoPalette-950 text-sm">
+                <input type="checkbox" v-model="newVhost.ssl_enabled" class="checkbox checkbox-xs checkbox-primary rounded" />
+                <span>Configure &amp; Bind SSL / TLS Certificate</span>
+              </label>
+              <span class="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-bold">
+                <i class="fa-solid fa-shield-check"></i> TLS 1.3 Strict Enforced
+              </span>
+            </div>
+
+            <div v-if="newVhost.ssl_enabled" class="space-y-3 pt-1">
+              <div>
+                <label class="font-bold text-indigoPalette-800 block mb-1">Certificate Authority / Provider</label>
+                <select v-model="newVhost.ssl_provider" class="select select-sm select-bordered w-full rounded-xl border-indigoPalette-200 bg-white text-xs">
+                  <option value="letsencrypt">ACME Let's Encrypt (Automated Zero-Touch Renewal via DNS/HTTP-01)</option>
+                  <option value="tpm_internal_ca">Hardware TPM 2.0 Internal CA (Sovereign Lab / Air-Gapped Network PKI)</option>
+                  <option value="custom">Custom Enterprise Certificate (Upload External CRT / PEM &amp; Private Key)</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 pt-1">
+                <label class="cursor-pointer flex items-center gap-2 p-2 rounded-xl bg-indigoPalette-50 border border-indigoPalette-200">
+                  <input type="checkbox" v-model="newVhost.ssl_force_https" class="checkbox checkbox-xs checkbox-primary rounded" />
+                  <span class="text-[11px] font-semibold text-indigoPalette-900">Force HTTPS (HTTP 301 Redirect)</span>
+                </label>
+
+                <label class="cursor-pointer flex items-center gap-2 p-2 rounded-xl bg-indigoPalette-50 border border-indigoPalette-200">
+                  <input type="checkbox" v-model="newVhost.ssl_hsts" class="checkbox checkbox-xs checkbox-primary rounded" />
+                  <span class="text-[11px] font-semibold text-indigoPalette-900">Enforce HSTS (31536000s)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-action mt-6 border-t border-indigoPalette-100 pt-4 flex items-center justify-between">
+          <div class="text-[11px] text-indigoPalette-400 font-mono">
+            <i class="fa-solid fa-fingerprint"></i> SHA-256 Signed by CSIR Node Agent
+          </div>
+          <div class="flex items-center gap-2">
+            <button @click="showAddVhostModal = false" class="btn btn-sm btn-ghost rounded-xl text-indigoPalette-700">Cancel</button>
+            <button @click="createVhost()" class="btn btn-sm bg-indigoPalette-500 hover:bg-indigoPalette-600 border-none text-white rounded-xl shadow-md shadow-indigoPalette-500/25 px-5">
+              <i class="fa-solid fa-check text-xs mr-1"></i> Provision Virtual Host &amp; Runtime
+            </button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
     <!-- Workload Deployment Modal -->
     <dialog class="modal" :class="{ 'modal-open': showDeployModal }">
       <div class="modal-box glass-panel rounded-2xl border border-indigoPalette-200">
@@ -1144,7 +1504,118 @@
         const activeTab = ref('overview');
         const searchQuery = ref('');
         const showDeployModal = ref(false);
+        const showAddVhostModal = ref(false);
         const chatopsInput = ref('');
+        const appliancePurpose = ref('Full-Stack Sovereign Web & Virtualization Appliance');
+
+        const newVhost = ref({
+          domain: 'analytics.serc.res.in',
+          docroot: '/srv/www/vhosts/analytics.serc.res.in/public',
+          install_backend_app: true,
+          backend_app_type: 'php82',
+          backend_app_workers: 4,
+          ssl_enabled: true,
+          ssl_provider: 'letsencrypt',
+          ssl_force_https: true,
+          ssl_hsts: true
+        });
+
+        const kvmStatus = ref({
+          installed: true,
+          hypervisor: 'QEMU/KVM 8.2',
+          libvirtd_active: true,
+          vms_active: 3,
+          vms_total: 4,
+          vcpus_allocated: 16,
+          memory_allocated_gb: 32,
+          storage_pool: '/var/lib/libvirt/images',
+          storage_free_gb: 184.2
+        });
+
+        const kvmVms = ref([
+          {
+            id: 'vm-serc-01',
+            name: 'csir-serc-lab-vm',
+            os_flavor: 'AlmaLinux 9 Enterprise (x86_64)',
+            vcpus: 4,
+            memory_mb: 8192,
+            disk_size: '60 GB',
+            disk_path: '/var/lib/libvirt/images/csir-serc-lab.qcow2',
+            ip_address: '10.20.10.101',
+            mac_address: '52:54:00:1a:2b:3c',
+            console_type: 'VNC',
+            console_port: 5901,
+            state: 'running'
+          },
+          {
+            id: 'vm-ai-02',
+            name: 'ai-training-ollama',
+            os_flavor: 'Ubuntu 24.04 LTS (Local LLM Inference)',
+            vcpus: 6,
+            memory_mb: 12288,
+            disk_size: '100 GB',
+            disk_path: '/var/lib/libvirt/images/ollama-node.qcow2',
+            ip_address: '10.20.10.102',
+            mac_address: '52:54:00:3d:4e:5f',
+            console_type: 'VNC',
+            console_port: 5902,
+            state: 'running'
+          },
+          {
+            id: 'vm-win-03',
+            name: 'windows-server-gateway',
+            os_flavor: 'Windows Server 2022 Standard',
+            vcpus: 4,
+            memory_mb: 8192,
+            disk_size: '80 GB',
+            disk_path: '/var/lib/libvirt/images/win-gw.qcow2',
+            ip_address: '10.20.10.103',
+            mac_address: '52:54:00:7a:8b:9c',
+            console_type: 'SPICE',
+            console_port: 5903,
+            state: 'running'
+          },
+          {
+            id: 'vm-legacy-04',
+            name: 'legacy-centos-db',
+            os_flavor: 'CentOS 7.9 (Historical Archive)',
+            vcpus: 2,
+            memory_mb: 4096,
+            disk_size: '40 GB',
+            disk_path: '/var/lib/libvirt/images/centos-db.qcow2',
+            ip_address: '10.20.10.104',
+            mac_address: '52:54:00:de:ad:01',
+            console_type: 'VNC',
+            console_port: 5904,
+            state: 'shut_off'
+          }
+        ]);
+
+        function toggleKvmMode() {
+          kvmStatus.value.installed = !kvmStatus.value.installed;
+        }
+
+        function installKvm() {
+          kvmStatus.value.installed = true;
+          alert('KVM Hypervisor subsystem successfully installed via transactional overlay. Libvirtd started.');
+        }
+
+        function createVhost() {
+          vhostsList.value.push({
+            id: 'vh-' + Date.now(),
+            domain: newVhost.value.domain,
+            aliases: 'www.' + newVhost.value.domain,
+            docroot: newVhost.value.docroot,
+            runtime: newVhost.value.backend_app_type.toUpperCase() + ' (' + newVhost.value.backend_app_workers + 'w)',
+            ssl_status: newVhost.value.ssl_enabled ? (newVhost.value.ssl_provider === 'letsencrypt' ? "Let's Encrypt (Auto)" : "TPM CA") : "Disabled",
+            storage_used: '120 MB',
+            storage_quota: '20 GB',
+            quota_percent: 1,
+            status: 'online'
+          });
+          showAddVhostModal.value = false;
+          alert('Virtual host ' + newVhost.value.domain + ' and background application stack provisioned successfully!');
+        }
 
         const currentDateFormatted = computed(() => {
           return new Date().toLocaleDateString('en-IN', {
@@ -1242,7 +1713,15 @@
           activeTab,
           searchQuery,
           showDeployModal,
+          showAddVhostModal,
           chatopsInput,
+          appliancePurpose,
+          newVhost,
+          kvmStatus,
+          kvmVms,
+          toggleKvmMode,
+          installKvm,
+          createVhost,
           currentDateFormatted,
           appList,
           vhostsList,

@@ -399,18 +399,21 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     def reg(p):
         return builder.add_media(p) if builder else Path(p).name
 
-    # 11 LATEST WEB MANAGEMENT CONSOLE SCREENSHOTS
-    img_c_ov   = reg(SCREENSHOTS_DIR / "web_console_01_overview.png")
-    img_c_vh   = reg(SCREENSHOTS_DIR / "web_console_02_vhosts.png")
-    img_c_px   = reg(SCREENSHOTS_DIR / "web_console_03_proxy.png")
-    img_c_ssl  = reg(SCREENSHOTS_DIR / "web_console_04_ssl.png")
-    img_c_app  = reg(SCREENSHOTS_DIR / "web_console_05_applications.png")
-    img_c_waf  = reg(SCREENSHOTS_DIR / "web_console_06_security_waf.png")
-    img_c_ai   = reg(SCREENSHOTS_DIR / "web_console_07_ai_security_center.png")
-    img_c_dr   = reg(SCREENSHOTS_DIR / "web_console_08_data_protection_backups.png")
-    img_c_comp = reg(SCREENSHOTS_DIR / "web_console_09_compliance_audit_ledger.png")
-    img_c_upd  = reg(SCREENSHOTS_DIR / "web_console_10_transactional_updates.png")
-    img_c_term = reg(SCREENSHOTS_DIR / "web_console_11_boot_screen_console.png")
+    # 14 LATEST WEB MANAGEMENT CONSOLE SCREENSHOTS
+    img_c_ov       = reg(SCREENSHOTS_DIR / "web_console_01_overview.png")
+    img_c_vh       = reg(SCREENSHOTS_DIR / "web_console_02_vhosts.png")
+    img_c_vmodal   = reg(SCREENSHOTS_DIR / "web_console_02b_vhost_modal.png")
+    img_c_px       = reg(SCREENSHOTS_DIR / "web_console_03_proxy.png")
+    img_c_ssl      = reg(SCREENSHOTS_DIR / "web_console_04_ssl.png")
+    img_c_app      = reg(SCREENSHOTS_DIR / "web_console_05_applications.png")
+    img_c_kvm      = reg(SCREENSHOTS_DIR / "web_console_06_virtualization_kvm.png")
+    img_c_kvm_wiz  = reg(SCREENSHOTS_DIR / "web_console_06b_kvm_setup_wizard.png")
+    img_c_waf      = reg(SCREENSHOTS_DIR / "web_console_07_security_waf.png")
+    img_c_ai       = reg(SCREENSHOTS_DIR / "web_console_08_ai_security_center.png")
+    img_c_dr       = reg(SCREENSHOTS_DIR / "web_console_09_data_protection_backups.png")
+    img_c_comp     = reg(SCREENSHOTS_DIR / "web_console_10_compliance_audit_ledger.png")
+    img_c_upd      = reg(SCREENSHOTS_DIR / "web_console_11_transactional_updates.png")
+    img_c_term     = reg(SCREENSHOTS_DIR / "web_console_12_boot_screen_console.png")
 
     # 6 APPLIANCE OS PROVISIONING & HYPERVISOR INSTALLATION SCREENSHOTS
     img_boot = reg(INSTALLER_SCREENSHOTS_DIR / "vm_boot_menu_v2.jpg")
@@ -434,7 +437,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
         "bullets": [
             "Engineered for classified research laboratories, government web portals, and critical public infrastructure.",
             "Prompt Indigo AI SaaS Architecture with Tailwind CSS, daisyUI, and Glassmorphic aesthetics.",
-            "Integrated Multi-Tenant Web Hosting, Virtual Host Manager, HAProxy Reverse Proxy, and ACME SSL Key Vault."
+            "Integrated Multi-Tenant Web Hosting, Virtual Host Manager, KVM VM Manager, HAProxy Proxy, and ACME SSL Key Vault."
         ]
     })
 
@@ -463,7 +466,7 @@ def build_all_slides_data(builder: PPTXBuilder = None):
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console Subsystem",
-        "title": "Figure 2: Native Web Hosting & Multi-Tenant Virtual Host Management",
+        "title": "Figure 2: Native Web Hosting & Multi-Tenant Virtual Host Fleet",
         "image_file": img_c_vh,
         "caption": "Figure 2: Native Virtual Host Manager with Multi-Tenant Runtimes (PHP 8.2, Node 20, Python ASGI), Quotas & SSL Status.",
         "specs": [
@@ -475,15 +478,33 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 4: Figure 3 - Reverse Proxy (web_console_03_proxy.png)
+    # SLIDE 4: Figure 3 - Virtual Host Configuration Modal (web_console_02b_vhost_modal.png)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console Subsystem",
-        "title": "Figure 3: HAProxy Dynamic Reverse Proxy & Upstream Server Pools",
+        "title": "Figure 3: Virtual Host Configuration & Background Stack Setup Modal",
+        "image_file": img_c_vmodal,
+        "caption": "Figure 3: Add Virtual Host Modal with Background Application Stack Selection (PHP, Node, Python, Static) and SSL/TLS Binding.",
+        "specs": [
+            {"label": "Application Runtime Selection", "detail": "Interactive stack choice for PHP 8.2-FPM, Node.js 20 SSR, Python 3.11 ASGI, or Static"},
+            {"label": "Tunable Worker Daemons", "detail": "Selectable 2, 4, 8, or 16 isolated worker processes running in unprivileged cgroups"},
+            {"label": "Sovereign SSL/TLS Binding", "detail": "Automated ACME Let's Encrypt, TPM Hardware Internal CA, or Enterprise CRT upload"},
+            {"label": "Security Enforcements", "detail": "Mandatory HTTP 301 HTTPS redirection and HSTS (31536000s) security headers"}
+        ]
+    })
+
+    # --------------------------------------------------------------------------
+    # SLIDE 5: Figure 4 - Reverse Proxy (web_console_03_proxy.png)
+    # --------------------------------------------------------------------------
+    slides.append({
+        "type": "hero_screenshot",
+        "bg": "F5F3FF",
+        "category": "Visual Qualification: Web Console Subsystem",
+        "title": "Figure 4: HAProxy Dynamic Reverse Proxy & Upstream Server Pools",
         "image_file": img_c_px,
-        "caption": "Figure 3: HAProxy Sovereign Router with Target Pools, Load Balancing Algorithms, Active Health Probes & Routes.",
+        "caption": "Figure 4: HAProxy Sovereign Router with Target Pools, Load Balancing Algorithms, Active Health Probes & Routes.",
         "specs": [
             {"label": "Upstream Target Pools", "detail": "Dedicated server pools for Structural Health, Wind Tunnel, and Local AI"},
             {"label": "Balancing Algorithms", "detail": "Round-Robin, Least-Connections, and IP-Hash session pinning"},
@@ -493,15 +514,15 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 5: Figure 4 - SSL Vault (web_console_04_ssl.png)
+    # SLIDE 6: Figure 5 - SSL Vault (web_console_04_ssl.png)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console Subsystem",
-        "title": "Figure 4: Sovereign SSL / TLS Certificate Vault & ACME Key Management",
+        "title": "Figure 5: Sovereign SSL / TLS Certificate Vault & ACME Key Management",
         "image_file": img_c_ssl,
-        "caption": "Figure 4: Cryptographic SSL/TLS Vault with ACME Auto-Renewal, ECDSA 384-bit & RSA 4096-bit Keys, and CSR Generator.",
+        "caption": "Figure 5: Cryptographic SSL/TLS Vault with ACME Auto-Renewal, ECDSA 384-bit & RSA 4096-bit Keys, and CSR Generator.",
         "specs": [
             {"label": "Automated ACME Lifecycle", "detail": "Zero-touch renewal for *.serc.res.in 30 days prior to certificate expiry"},
             {"label": "Military-Grade Keys", "detail": "ECDSA secp384r1 and RSA 4096-bit institutional private keys"},
@@ -511,15 +532,15 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 6: Figure 5 - Container Quadlets (web_console_05_applications.png)
+    # SLIDE 7: Figure 6 - Container Quadlets (web_console_05_applications.png)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console Subsystem",
-        "title": "Figure 5: Rootless Podman Quadlet Container Workloads",
+        "title": "Figure 6: Rootless Podman Quadlet Container Workloads",
         "image_file": img_c_app,
-        "caption": "Figure 5: Rootless Podman Quadlet Container Workloads with Cryptographic Cosign Digests & UserNS Sandboxing.",
+        "caption": "Figure 6: Rootless Podman Quadlet Container Workloads with Cryptographic Cosign Digests & UserNS Sandboxing.",
         "specs": [
             {"label": "Cosign Verification", "detail": "Mandatory cryptographic signature verification before workload ignition"},
             {"label": "Rootless UserNS Sandbox", "detail": "Zero root privileges inside containers, mitigating container breakout risks"},
@@ -529,15 +550,51 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 7: Figure 6 - Coraza WAF (web_console_06_security_waf.png)
+    # SLIDE 8: Figure 7 - KVM Hypervisor Active (web_console_06_virtualization_kvm.png)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console Subsystem",
-        "title": "Figure 6: Coraza Sovereign WAF & nftables Network Defense",
+        "title": "Figure 7: KVM Hardware Virtualization & Virtual Machine Manager",
+        "image_file": img_c_kvm,
+        "caption": "Figure 7: KVM Virtual Machine Manager with QEMU 8.2, Hardware VT-x/AMD-V Acceleration, and 4 Provisioned Guest VMs.",
+        "specs": [
+            {"label": "Hypervisor Backend", "detail": "QEMU/KVM 8.2 with hardware VT-x/AMD-V acceleration and libvirtd daemon"},
+            {"label": "Multi-OS Guest Workloads", "detail": "AlmaLinux 9 Enterprise, Ubuntu 24.04 AI Node, Windows Server 2022 & CentOS 7"},
+            {"label": "Resource Commit Pool", "detail": "16 vCPUs and 32 GB RAM allocated across guests on virbr0 virtual bridge"},
+            {"label": "Web Console Suite", "detail": "Direct browser-based SPICE and VNC display consoles on ports 5901-5904"}
+        ]
+    })
+
+    # --------------------------------------------------------------------------
+    # SLIDE 9: Figure 8 - KVM Setup Wizard (web_console_06b_kvm_setup_wizard.png)
+    # --------------------------------------------------------------------------
+    slides.append({
+        "type": "hero_screenshot",
+        "bg": "F5F3FF",
+        "category": "Visual Qualification: Web Console Subsystem",
+        "title": "Figure 8: KVM Subsystem Setup & One-Click Hypervisor Deployment Wizard",
+        "image_file": img_c_kvm_wiz,
+        "caption": "Figure 8: Interactive KVM Setup Wizard Displayed When Virtualization Is Not Yet Installed, Featuring 1-Click Activation.",
+        "specs": [
+            {"label": "Hardware VT Detection", "detail": "Automatic kernel inspection verifying Intel VT-x / AMD-V CPU readiness"},
+            {"label": "Transactional Packaging", "detail": "Atomic deployment of qemu-kvm, libvirt-daemon-system, and virt-install"},
+            {"label": "Web Management Console", "detail": "Cockpit Machines web interface integrated seamlessly with zero reboot"},
+            {"label": "One-Click Initialization", "detail": "Single-click activation creating an atomic Btrfs transactional snapshot"}
+        ]
+    })
+
+    # --------------------------------------------------------------------------
+    # SLIDE 10: Figure 9 - Coraza WAF (web_console_07_security_waf.png)
+    # --------------------------------------------------------------------------
+    slides.append({
+        "type": "hero_screenshot",
+        "bg": "F5F3FF",
+        "category": "Visual Qualification: Web Console Subsystem",
+        "title": "Figure 9: Coraza Sovereign WAF & nftables Network Defense",
         "image_file": img_c_waf,
-        "caption": "Figure 6: Real-Time Coraza OWASP CRS Rule Toggles, Paranoia Level Enforcement & Default-Deny nftables Firewall.",
+        "caption": "Figure 9: Real-Time Coraza OWASP CRS Rule Toggles, Paranoia Level Enforcement & Default-Deny nftables Firewall.",
         "specs": [
             {"label": "OWASP CRS v4 Defense", "detail": "Active mitigation of SQLi (942100), XSS (941100), RCE (932100) & LFI (930100)"},
             {"label": "Paranoia Strictness L2", "detail": "Enhanced scrutiny on administrative endpoints without disrupting users"},
@@ -547,15 +604,15 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 8: Figure 7 - Local AI Security (web_console_07_ai_security_center.png)
+    # SLIDE 11: Figure 10 - Local AI Security (web_console_08_ai_security_center.png)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console Subsystem",
-        "title": "Figure 7: Local AI Security Center & Incident Root Cause Analysis",
+        "title": "Figure 10: Local AI Security Center & Incident Root Cause Analysis",
         "image_file": img_c_ai,
-        "caption": "Figure 7: Local AI Security Center with Plain-English Incident Narratives, Human Approval Gates & ChatOps Telemetry.",
+        "caption": "Figure 10: Local AI Security Center with Plain-English Incident Narratives, Human Approval Gates & ChatOps Telemetry.",
         "specs": [
             {"label": "Incident Synthesis", "detail": "Autonomous plain-English briefings of scanner probes (Narrative NAR-882)"},
             {"label": "Human Approval Gates", "detail": "Strict mandatory human approval required before AI mitigations are committed"},
@@ -565,15 +622,15 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 9: Figure 8 - Data Protection & DR (web_console_08_data_protection_backups.png)
+    # SLIDE 12: Figure 11 - Data Protection & DR (web_console_09_data_protection_backups.png)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console Subsystem",
-        "title": "Figure 8: Immutable Data Protection & Btrfs Automated DR Drills",
+        "title": "Figure 11: Immutable Data Protection & Btrfs Automated DR Drills",
         "image_file": img_c_dr,
-        "caption": "Figure 8: Snapper Btrfs Subvolume Trees, Restic Deduplicated Backups & Automated Sandbox DR Verification Drills.",
+        "caption": "Figure 11: Snapper Btrfs Subvolume Trees, Restic Deduplicated Backups & Automated Sandbox DR Verification Drills.",
         "specs": [
             {"label": "Btrfs Subvolume Tree", "detail": "Granular snapshot management across root (@), data (@/srv), and logs (@/var)"},
             {"label": "Verified DR Drills", "detail": "Measured RTO (12s-23s) and measured RPO (15s-45s) for production portals"},
@@ -583,15 +640,15 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 10: Figure 9 - CERT-In Audit Ledger (web_console_09_compliance_audit_ledger.png)
+    # SLIDE 13: Figure 12 - CERT-In Audit Ledger (web_console_10_compliance_audit_ledger.png)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console Subsystem",
-        "title": "Figure 9: CERT-In Section 70B Cryptographic SHA-256 Audit Ledger",
+        "title": "Figure 12: CERT-In Section 70B Cryptographic SHA-256 Audit Ledger",
         "image_file": img_c_comp,
-        "caption": "Figure 9: CERT-In Section 70B Tamper-Evident SHA-256 Hash-Chained Audit Ledger with 180-Day Retention Lock.",
+        "caption": "Figure 12: CERT-In Section 70B Tamper-Evident SHA-256 Hash-Chained Audit Ledger with 180-Day Retention Lock.",
         "specs": [
             {"label": "SHA-256 Hash Chaining", "detail": "SHA256(prev_hash | entry_hash) guarantees mathematical tamper-evidence"},
             {"label": "Section 70B Compliance", "detail": "Comprehensive auditing of every privileged state change and WAF toggle"},
@@ -601,15 +658,15 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 11: Figure 10 - Transactional Updates (web_console_10_transactional_updates.png)
+    # SLIDE 14: Figure 13 - Transactional Updates (web_console_11_transactional_updates.png)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Web Console Subsystem",
-        "title": "Figure 10: openSUSE MicroOS Transactional-Updates & Rollback",
+        "title": "Figure 13: openSUSE MicroOS Transactional-Updates & Rollback",
         "image_file": img_c_upd,
-        "caption": "Figure 10: MicroOS Transactional Update Engine with Read-Only Root Snapshot #14, Staging Trees & Health Gate.",
+        "caption": "Figure 13: MicroOS Transactional Update Engine with Read-Only Root Snapshot #14, Staging Trees & Health Gate.",
         "specs": [
             {"label": "Read-Only System Root", "detail": "Appliance operating system executes from immutable snapshot #14"},
             {"label": "Atomic Update Staging", "detail": "OS updates install into isolated snapshots with zero runtime interruption"},
@@ -619,15 +676,15 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 12: Figure 11 - Boot Screen Console (web_console_11_boot_screen_console.png)
+    # SLIDE 15: Figure 14 - Boot Screen Console (web_console_12_boot_screen_console.png)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Hardware Console Subsystem",
-        "title": "Figure 11: Bare-Metal Hardware & Diagnostic Terminal Console",
+        "title": "Figure 14: Bare-Metal Hardware & Diagnostic Terminal Console",
         "image_file": img_c_term,
-        "caption": "Figure 11: Bare-Metal Diagnostic Console Banner with Hardware Integrity Checks, Emergency Keys & Statutory Notice.",
+        "caption": "Figure 14: Bare-Metal Diagnostic Console Banner with Hardware Integrity Checks, Emergency Keys & Statutory Notice.",
         "specs": [
             {"label": "Diagnostic Boot Banner", "detail": "Official ASCII institutional console banner displayed on bare-metal boot"},
             {"label": "Hardware Validation", "detail": "Automated validation of TPM 2.0, Secure Boot, LUKS disks & NPL clock sync"},
@@ -637,105 +694,105 @@ def build_all_slides_data(builder: PPTXBuilder = None):
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 13: Figure 12 - GRUB2 Bootloader (vm_boot_menu_v2.jpg)
+    # SLIDE 16: Figure 15 - GRUB2 Bootloader (vm_boot_menu_v2.jpg)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Bare-Metal Provisioning",
-        "title": "Figure 12: High-Resolution GRUB2 Bootloader & Deployment Menu",
+        "title": "Figure 15: Purpose-Driven GRUB2 Bootloader & Profile Selection",
         "image_file": img_boot,
-        "caption": "Figure 12: Official CSIR-SERC GRUB2 Graphical Bootloader with Automated Express & Interactive Easy Install Options.",
+        "caption": "Figure 15: Official CSIR-SERC GRUB2 Graphical Bootloader with Profile Options for Full-Stack, Web Hosting, KVM & Airgap.",
         "specs": [
+            {"label": "Purpose Profile Selection", "detail": "Dedicated boot options for Full-Stack, Web Hosting Gateway, KVM, Edge WAF, or Airgap"},
             {"label": "1024x768 Graphical Canvas", "detail": "TrueColor graphical frame-buffer with official CSIR-SERC institutional seal"},
-            {"label": "Turn-Key Boot Modes", "detail": "Automated Express Install, Easy Interactive Install, Memtest & Hardware Probe"},
-            {"label": "Dual Architecture", "detail": "Full support for UEFI Secure Boot (x86_64-efi) and legacy BIOS hardware"},
-            {"label": "Offline Monolithic DVD", "detail": "Self-contained ISO with 100% offline packages and zero internet requirement"}
+            {"label": "Automated Boot Ingestion", "detail": "Direct kernel ingestion of combustion script and AutoYaST deployment rules"},
+            {"label": "Multi-Platform Support", "detail": "Unified UEFI x86_64 and legacy BIOS firmware compatibility"}
         ]
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 14: Figure 13 - YaST Initialization (vm_step4_yast.jpg)
+    # SLIDE 17: Figure 16 - AutoYaST Core (vm_step4_yast.jpg)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Bare-Metal Provisioning",
-        "title": "Figure 13: Graphical YaST Installer Engine & Combustion Automation",
+        "title": "Figure 16: AutoYaST Automated OS Installation Engine",
         "image_file": img_yast,
-        "caption": "Figure 13: YaST Automated Hardware Discovery, Combustion Configuration Hooks & Memory Optimization.",
+        "caption": "Figure 16: Automated YaST Control Flow - Unattended Installation Ingestion & Base Operating System Deployment.",
         "specs": [
-            {"label": "Combustion Engine", "detail": "Automated execution of first-boot appliance hardening scripts"},
-            {"label": "Hardware RAM Probing", "detail": "Automated detection allocating memory for graphical and container workloads"},
-            {"label": "Hardened Base Profile", "detail": "openSUSE MicroOS transactional minimal profile with zero bloatware"},
-            {"label": "Package Verification", "detail": "All installer RPM packages verified against CSIR institutional GPG key"}
+            {"label": "Zero-Touch Provisioning", "detail": "Fully autonomous unattended installation eliminating manual technician errors"},
+            {"label": "Package Pattern Resolution", "detail": "Automated dependency calculation for MicroOS core and container engine"},
+            {"label": "Secure Boot Verification", "detail": "Mandatory validation of kernel signatures and cryptographic platform keys"},
+            {"label": "Non-Interactive Mode", "detail": "Direct hands-free installation for automated data center rollouts"}
         ]
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 15: Figure 14 - Network Discovery (vm_step5_yast_net.jpg)
+    # SLIDE 18: Figure 17 - Network Ingestion (vm_step5_yast_net.jpg)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Bare-Metal Provisioning",
-        "title": "Figure 14: Automated Network Interface Discovery & Time Synchronization",
+        "title": "Figure 17: Network & Ingress Interface Configuration",
         "image_file": img_net,
-        "caption": "Figure 14: Deterministic Network Interface Configuration, IPv4/IPv6 Dual-Stack & Indian NPL NTP Sync.",
+        "caption": "Figure 17: Network Interface Bonding, Static IPv4/IPv6 Addressing & Gateway Ingress Configuration.",
         "specs": [
-            {"label": "Interface Probing", "detail": "Deterministic identification of 10G/1G physical Ethernet and virtual NICs"},
-            {"label": "Dual-Stack Addressing", "detail": "IPv4 and IPv6 automatic acquisition with static management override"},
-            {"label": "Sovereign Clock Sync", "detail": "Chrony disciplined directly by Indian National Physical Laboratory Stratum 1"},
-            {"label": "Default-Deny Ingress", "detail": "Firewall rules primed and active prior to network link activation"}
+            {"label": "Predictable Naming", "detail": "Deterministic interface mapping for management and public ingress"},
+            {"label": "Hardware Offloading", "detail": "TCP segmentation offload and checksum calculation enabled on NICs"},
+            {"label": "DNS Resolver Hardening", "detail": "High-availability DNS resolver configuration with local cache fallbacks"},
+            {"label": "Isolated Mgmt Segment", "detail": "Out-of-band management subnet routing for administration traffic"}
         ]
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 16: Figure 15 - Partitioning Layout (vm_step8_partitioning.jpg)
+    # SLIDE 19: Figure 18 - Btrfs Subvolumes (vm_step8_partitioning.jpg)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Bare-Metal Provisioning",
-        "title": "Figure 15: Immutable Btrfs Subvolume Layout Scheme (@, @/var, @/srv)",
+        "title": "Figure 18: Btrfs Subvolume Topology & Partitioning",
         "image_file": img_part,
-        "caption": "Figure 15: Immutable Btrfs Subvolume Partitioning Scheme with Segregated Root, Data and Log Trees.",
+        "caption": "Figure 18: Automated Partitioning Table - Btrfs Root, Granular Subvolumes (@, @/srv, @/var) & ESP Mount.",
         "specs": [
-            {"label": "Read-Only Root (@)", "detail": "Mounted strictly read-only to ensure complete malware and tampering immunity"},
-            {"label": "Data Subvolume (@/srv)", "detail": "Segregated read-write subvolume for virtual hosts, web roots & Podman"},
-            {"label": "Audit Subvolume (@/var)", "detail": "Dedicated subvolume for CERT-In 180-day append-only cryptographic logs"},
-            {"label": "Independent Snapper Trees", "detail": "Granular snapshot retention policies preventing log churn from polluting root"}
+            {"label": "Immutable Root Isolation", "detail": "Subvolume separation ensuring OS root remains isolated from application data"},
+            {"label": "Dedicated Data Subvolume", "detail": "/srv subvolume optimized with nocow flag for high-IOPS database operations"},
+            {"label": "Dynamic Quota Enforcement", "detail": "Subvolume-level storage limits preventing disk exhaustion attacks"},
+            {"label": "Snapper Integration", "detail": "Deep kernel integration for transparent copy-on-write snapshot creation"}
         ]
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 17: Figure 16 - Installation Confirmation (vm_final_gui_proof_ready2.jpg)
+    # SLIDE 20: Figure 19 - Hardware Topology (vm_final_gui_proof_ready2.jpg)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Bare-Metal Provisioning",
-        "title": "Figure 16: Final Installation Confirmation & Sovereign Payload Commitment",
+        "title": "Figure 19: Hypervisor Resource Allocation & Hardware Proof",
         "image_file": img_conf,
-        "caption": "Figure 16: Final Installation Confirmation Committing Coraza WAF, HAProxy, Podman & UX4G Web Console.",
+        "caption": "Figure 19: Comprehensive System Configuration Summary - 4 vCPUs, 8GB ECC RAM, 30GB Disk & Network Topology.",
         "specs": [
-            {"label": "Full Appliance Payload", "detail": "Complete offline provisioning of Coraza WAF, HAProxy, Podman & Vue 3 SPA"},
-            {"label": "Security Hardening", "detail": "Disabling non-essential daemons, SHA-512 password hashing & SSH bastions"},
-            {"label": "Storage Commitment", "detail": "Atomic Btrfs formatting with initial baseline snapshot generation"},
-            {"label": "Secure Bootloader", "detail": "Digitally signed GRUB2 committed to EFI System Partition (ESP)"}
+            {"label": "Hardware Topology", "detail": "Multi-core vCPU allocation with dedicated memory mapping and VT-x flags"},
+            {"label": "Storage Controller", "detail": "High-performance VirtIO SCSI / SATA storage controller configuration"},
+            {"label": "Virtual Network Bridge", "detail": "Dedicated host-only and NAT network adapters for testbed isolation"},
+            {"label": "Display Subsystem", "detail": "High-resolution VBoxVGA/QXL frame-buffer for administrative boot verification"}
         ]
     })
 
     # --------------------------------------------------------------------------
-    # SLIDE 18: Figure 17 - TTY3 Diagnostic Console (vm_tty3_log.jpg)
+    # SLIDE 21: Figure 20 - TTY3 Diagnostic Console (vm_tty3_log.jpg)
     # --------------------------------------------------------------------------
     slides.append({
         "type": "hero_screenshot",
         "bg": "F5F3FF",
         "category": "Visual Qualification: Bare-Metal Provisioning",
-        "title": "Figure 17: Diagnostic Linuxrc Installation Console & TTY3 Shell",
+        "title": "Figure 20: Diagnostic Linuxrc Installation Console & TTY3 Shell",
         "image_file": img_tty3,
-        "caption": "Figure 17: TTY3 Real-Time Linuxrc Installation Diagnostics, Kernel Probing & Hardware Telemetry.",
+        "caption": "Figure 20: TTY3 Real-Time Linuxrc Installation Diagnostics, Kernel Probing & Hardware Telemetry.",
         "specs": [
             {"label": "Kernel Telemetry", "detail": "Live tracking of device driver probing, hardware interrupts & storage mounting"},
             {"label": "Storage Attachment", "detail": "SATA/NVMe controller discovery and LUKS encrypted container initialization"},

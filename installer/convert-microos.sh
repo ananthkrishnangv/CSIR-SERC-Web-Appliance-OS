@@ -177,19 +177,46 @@ if [ "$DISK_FREE_GB" -lt 5 ]; then
     echo -e "${YELLOW}[!] Warning: Disk free space (${DISK_FREE_GB} GB) is below 5 GB. Btrfs snapshots require adequate headroom.${NC}"
 fi
 
+if [ "$UNATTENDED" = false ] && [ "$DRY_RUN" = false ]; then
+    echo ""
+    echo -e "${CYAN}${BOLD}=== Select Installation Purpose & Appliance Profile ===${NC}"
+    echo -e "  ${WHITE}1) Full-Stack Sovereign Web & Virtualization Appliance${NC} (VHosts, Quadlets, KVM VM Manager, AI Center, WAF)"
+    echo -e "  ${WHITE}2) High-Density Sovereign Web Hosting Gateway${NC} (Multi-tenant VHosts, PHP/Node/Python Runtimes, SSL Key Vault)"
+    echo -e "  ${WHITE}3) Micro-Virtualization & Container Node${NC} (KVM Hypervisor, Libvirt, QCOW2 Pools, Rootless Quadlets)"
+    echo -e "  ${WHITE}4) Edge Security & Coraza WAF Gateway${NC} (HAProxy 3.0, Coraza WAF, OWASP CRS, nftables)"
+    echo -e "  ${WHITE}5) Air-Gapped Strategic Laboratory Archive Node${NC} (Hardened immutable node, TPM CA, Local Snapper DR)"
+    read -rp "Enter profile choice [1-5, default 1]: " PROFILE_CHOICE
+    case "$PROFILE_CHOICE" in
+        2) SELECTED_PROFILE="webhosting" ;;
+        3) SELECTED_PROFILE="virtualization" ;;
+        4) SELECTED_PROFILE="edge-waf" ;;
+        5) SELECTED_PROFILE="airgap" ;;
+        *) SELECTED_PROFILE="full" ;;
+    esac
+fi
+
 # Profile Confirmation
 echo ""
 echo -e "${CYAN}${BOLD}=== Selected Appliance Profile: ${WHITE}${SELECTED_PROFILE^^}${CYAN} ===${NC}"
 case "$SELECTED_PROFILE" in
     "full")
-        echo -e "    Installs: Core Management Portal, UX4G Nuxt UI, Node Agent, HAProxy 3.0, Coraza WAF (CRS v4),"
-        echo -e "              nftables default-deny, Podman Quadlets, PostgreSQL, Snapper/Restic DR, AI Center, Branding."
+        echo -e "    Installs: Web Management Portal, VHost Manager (PHP/Node/Python), KVM VM Manager (libvirt),"
+        echo -e "              HAProxy 3.0, Coraza WAF (CRS v4), nftables, Podman Quadlets, Snapper/Restic DR, AI Center."
+        ;;
+    "webhosting")
+        echo -e "    Installs: Web Hosting Manager, Multi-Tenant VHosts, PHP-FPM, Node.js, Python ASGI, HAProxy, SSL Key Vault."
+        ;;
+    "virtualization")
+        echo -e "    Installs: KVM Hypervisor (qemu-kvm, libvirt), Cockpit Machines, Rootless Podman Quadlets, Node Agent."
         ;;
     "edge-waf")
         echo -e "    Installs: Core Management, Node Agent, HAProxy 3.0, Coraza WAF (CRS v4), nftables, Suricata IDS, Branding."
         ;;
     "app-host")
         echo -e "    Installs: Core Management, Node Agent, Podman Quadlets, PostgreSQL, Backups, Hardening, Branding."
+        ;;
+    "airgap")
+        echo -e "    Installs: Hardened Core Management, TPM 2.0 Internal CA, Snapper/Restic Local Backups, Isolated Root."
         ;;
     "minimal")
         echo -e "    Installs: Core Management, Node Agent RPC, nftables default-deny, System Hardening."
@@ -368,10 +395,19 @@ PKG_LIST="python3 python3-pip python3-venv openssl ca-certificates chrony jq cur
 
 case "$SELECTED_PROFILE" in
     "full")
-        PKG_LIST="${PKG_LIST} haproxy suricata podman crun netavark aardvark-dns catatonit snapper restic borgbackup postgresql postgresql-server pgbouncer"
+        PKG_LIST="${PKG_LIST} haproxy suricata podman crun netavark aardvark-dns catatonit snapper restic borgbackup postgresql postgresql-server pgbouncer qemu-kvm libvirt-daemon-system libvirt-clients virt-install cockpit-machines"
+        ;;
+    "webhosting")
+        PKG_LIST="${PKG_LIST} haproxy podman crun netavark aardvark-dns catatonit snapper restic nginx certbot python3-certbot"
+        ;;
+    "virtualization")
+        PKG_LIST="${PKG_LIST} podman crun netavark aardvark-dns catatonit snapper restic qemu-kvm libvirt-daemon-system libvirt-clients virt-install cockpit-machines"
         ;;
     "edge-waf")
         PKG_LIST="${PKG_LIST} haproxy suricata"
+        ;;
+    "airgap")
+        PKG_LIST="${PKG_LIST} snapper restic tpm2-tools openssl"
         ;;
     "app-host")
         PKG_LIST="${PKG_LIST} haproxy podman crun netavark aardvark-dns catatonit snapper restic postgresql postgresql-server"
