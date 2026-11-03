@@ -1,7 +1,8 @@
 # CSIR Secure Web Appliance OS (CSIR-SWA OS)
 ### Immutable Web, Application and Security Platform based on openSUSE MicroOS
-**Release Baseline:** 28 September 2026 | **Version:** 1.0.0 (Stable Channel)  
+**Release Baseline:** 28 September 2026 | **Version:** 1.0.0 (Stable Channel) | **Last Synchronized:** 3 November 2026  
 **Lead Organisation:** CSIR-SERC / Participating Laboratories  
+**Repository:** [CSIR-SERC-Web-Appliance-OS](https://github.com/ananthkrishnangv/CSIR-SERC-Web-Appliance-OS.git)  
 **Image File:** `release/csir-swa-os-1.0.0-fullstack-x86_64.iso` (2.73 GB Monolithic Full-Stack Offline DVD)
 
 ---
